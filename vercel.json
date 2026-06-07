@@ -1,7 +1,6 @@
 {
   "buildCommand": "",
-  "outputDirectory": "./",
-  "installCommand": "echo skip",
+  "outputDirectory": ".",
   "headers": [
     {
       "source": "/(.*)",
@@ -11,5 +10,10 @@
         { "key": "Cross-Origin-Resource-Policy",  "value": "cross-origin" }
       ]
     }
+  ],
+  "rewrites": [
+    { "source": "/icons/(.*)", "destination": "/public/icons/$1" },
+    { "source": "/manifest.json", "destination": "/public/manifest.json" },
+    { "source": "/sw.js", "destination": "/public/sw.js" }
   ]
 }
