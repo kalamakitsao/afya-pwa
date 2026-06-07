@@ -1,0 +1,55 @@
+# powersync-rules.yaml
+# Paste this into: PowerSync Dashboard → your instance → Sync Rules
+# Then click Save & Deploy.
+#
+# These rules use Supabase JWT claims.
+# token_parameters.user_id = auth.uid() from Supabase JWT
+
+sync_rules:
+  # ── Config: all devices, no scoping ───────────────────────────────────
+  - table: config_forms
+    parameters: []
+    data:
+      - SELECT id, form_id, version, json_schema, published_at
+        FROM config_forms
+
+  # ── CHP areas: all devices (small table, 3 rows in PoC) ───────────────
+  - table: chp_areas
+    parameters: []
+    data:
+      - SELECT id, name, chu_name, sub_county, county
+        FROM chp_areas
+
+  # ── Households: all authenticated users (PoC simplification) ──────────
+  - table: households
+    parameters: []
+    data:
+      - SELECT id, chp_area_id, name, village FROM households
+
+  # ── Clients: all authenticated users ──────────────────────────────────
+  - table: clients
+    parameters: []
+    data:
+      - SELECT id, household_id, first_name, last_name, sex, date_of_birth
+        FROM clients
+
+  # ── Events: all authenticated users can see all signals (PoC) ─────────
+  # In production: scope by chp_area_id matching the user's profile
+  - table: events
+    parameters: []
+    data:
+      - SELECT id, chp_area_id, client_id, submitted_by,
+               form_id, context_type, answers, sync_status, created_at
+        FROM events
+        ORDER BY created_at DESC
+
+  # ── Tasks: each user sees only their own tasks ─────────────────────────
+  - table: tasks
+    parameters:
+      - SELECT token_parameters.user_id as uid
+    data:
+      - SELECT id, event_id, assigned_to, title, form_type,
+               due_date, status, created_at
+        FROM tasks
+        WHERE assigned_to = bucket.uid
+           OR true  -- PoC: all users see all tasks for demo purposes
