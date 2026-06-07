@@ -995,7 +995,7 @@ window.loadAllSigs = async () => {
 let verifyState = { taskId: null, eventId: null, credible: null, escalate: null };
 
 window.openVerifyModal = async (taskId, eventId, signalTitle) => {
-  verifyState = { taskId, eventId, credible: null, escalate: null };
+  verifyState = { taskId, eventId: eventId||null, credible: null, escalate: null };
 
   id('vm-title').textContent = 'Verify signal';
   id('vm-notes').value = '';
@@ -1006,9 +1006,13 @@ window.openVerifyModal = async (taskId, eventId, signalTitle) => {
     if (el) el.classList.remove('sel');
   });
 
-  // Load signal detail
-  const { data: evt } = await sb.from('events')
-    .select('answers,created_at').eq('id', eventId).maybeSingle();
+  // Load signal detail (gracefully handle missing eventId)
+  let evt = null;
+  if (eventId) {
+    const { data } = await sb.from('events')
+      .select('answers,created_at').eq('id', eventId).maybeSingle();
+    evt = data;
+  }
 
   const a = evt?.answers || {};
   const TYPES = {
@@ -1063,14 +1067,23 @@ window.submitVerification = async () => {
   const btn = id('vm-submit');
   btn.disabled = true; btn.textContent = 'Submitting…';
   try {
-    const { error } = await sb.from('verifications').insert({
-      event_id:    verifyState.eventId,
-      verified_by: session.user.id,
-      credible:    verifyState.credible,
-      escalate:    verifyState.escalate || false,
-      notes:       id('vm-notes').value.trim() || null,
-    });
-    if (error) throw error;
+    // First: update task status to done
+    const { error: taskErr } = await sb.from('tasks')
+      .update({ status: 'done' })
+      .eq('id', verifyState.taskId);
+    if (taskErr) console.warn('[verify] task close error:', taskErr);
+
+    // Then: insert verification record (only if we have an event_id)
+    if (verifyState.eventId) {
+      const { error } = await sb.from('verifications').insert({
+        event_id:    verifyState.eventId,
+        verified_by: session.user.id,
+        credible:    verifyState.credible,
+        escalate:    verifyState.escalate || false,
+        notes:       id('vm-notes').value.trim() || null,
+      });
+      if (error && error.code !== '23505') throw error; // ignore duplicate
+    }
 
     id('verify-modal').style.display = 'none';
     await renderHome();
@@ -1104,7 +1117,7 @@ function showToast(msg) {
   setTimeout(() => { t.style.opacity = '0'; }, 2500);
 }
 
-// ── UPDATED renderTasks — now tappable for CHA ────────────────────────────
+// ── UPDATED renderTasks — tappable for CHA verification ───────────────────
 async function renderTasksVerify() {
   const el = id('task-list');
   if (!isOnline()) {
@@ -1112,24 +1125,77 @@ async function renderTasksVerify() {
       Tasks load when reconnected.</div>`;
     return;
   }
-  const { data: tasks } = await sb.from('tasks')
+
+  const { data: tasks, error } = await sb.from('tasks')
     .select('*').eq('status','pending')
-    .order('created_at',{ascending:false}).limit(10);
-  if (!tasks?.length) {
-    el.innerHTML = empty('✅','No pending tasks','Tasks appear here when signals are submitted');
+    .order('created_at',{ascending:false}).limit(20);
+
+  if (error) {
+    console.error('[tasks] fetch error:', error);
+    el.innerHTML = `<div style="color:var(--red);font-size:12px">
+      Error loading tasks: ${error.message}</div>`;
     return;
   }
+
+  console.log('[tasks] fetched:', tasks?.length, tasks);
+
+  if (!tasks?.length) {
+    // Show helpful message with a way to create a test task
+    el.innerHTML = `
+      <div class="empty" style="padding:16px 0">
+        <div class="empty-icon">✅</div>
+        <div class="empty-title">No pending tasks</div>
+        <div style="font-size:12px;color:var(--text-2);margin-top:4px">
+          Tasks are created automatically when CHPs submit signals.<br>
+          Submit a signal first, then check back here.
+        </div>
+        <button onclick="createTestTask()" class="btn btn-o"
+          style="margin-top:12px;font-size:12px;padding:8px 14px;width:auto">
+          + Create test task (demo)
+        </button>
+      </div>`;
+    return;
+  }
+
   el.innerHTML = tasks.map(t => {
     const urg = t.title?.startsWith('URGENT');
+    const eventId = t.event_id || '';
     return `<div class="task" style="cursor:pointer"
-        onclick="openVerifyModal('${t.id}','${t.event_id}','${esc(t.title)}')">
-      ${urg ? '<div class="task-urg">⚠ Tap to verify — urgent</div>' : ''}
+        onclick="openVerifyModal('${t.id}','${eventId}','${esc(t.title)}')">
+      ${urg ? '<div class="task-urg">⚠ Tap to verify — urgent</div>'
+             : '<div style="font-size:10px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px">Tap to verify →</div>'}
       <div class="task-title">${esc(t.title)}</div>
-      <div class="task-due">Due: ${t.due_date||'ASAP'} &nbsp;·&nbsp;
-        <span style="color:var(--green);font-weight:600">Tap to verify →</span></div>
+      <div class="task-due">Due: ${t.due_date||'ASAP'}</div>
     </div>`;
   }).join('');
 }
+
+// Create a test task directly — useful when trigger hasn't fired yet
+window.createTestTask = async () => {
+  // Find most recent signal to attach to
+  const { data: events } = await sb.from('events')
+    .select('id,answers').eq('form_id','cebs_signal')
+    .order('created_at',{ascending:false}).limit(1);
+
+  const eventId = events?.[0]?.id || null;
+  const sigType = events?.[0]?.answers?.signal_type || 'outbreak';
+  const uid     = session.user.id;
+
+  const { error } = await sb.from('tasks').insert({
+    event_id:    eventId,
+    assigned_to: uid,
+    title:       sigType === 'outbreak'
+      ? 'URGENT: Verify outbreak signal — test'
+      : 'Verify signal — ' + sigType,
+    form_type:   'signal_verification',
+    due_date:    new Date(Date.now() + 48*3600000).toISOString().slice(0,10),
+    status:      'pending',
+  });
+
+  if (error) { alert('Could not create task: ' + error.message); return; }
+  await renderHome();
+  showToast('Test task created ✓');
+};
 
 // ── ANALYTICS ─────────────────────────────────────────────────────────────
 let analyticsPeriod = 30;
