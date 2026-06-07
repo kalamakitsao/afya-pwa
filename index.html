@@ -398,21 +398,19 @@ window.doLogin = async () => {
 // POWERSYNC INIT
 // ─────────────────────────────────────────────────────────────────────────────
 async function initPowerSync() {
-  const { PowerSyncDatabase, AbstractPowerSyncDatabase } = await import(
-    'https://esm.sh/@powersync/web@1.9.0'
-  );
+  const { PowerSyncDatabase } = await import('https://esm.sh/@powersync/web@1.37.2');
 
   // Schema — mirrors what we created in Supabase
-  const { Schema, Table, Column } = await import('https://esm.sh/@powersync/web@1.9.0');
+  const { Schema, Table, column } = await import('https://esm.sh/@powersync/web@1.37.2');
 
-  const schema = new Schema([
-    new Table({ name: 'chp_areas',    columns: [Column.text('name'), Column.text('chu_name'), Column.text('sub_county'), Column.text('county')] }),
-    new Table({ name: 'households',   columns: [Column.text('chp_area_id'), Column.text('name'), Column.text('village')] }),
-    new Table({ name: 'clients',      columns: [Column.text('household_id'), Column.text('first_name'), Column.text('last_name'), Column.text('sex'), Column.text('date_of_birth')] }),
-    new Table({ name: 'events',       columns: [Column.text('chp_area_id'), Column.text('client_id'), Column.text('submitted_by'), Column.text('form_id'), Column.text('context_type'), Column.text('answers'), Column.text('sync_status'), Column.text('created_at')], trackMetadata: true }),
-    new Table({ name: 'tasks',        columns: [Column.text('event_id'), Column.text('assigned_to'), Column.text('title'), Column.text('form_type'), Column.text('due_date'), Column.text('status'), Column.text('created_at')] }),
-    new Table({ name: 'config_forms', columns: [Column.text('form_id'), Column.integer('version'), Column.text('json_schema'), Column.text('published_at')] }),
-  ]);
+  const schema = new Schema({
+    chp_areas:    new Table({ name: column.text, chu_name: column.text, sub_county: column.text, county: column.text }),
+    households:   new Table({ chp_area_id: column.text, name: column.text, village: column.text }),
+    clients:      new Table({ household_id: column.text, first_name: column.text, last_name: column.text, sex: column.text, date_of_birth: column.text }),
+    events:       new Table({ chp_area_id: column.text, client_id: column.text, submitted_by: column.text, form_id: column.text, context_type: column.text, answers: column.text, sync_status: column.text, created_at: column.text }),
+    tasks:        new Table({ event_id: column.text, assigned_to: column.text, title: column.text, form_type: column.text, due_date: column.text, status: column.text, created_at: column.text }),
+    config_forms: new Table({ form_id: column.text, version: column.integer, json_schema: column.text, published_at: column.text }),
+  });
 
   // Connector: handles auth tokens and write uploads
   const connector = {
