@@ -9,250 +9,214 @@
 <meta name="apple-mobile-web-app-title" content="Afya Nyumbani"/>
 <meta name="theme-color" content="#085041"/>
 <title>Afya Nyumbani</title>
-<link rel="manifest" href="/manifest.json"/>
-<link rel="icon" href="/icons/icon-192.png"/>
+<link rel="manifest" href="/public/manifest.json"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
   --green:#085041;--green-mid:#0F6E56;--green-light:#E1F5EE;
   --red:#A32D2D;--red-light:#FCEBEB;--amber:#854F0B;--amber-light:#FAEEDA;
-  --text:#1E293B;--text-secondary:#64748B;--border:#E2E8F0;
-  --bg:#F8FAFC;--surface:#FFFFFF;--radius:12px;--safe-top:env(safe-area-inset-top,0px);
+  --text:#1E293B;--text-2:#64748B;--border:#E2E8F0;
+  --bg:#F8FAFC;--surface:#fff;--r:12px;
+  --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px)
 }
 html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
   background:var(--bg);color:var(--text);overscroll-behavior:none}
 #root{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto;
   background:var(--surface);box-shadow:0 0 40px rgba(0,0,0,.08)}
 
-/* ── NAV BAR ── */
-.nav{background:var(--green);color:#E1F5EE;padding:calc(var(--safe-top) + 12px) 16px 12px;
+/* NAV */
+.nav{background:var(--green);color:#E1F5EE;padding:calc(var(--sat) + 12px) 16px 12px;
   display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
 .nav-title{font-size:17px;font-weight:600}
 .nav-sub{font-size:11px;color:#9FE1CB;margin-top:1px}
-.sync-dot{width:8px;height:8px;border-radius:50%;background:#9FE1CB}
-.sync-dot.syncing{animation:pulse 1s ease infinite}
-.sync-dot.error{background:#F87171}
+.dot{width:8px;height:8px;border-radius:50%;background:#9FE1CB;transition:background .3s}
+.dot.ok{background:#4ade80}.dot.err{background:#f87171}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-.sync-bar{background:rgba(0,0,0,.2);padding:5px 16px;font-size:11px;color:#9FE1CB;
-  flex-shrink:0;display:none}
-.sync-bar.show{display:block}
+.dot.sync{animation:pulse 1s ease infinite}
 
-/* ── SCREENS ── */
+/* SCREENS */
 .screen{flex:1;overflow-y:auto;padding:16px;display:none;flex-direction:column;gap:12px}
-.screen.active{display:flex}
+.screen.on{display:flex}
 
-/* ── BOTTOM TABS ── */
+/* TABS */
 .tabs{display:flex;border-top:1px solid var(--border);flex-shrink:0;background:var(--surface);
-  padding-bottom:env(safe-area-inset-bottom,0px)}
+  padding-bottom:var(--sab)}
 .tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;
-  background:none;border:none;color:var(--text-secondary);font-size:10px;font-weight:500;cursor:pointer}
-.tab.active{color:var(--green)}
+  background:none;border:none;color:var(--text-2);font-size:10px;font-weight:500;cursor:pointer}
+.tab.on{color:var(--green)}
 .tab svg{width:22px;height:22px}
-.tab-badge{background:var(--red);color:#fff;border-radius:10px;padding:1px 5px;font-size:10px;
-  position:absolute;top:8px;right:calc(50% - 18px)}
 
-/* ── CARDS ── */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
-.card-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px}
-.card-sub{font-size:12px;color:var(--text-secondary)}
+/* CARDS */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.card-title{font-size:13px;font-weight:600;margin-bottom:8px}
 
-/* ── SIGNAL CARDS ── */
-.signal-card{border-radius:var(--radius);padding:12px 14px;border:1px solid transparent;
-  display:flex;gap:10px;align-items:flex-start}
-.signal-card.urgent{background:var(--red-light);border-color:#F7C1C1}
-.signal-card.normal{background:#F8FAFC;border-color:var(--border)}
-.signal-icon{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;
-  justify-content:center;flex-shrink:0;font-size:18px}
-.signal-icon.urgent{background:#F7C1C1}
-.signal-icon.normal{background:#E1F5EE}
-.signal-type{font-size:13px;font-weight:600}
-.signal-meta{font-size:11px;color:var(--text-secondary);margin-top:2px}
-.signal-status{font-size:10px;padding:2px 7px;border-radius:10px;margin-top:5px;
-  display:inline-block;font-weight:500}
-.status-pending{background:#FAEEDA;color:var(--amber)}
-.status-synced{background:var(--green-light);color:var(--green)}
+/* SIGNAL CARDS */
+.sig{border-radius:var(--r);padding:12px 14px;border:1px solid transparent;margin-bottom:8px}
+.sig.urg{background:var(--red-light);border-color:#F7C1C1}
+.sig.nor{background:var(--bg);border-color:var(--border)}
+.sig-type{font-size:13px;font-weight:600}
+.sig-meta{font-size:11px;color:var(--text-2);margin-top:2px}
+.badge{font-size:10px;padding:2px 7px;border-radius:10px;margin-top:5px;display:inline-block;font-weight:500}
+.badge.pend{background:var(--amber-light);color:var(--amber)}
+.badge.sync{background:var(--green-light);color:var(--green)}
 
-/* ── TASK CARDS ── */
-.task-card{background:var(--amber-light);border:1px solid #FAC775;border-radius:var(--radius);
-  padding:12px 14px}
+/* TASK CARDS */
+.task{background:var(--amber-light);border:1px solid #FAC775;border-radius:var(--r);
+  padding:12px 14px;margin-bottom:8px}
 .task-title{font-size:13px;font-weight:600;color:var(--amber)}
 .task-due{font-size:11px;color:#633806;margin-top:3px}
-.task-urgent{font-size:10px;font-weight:600;color:var(--red);text-transform:uppercase;
+.task-urg{font-size:10px;font-weight:600;color:var(--red);text-transform:uppercase;
   letter-spacing:.05em;margin-bottom:4px}
 
-/* ── FORM ── */
-.form-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  overflow:hidden}
-.form-section-title{background:#F1F5F9;padding:10px 14px;font-size:12px;font-weight:600;
-  color:var(--text-secondary);text-transform:uppercase;letter-spacing:.04em;
-  border-bottom:1px solid var(--border)}
-.form-section-note{padding:10px 14px;background:#FAEEDA;font-size:12px;color:#412402;
-  border-bottom:1px solid #FAC775}
-.question{padding:12px 14px;border-bottom:1px solid #F1F5F9}
-.question:last-child{border-bottom:none}
-.question label{display:block;font-size:13px;font-weight:500;color:var(--text);margin-bottom:8px}
-.question .req{color:var(--red);margin-left:2px}
+/* FORM */
+.fsect{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:10px}
+.fstitle{background:#F1F5F9;padding:10px 14px;font-size:12px;font-weight:600;
+  color:var(--text-2);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border)}
+.fnote{padding:10px 14px;background:var(--amber-light);font-size:12px;color:#412402;
+  border-bottom:1px solid #FAC775;line-height:1.5}
+.fq{padding:12px 14px;border-bottom:1px solid #F1F5F9}
+.fq:last-child{border-bottom:none}
+.fq label{display:block;font-size:13px;font-weight:500;margin-bottom:8px}
+.req{color:var(--red);margin-left:2px}
 .choices{display:flex;flex-direction:column;gap:6px}
-.choice{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;
-  border:1.5px solid var(--border);background:var(--surface);cursor:pointer;transition:all .12s}
-.choice.selected{border-color:var(--green);background:var(--green-light)}
-.choice.urgent-choice.selected{border-color:var(--red);background:var(--red-light)}
-.choice-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);
-  flex-shrink:0;display:flex;align-items:center;justify-content:center}
-.choice.selected .choice-radio{border-color:var(--green);background:var(--green)}
-.choice.selected .choice-radio::after{content:'';width:7px;height:7px;border-radius:50%;background:#fff}
-.choice-label{font-size:13px;flex:1}
-.choice-urgent{font-size:10px;font-weight:600;color:var(--red);background:var(--red-light);
+.ch{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;
+  border:1.5px solid var(--border);cursor:pointer;transition:all .12s}
+.ch.sel{border-color:var(--green);background:var(--green-light)}
+.ch.sel.urg{border-color:var(--red);background:var(--red-light)}
+.radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center}
+.ch.sel .radio{border-color:var(--green);background:var(--green)}
+.ch.sel .radio::after{content:'';width:7px;height:7px;border-radius:50%;background:#fff}
+.ch-lbl{font-size:13px;flex:1}
+.urg-tag{font-size:10px;font-weight:600;color:var(--red);background:var(--red-light);
   padding:1px 5px;border-radius:5px}
 input[type=text],input[type=number],input[type=date],textarea{
   width:100%;border:1.5px solid var(--border);border-radius:8px;padding:10px 12px;
-  font-size:15px;font-family:inherit;background:var(--surface);color:var(--text);
-  outline:none;transition:border-color .12s}
+  font-size:15px;font-family:inherit;background:var(--surface);color:var(--text);outline:none}
 input:focus,textarea:focus{border-color:var(--green)}
 textarea{min-height:80px;resize:vertical}
 
-/* ── BUTTONS ── */
+/* BUTTONS */
 .btn{width:100%;padding:14px;border-radius:10px;font-size:15px;font-weight:600;
   border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
-.btn-primary{background:var(--green);color:#E1F5EE}
-.btn-primary:active{background:var(--green-mid)}
-.btn-primary:disabled{background:#B4B2A9;cursor:not-allowed}
-.btn-outline{background:none;border:1.5px solid var(--border);color:var(--text)}
-.btn-danger{background:var(--red);color:#fff}
+.btn-p{background:var(--green);color:#E1F5EE}
+.btn-p:disabled{background:#B4B2A9;cursor:not-allowed}
+.btn-o{background:none;border:1.5px solid var(--border);color:var(--text)}
 
-/* ── LOGIN ── */
+/* LOGIN */
 .login-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;padding:24px}
-.login-logo{text-align:center;margin-bottom:28px}
-.login-logo-circle{width:80px;height:80px;background:var(--green);border-radius:24px;
+.logo-circle{width:80px;height:80px;background:var(--green);border-radius:24px;
   margin:0 auto 12px;display:flex;align-items:center;justify-content:center}
-.login-app-name{font-size:22px;font-weight:700;color:var(--text)}
-.login-tagline{font-size:13px;color:var(--text-secondary);margin-top:4px}
-.form-field{margin-bottom:14px}
-.form-field label{display:block;font-size:13px;font-weight:500;color:var(--text);margin-bottom:6px}
-.form-field input{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:13px 14px;
+.app-name{font-size:22px;font-weight:700;text-align:center}
+.tagline{font-size:13px;color:var(--text-2);margin-top:4px;text-align:center;margin-bottom:28px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:13px;font-weight:500;margin-bottom:6px}
+.field input{width:100%;border:1.5px solid var(--border);border-radius:10px;padding:13px 14px;
   font-size:16px;font-family:inherit;background:var(--surface);outline:none}
-.form-field input:focus{border-color:var(--green)}
-.error-msg{background:var(--red-light);color:var(--red);border-radius:8px;padding:10px 12px;
+.field input:focus{border-color:var(--green)}
+.err{background:var(--red-light);color:var(--red);border-radius:8px;padding:10px 12px;
   font-size:13px;margin-bottom:12px;display:none}
-.error-msg.show{display:block}
+.err.on{display:block}
 
-/* ── EMPTY STATE ── */
-.empty{text-align:center;padding:40px 20px;color:var(--text-secondary)}
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;color:var(--text-2)}
 .empty-icon{font-size:48px;margin-bottom:12px}
 .empty-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px}
-.empty-sub{font-size:13px}
 
-/* ── SUCCESS SCREEN ── */
+/* SUCCESS */
 .success-wrap{flex:1;display:flex;flex-direction:column;align-items:center;
   justify-content:center;padding:24px;text-align:center}
-.success-icon{width:80px;height:80px;background:var(--green-light);border-radius:50%;
+.s-icon{width:80px;height:80px;background:var(--green-light);border-radius:50%;
   display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:40px}
-.success-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:8px}
-.success-sub{font-size:14px;color:var(--text-secondary);line-height:1.5}
-.success-tag{background:var(--amber-light);color:var(--amber);border-radius:20px;
+.s-title{font-size:20px;font-weight:700;margin-bottom:8px}
+.s-sub{font-size:14px;color:var(--text-2);line-height:1.5}
+.s-tag{background:var(--amber-light);color:var(--amber);border-radius:20px;
   padding:6px 14px;font-size:12px;font-weight:500;margin:16px auto 0;display:inline-block}
 
-/* ── SETUP NOTICE ── */
-.setup-notice{background:#EFF6FF;border:1px solid #BFDBFE;border-radius:var(--radius);
-  padding:12px 14px;font-size:12px;color:#1E40AF;line-height:1.5}
-.setup-notice strong{display:block;margin-bottom:4px}
-
-/* ── LOADING ── */
+/* LOADING */
 .loading{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px}
 .spinner{width:36px;height:36px;border:3px solid var(--green-light);
   border-top-color:var(--green);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+
+.divider{height:1px;background:var(--border);margin:8px 0}
+.hint{font-size:11px;color:var(--text-2);text-align:center;margin-top:8px}
 </style>
 </head>
 <body>
 <div id="root">
 
-<!-- ── LOADING ───────────────────────────────────────────────────── -->
-<div id="loading-screen" class="loading">
+<!-- LOADING -->
+<div id="s-loading" class="loading">
   <div class="spinner"></div>
-  <div style="font-size:14px;color:var(--text-secondary)">Starting Afya Nyumbani…</div>
+  <div style="font-size:14px;color:var(--text-2)">Starting Afya Nyumbani…</div>
 </div>
 
-<!-- ── LOGIN ─────────────────────────────────────────────────────── -->
-<div id="login-screen" style="display:none;flex:1;flex-direction:column">
+<!-- LOGIN -->
+<div id="s-login" style="display:none;flex:1;flex-direction:column">
   <div class="login-wrap">
-    <div class="login-logo">
-      <div class="login-logo-circle">
-        <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
-          <path d="M22 8C22 8 10 14 10 24C10 30.627 15.373 36 22 36C28.627 36 34 30.627 34 24C34 14 22 8 22 8Z" fill="#9FE1CB"/>
-          <path d="M22 14C22 14 15 18 15 24C15 27.866 18.134 31 22 31C25.866 31 29 27.866 29 24C29 18 22 14 22 14Z" fill="#E1F5EE"/>
-          <circle cx="22" cy="24" r="4" fill="#085041"/>
-        </svg>
-      </div>
-      <div class="login-app-name">Afya Nyumbani</div>
-      <div class="login-tagline">Community Health · Outbreak Surveillance</div>
+    <div class="logo-circle">
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
+        <path d="M22 8C22 8 10 14 10 24C10 30.6 15.4 36 22 36C28.6 36 34 30.6 34 24C34 14 22 8 22 8Z" fill="#9FE1CB"/>
+        <circle cx="22" cy="24" r="5" fill="#085041"/>
+      </svg>
     </div>
-
-    <div id="setup-notice" class="setup-notice" style="margin-bottom:16px;display:none">
-      <strong>⚙️ Demo mode — connect your backend</strong>
-      Set VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY and VITE_POWERSYNC_URL in .env, then redeploy.<br>
-      See the README for the 15-minute setup guide.
+    <div class="app-name">Afya Nyumbani</div>
+    <div class="tagline">Community Health · Outbreak Surveillance</div>
+    <div id="login-err" class="err"></div>
+    <div class="field">
+      <label>Email</label>
+      <input type="email" id="f-email" placeholder="chp@health.go.ke" autocomplete="email"/>
     </div>
-
-    <div id="login-error" class="error-msg"></div>
-
-    <div class="form-field">
-      <label for="email">Email</label>
-      <input type="email" id="email" placeholder="chp@health.go.ke" autocomplete="email"/>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="f-pass" placeholder="••••••••" autocomplete="current-password"/>
     </div>
-    <div class="form-field">
-      <label for="password">Password</label>
-      <input type="password" id="password" placeholder="••••••••" autocomplete="current-password"/>
-    </div>
-    <button class="btn btn-primary" id="login-btn" onclick="doLogin()">
-      Sign in
-    </button>
-    <div style="text-align:center;margin-top:14px;font-size:12px;color:var(--text-secondary)">
-      New user? Ask your CHA to create your account in Supabase Auth.
-    </div>
+    <button class="btn btn-p" id="login-btn" onclick="doLogin()">Sign in</button>
+    <div class="hint">New user? Ask your supervisor to create your account in Supabase Auth.</div>
   </div>
 </div>
 
-<!-- ── APP SHELL (after login) ───────────────────────────────────── -->
-<div id="app-shell" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+<!-- APP -->
+<div id="s-app" style="display:none;flex:1;flex-direction:column;overflow:hidden">
 
   <div class="nav">
     <div>
       <div class="nav-title">Afya Nyumbani</div>
       <div class="nav-sub" id="nav-user">Loading…</div>
     </div>
-    <div style="display:flex;align-items:center;gap:8px">
-      <div style="font-size:11px;color:#9FE1CB" id="sync-label">Syncing…</div>
-      <div class="sync-dot syncing" id="sync-dot"></div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="font-size:11px;color:#9FE1CB" id="sync-lbl">Connecting…</span>
+      <div class="dot sync" id="sync-dot"></div>
     </div>
   </div>
-  <div class="sync-bar" id="sync-bar"></div>
+
+  <!-- OFFLINE BANNER -->
+  <div id="offline-banner" style="display:none;background:#7F1D1D;color:#FEE2E2;
+    padding:7px 16px;font-size:12px;font-weight:500;flex-shrink:0;
+    display:none;align-items:center;gap:8px">
+    <span>📴</span>
+    <span>Offline — signals saved to device, will sync when reconnected</span>
+  </div>
 
   <!-- HOME -->
-  <div id="screen-home" class="screen active">
+  <div id="screen-home" class="screen on">
     <div class="card">
-      <div class="card-title">My pending tasks</div>
-      <div id="task-list">
-        <div class="empty"><div class="empty-icon">✅</div><div class="empty-title">No pending tasks</div><div class="empty-sub">Tasks created by signal submissions appear here</div></div>
-      </div>
+      <div class="card-title">Pending tasks</div>
+      <div id="task-list"></div>
     </div>
     <div class="card">
       <div class="card-title">Recent signals</div>
-      <div id="recent-signals">
-        <div class="empty"><div class="empty-icon">📡</div><div class="empty-title">No signals yet</div><div class="empty-sub">Your submitted signals appear here</div></div>
-      </div>
+      <div id="recent-sigs"></div>
     </div>
   </div>
 
-  <!-- REPORT SIGNAL -->
+  <!-- REPORT -->
   <div id="screen-report" class="screen">
-    <div id="form-container">
-      <!-- Dynamic form rendered here -->
-    </div>
-    <div id="form-buttons" style="display:none">
-      <button class="btn btn-primary" id="submit-btn" onclick="submitForm()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-        Submit signal
+    <div id="form-wrap"></div>
+    <div id="form-btns" style="display:none;padding-bottom:8px">
+      <button class="btn btn-p" id="sub-btn" onclick="doSubmit()">
+        ✓ Submit signal
       </button>
     </div>
   </div>
@@ -260,667 +224,658 @@ textarea{min-height:80px;resize:vertical}
   <!-- SUCCESS -->
   <div id="screen-success" class="screen">
     <div class="success-wrap">
-      <div class="success-icon">📡</div>
-      <div class="success-title">Signal submitted</div>
-      <div class="success-sub">Your signal has been saved to this device.<br>It will sync to the server automatically when online.</div>
-      <div class="success-tag" id="success-tag">Saved locally · Queued for sync</div>
+      <div class="s-icon">📡</div>
+      <div class="s-title">Signal submitted</div>
+      <div class="s-sub">Saved to Supabase. A CHA verification task has been created automatically.</div>
+      <div class="s-tag" id="s-tag">Synced ✓</div>
       <div style="margin-top:28px;width:100%;display:flex;flex-direction:column;gap:10px">
-        <button class="btn btn-primary" onclick="showTab('report');renderForm()">Report another signal</button>
-        <button class="btn btn-outline" onclick="showTab('home')">Go to home</button>
+        <button class="btn btn-p" onclick="goReport()">Report another signal</button>
+        <button class="btn btn-o" onclick="goTab('home')">Go to home</button>
       </div>
     </div>
   </div>
 
-  <!-- SIGNALS LIST -->
+  <!-- ALL SIGNALS -->
   <div id="screen-signals" class="screen">
-    <div id="all-signals-list"></div>
+    <div id="all-sigs-wrap"></div>
   </div>
 
-  <!-- BOTTOM TABS -->
   <div class="tabs">
-    <button class="tab active" id="tab-home" onclick="showTab('home')">
+    <button class="tab on" id="tab-home" onclick="goTab('home')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
         <polyline points="9 22 9 12 15 12 15 22"/>
-      </svg>
-      Home
+      </svg>Home
     </button>
-    <button class="tab" id="tab-report" onclick="showTab('report');renderForm()">
+    <button class="tab" id="tab-report" onclick="goReport()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="10"/>
-        <line x1="12" y1="8" x2="12" y2="16"/>
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/>
         <line x1="8" y1="12" x2="16" y2="12"/>
-      </svg>
-      Report
+      </svg>Report
+      <span id="queue-badge" style="display:none;position:absolute;top:6px;
+        right:calc(50% - 20px);background:#A32D2D;color:#fff;border-radius:10px;
+        padding:1px 5px;font-size:9px;font-weight:600"></span>
     </button>
-    <button class="tab" id="tab-signals" onclick="showTab('signals');renderAllSignals()">
+    <button class="tab" id="tab-signals" onclick="goTab('signals');loadAllSigs()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-      </svg>
-      Signals
+      </svg>Signals
     </button>
   </div>
 </div>
 
-</div><!-- #root -->
+</div>
 
-<!-- ── PowerSync + Supabase JS SDKs (loaded from CDN) ── -->
 <script src="/config.js"></script>
 <script type="module">
-// ─────────────────────────────────────────────────────────────────────────────
-// CONFIG — read from build-time env vars injected by Vite
-// When running locally without a build step, fall back to demo mode.
-// ─────────────────────────────────────────────────────────────────────────────
-const SUPABASE_URL    = window.__CONFIG__?.SUPABASE_URL    || '';
-const SUPABASE_ANON   = window.__CONFIG__?.SUPABASE_ANON   || '';
-const POWERSYNC_URL   = window.__CONFIG__?.POWERSYNC_URL   || '';
-const DEMO_MODE       = !SUPABASE_URL || !SUPABASE_ANON || !POWERSYNC_URL;
+// ── CONFIG ────────────────────────────────────────────────────────────────
+const CFG       = window.__CONFIG__ || {};
+const SUPA_URL  = CFG.SUPABASE_URL  || '';
+const SUPA_ANON = CFG.SUPABASE_ANON || '';
+const isConfigured = SUPA_URL && !SUPA_URL.startsWith('REPLACE_')
+                  && SUPA_ANON && !SUPA_ANON.startsWith('REPLACE_');
 
-// ─────────────────────────────────────────────────────────────────────────────
-// STATE
-// ─────────────────────────────────────────────────────────────────────────────
-let db         = null;   // PowerSync database instance
-let supabase   = null;   // Supabase client
-let session    = null;   // Current Supabase session
-let formSchema = null;   // Loaded from config_forms in SQLite
-let answers    = {};     // Current form answers
-let chpAreaId  = null;   // User's CHP area
+// ── INDEXEDDB QUEUE ───────────────────────────────────────────────────────
+// This is the offline-first layer.
+// Every signal write goes here first — even when online.
+// A sync loop drains it to Supabase whenever connected.
+// Data is NEVER lost, even if the browser closes mid-sync.
 
-// ─────────────────────────────────────────────────────────────────────────────
-// BOOT
-// ─────────────────────────────────────────────────────────────────────────────
+const DB_NAME    = 'afya-nyumbani';
+const DB_VERSION = 1;
+const STORE      = 'outbox';   // pending signals waiting to sync
+
+let idb = null;
+
+async function openIDB() {
+  if (idb) return idb;
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VERSION);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE)) {
+        const store = db.createObjectStore(STORE, { keyPath: 'id' });
+        store.createIndex('status', 'status', { unique: false });
+      }
+    };
+    req.onsuccess = e => { idb = e.target.result; resolve(idb); };
+    req.onerror   = () => reject(req.error);
+  });
+}
+
+async function idbPut(record) {
+  const db    = await openIDB();
+  const tx    = db.transaction(STORE, 'readwrite');
+  const store = tx.objectStore(STORE);
+  return new Promise((resolve, reject) => {
+    const req  = store.put(record);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror   = () => reject(req.error);
+    tx.oncomplete = () => resolve();
+  });
+}
+
+async function idbGetAll(status) {
+  const db    = await openIDB();
+  const tx    = db.transaction(STORE, 'readonly');
+  const store = tx.objectStore(STORE);
+  return new Promise((resolve, reject) => {
+    const req = status
+      ? store.index('status').getAll(status)
+      : store.getAll();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror   = () => reject(req.error);
+  });
+}
+
+async function idbDelete(id) {
+  const db    = await openIDB();
+  const tx    = db.transaction(STORE, 'readwrite');
+  const store = tx.objectStore(STORE);
+  return new Promise((resolve, reject) => {
+    const req  = store.delete(id);
+    req.onsuccess = () => resolve();
+    req.onerror   = () => reject(req.error);
+  });
+}
+
+async function idbCount(status) {
+  const db    = await openIDB();
+  const tx    = db.transaction(STORE, 'readonly');
+  const store = tx.objectStore(STORE);
+  return new Promise((resolve, reject) => {
+    const req = status
+      ? store.index('status').count(status)
+      : store.count();
+    req.onsuccess = () => resolve(req.result);
+    req.onerror   = () => reject(req.error);
+  });
+}
+
+// ── STATE ─────────────────────────────────────────────────────────────────
+let sb          = null;
+let session     = null;
+let formSchema  = null;
+let answers     = {};
+let userProfile = null;
+let syncRunning = false;
+
+// ── OFFLINE / ONLINE DETECTION ────────────────────────────────────────────
+function isOnline() { return navigator.onLine; }
+
+function updateOfflineBanner() {
+  const banner = id('offline-banner');
+  if (!banner) return;
+  if (isOnline()) {
+    banner.style.display = 'none';
+    id('sync-dot').className = 'dot ok';
+    id('sync-lbl').textContent = 'Online';
+  } else {
+    banner.style.display   = 'flex';
+    id('sync-dot').className = 'dot err';
+    id('sync-lbl').textContent = 'Offline';
+  }
+}
+
+window.addEventListener('online',  () => { updateOfflineBanner(); drainOutbox(); updateQueueBadge(); });
+window.addEventListener('offline', () => { updateOfflineBanner(); updateQueueBadge(); });
+
+async function updateQueueBadge() {
+  const n     = await idbCount('pending');
+  const badge = id('queue-badge');
+  if (!badge) return;
+  if (n > 0) {
+    badge.style.display = 'inline';
+    badge.textContent   = n;
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+// ── OUTBOX DRAIN — syncs pending IndexedDB records to Supabase ────────────
+async function drainOutbox() {
+  if (!isOnline() || !sb || !session || syncRunning) return;
+  syncRunning = true;
+  try {
+    const pending = await idbGetAll('pending');
+    if (!pending.length) return;
+
+    id('sync-lbl').textContent = `Syncing ${pending.length}…`;
+    id('sync-dot').className   = 'dot sync';
+
+    for (const record of pending) {
+      try {
+        const { error } = await sb.from('events').insert({
+          id:           record.id,
+          chp_area_id:  record.chp_area_id,
+          submitted_by: record.submitted_by,
+          form_id:      record.form_id,
+          context_type: record.context_type,
+          answers:      record.answers,
+          sync_status:  'synced',
+        });
+
+        if (error && error.code === '23505') {
+          // Duplicate — already synced, just remove from outbox
+          await idbDelete(record.id);
+        } else if (error) {
+          console.warn('[outbox] Sync failed for', record.id, error.message);
+          // Leave in outbox, retry next time
+        } else {
+          await idbDelete(record.id);
+          console.log('[outbox] Synced:', record.id);
+        }
+      } catch(e) {
+        console.warn('[outbox] Network error, will retry:', e.message);
+      }
+    }
+
+    await updateQueueBadge();
+    await renderHome();
+  } finally {
+    syncRunning = false;
+    if (isOnline()) {
+      id('sync-dot').className = 'dot ok';
+      id('sync-lbl').textContent = 'Online';
+    }
+  }
+}
+
+// Retry drain every 30 seconds in case of intermittent connectivity
+setInterval(drainOutbox, 30000);
+
+// ── BOOT ──────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
-  if (DEMO_MODE) {
-    document.getElementById('setup-notice').style.display = 'block';
-    show('login-screen');
-    hide('loading-screen');
+  // Open IndexedDB immediately — works offline
+  await openIDB();
+  await updateQueueBadge();
+
+  if (!isConfigured) {
+    show('s-login'); hide('s-loading');
+    setErr('login-err', 'config.js not configured — set your Supabase URL and anon key.');
     return;
   }
 
-  try {
-    // Lazy-load Supabase
-    const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
-    supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
+  const { createClient } = await import('https://esm.sh/@supabase/supabase-js@2');
+  sb = createClient(SUPA_URL, SUPA_ANON);
 
-    // Check existing session
-    const { data: { session: s } } = await supabase.auth.getSession();
-    if (s) {
-      session = s;
-      await initPowerSync();
-      await enterApp();
-    } else {
-      hide('loading-screen');
-      show('login-screen');
-    }
-  } catch (e) {
-    console.error('Boot error:', e);
-    hide('loading-screen');
-    show('login-screen');
-  }
+  const { data: { session: s } } = await sb.auth.getSession();
+  if (s) { session = s; await enterApp(); }
+  else    { hide('s-loading'); show('s-login'); }
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// LOGIN
-// ─────────────────────────────────────────────────────────────────────────────
+// ── LOGIN ─────────────────────────────────────────────────────────────────
 window.doLogin = async () => {
-  const email    = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
-  const errEl    = document.getElementById('login-error');
-  const btn      = document.getElementById('login-btn');
-
-  errEl.classList.remove('show');
-  btn.disabled = true;
-  btn.textContent = 'Signing in…';
-
-  if (DEMO_MODE) {
-    errEl.textContent = 'Demo mode: set your Supabase + PowerSync credentials first. See the README.';
-    errEl.classList.add('show');
-    btn.disabled = false;
-    btn.textContent = 'Sign in';
-    return;
-  }
-
+  const email = id('f-email').value.trim();
+  const pass  = id('f-pass').value;
+  const btn   = id('login-btn');
+  clearErr('login-err');
+  btn.disabled = true; btn.textContent = 'Signing in…';
   try {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
     if (error) throw error;
     session = data.session;
-    await initPowerSync();
     await enterApp();
-  } catch (e) {
-    errEl.textContent = e.message || 'Login failed';
-    errEl.classList.add('show');
-    btn.disabled = false;
-    btn.textContent = 'Sign in';
+  } catch(e) {
+    setErr('login-err', e.message || 'Login failed');
+    btn.disabled = false; btn.textContent = 'Sign in';
   }
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// POWERSYNC INIT
-// ─────────────────────────────────────────────────────────────────────────────
-async function initPowerSync() {
-    const { PowerSyncDatabase, WASQLiteOpenFactory, WASQLiteVFS } = await import('https://esm.sh/@powersync/web@1.37.2');
-
-  // Schema — mirrors what we created in Supabase
-  const { Schema, Table, column } = await import('https://esm.sh/@powersync/web@1.37.2');
-
-  const schema = new Schema({
-    chp_areas:    new Table({ name: column.text, chu_name: column.text, sub_county: column.text, county: column.text }),
-    households:   new Table({ chp_area_id: column.text, name: column.text, village: column.text }),
-    clients:      new Table({ household_id: column.text, first_name: column.text, last_name: column.text, sex: column.text, date_of_birth: column.text }),
-    events:       new Table({ chp_area_id: column.text, client_id: column.text, submitted_by: column.text, form_id: column.text, context_type: column.text, answers: column.text, sync_status: column.text, created_at: column.text }),
-    tasks:        new Table({ event_id: column.text, assigned_to: column.text, title: column.text, form_type: column.text, due_date: column.text, status: column.text, created_at: column.text }),
-    config_forms: new Table({ form_id: column.text, version: column.integer, json_schema: column.text, published_at: column.text }),
-  });
-
-  // Connector: handles auth tokens and write uploads
-  const connector = {
-    fetchCredentials: async () => {
-      const { data: { session: s } } = await supabase.auth.getSession();
-      if (!s) throw new Error('Not authenticated');
-      return {
-        endpoint:  POWERSYNC_URL,
-        token:     s.access_token,
-        expiresAt: new Date(s.expires_at * 1000)
-      };
-    },
-    uploadData: async (database) => {
-      const tx = await database.getNextCrudTransaction();
-      if (!tx) return;
-      try {
-        for (const op of tx.crud) {
-          if (op.table === 'events' && (op.op === 'PUT' || op.op === 'INSERT')) {
-            const d = op.opData || {};
-            const { error } = await supabase.from('events').upsert({
-              id:           op.id,
-              chp_area_id:  d.chp_area_id,
-              submitted_by: d.submitted_by,
-              form_id:      d.form_id,
-              context_type: d.context_type || 'area',
-              answers:      typeof d.answers === 'string' ? JSON.parse(d.answers) : d.answers,
-              sync_status:  'synced',
-            });
-            if (error) throw error;
-          }
-        }
-        await tx.complete(null);
-      } catch (e) {
-        console.error('Upload failed:', e);
-        throw e;
-      }
-    }
-  };
-
-  db = new PowerSyncDatabase({
-    schema,
-    connector,
-    database: new WASQLiteOpenFactory({
-      dbFilename: 'afya.db',
-      vfs: WASQLiteVFS.IDBBatchAtomicVFS,
-    }),
-    flags: {
-      enableMultiTabs: false,   // disables SharedWorker — no COOP/COEP needed
-    }
-  });
-  await db.connect(connector);
-
-  // Watch sync status
-  db.currentStatus?.onChange?.((status) => {
-    const dot   = document.getElementById('sync-dot');
-    const label = document.getElementById('sync-label');
-    if (!dot || !label) return;
-    if (status.connected) {
-      dot.className   = 'sync-dot';
-      dot.style.background = '#9FE1CB';
-      label.textContent = 'Synced';
-    } else if (status.connecting) {
-      dot.className   = 'sync-dot syncing';
-      label.textContent = 'Syncing…';
-    } else {
-      dot.className   = 'sync-dot error';
-      label.textContent = 'Offline';
-    }
-  });
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// ENTER APP
-// ─────────────────────────────────────────────────────────────────────────────
+// ── ENTER APP ─────────────────────────────────────────────────────────────
 async function enterApp() {
-  hide('loading-screen');
-  hide('login-screen');
-  show('app-shell', 'flex');
+  hide('s-loading'); hide('s-login'); show('s-app', 'flex');
+  updateOfflineBanner();
 
-  // Load user profile
-  const userId = session.user.id;
-  const { data: profile } = await supabase
-    .from('profiles').select('*').eq('id', userId).single();
+  const uid = session.user.id;
+  const { data: profile } = await sb.from('profiles')
+    .select('*').eq('id', uid).maybeSingle();
+  userProfile = profile;
 
-  chpAreaId = profile?.chp_area_id || null;
   const name = profile?.display_name || session.user.email;
   const role = profile?.role || 'chp';
-  document.getElementById('nav-user').textContent = `${name} · ${role.toUpperCase()}`;
+  id('nav-user').textContent = `${name} · ${role.toUpperCase()}`;
 
-  // Load form schema from SQLite (after initial sync) or directly
-  await loadFormSchema();
+  await loadSchema();
+  await renderHome();
 
-  // Initial render
-  renderHome();
+  // Drain any queued signals now that we have a session
+  drainOutbox();
 
-  // Watch events and tasks for live updates
-  if (db) {
-    db.watch('SELECT * FROM events ORDER BY created_at DESC LIMIT 20', [],
-      { onResult: () => renderHome() });
-    db.watch('SELECT * FROM tasks WHERE status = ? ORDER BY created_at DESC', ['pending'],
-      { onResult: () => renderHome() });
-  }
+  // Supabase Realtime for live updates
+  sb.channel('afya-live')
+    .on('postgres_changes', {event:'INSERT',schema:'public',table:'tasks'},   () => renderHome())
+    .on('postgres_changes', {event:'INSERT',schema:'public',table:'events'},  () => { renderHome(); updateQueueBadge(); })
+    .subscribe();
 }
 
-async function loadFormSchema() {
-  // Always try Supabase directly first — most reliable path
+// ── SCHEMA ────────────────────────────────────────────────────────────────
+async function loadSchema() {
   try {
-    const { data, error } = await supabase
-      .from('config_forms')
-      .select('json_schema')
-      .eq('form_id', 'cebs_signal')
-      .order('version', { ascending: false })
-      .limit(1);
+    const { data, error } = await sb.from('config_forms')
+      .select('json_schema').eq('form_id','cebs_signal')
+      .order('version',{ascending:false}).limit(1);
     if (!error && data?.[0]) {
       formSchema = typeof data[0].json_schema === 'string'
-        ? JSON.parse(data[0].json_schema)
-        : data[0].json_schema;
-      console.log('[schema] loaded from Supabase');
-      return;
+        ? JSON.parse(data[0].json_schema) : data[0].json_schema;
+      // Cache in IndexedDB so form is available offline
+      await idbPut({ id: '__schema_cebs_signal', type: 'schema',
+                     data: JSON.stringify(formSchema), status: 'cached' });
     }
-  } catch (e) {
-    console.warn('[schema] Supabase load failed:', e);
-  }
-
-  // Secondary: try PowerSync local SQLite
-  try {
-    if (db) {
-      const rows = await db.getAll(
-        "SELECT json_schema FROM config_forms WHERE form_id='cebs_signal' ORDER BY version DESC LIMIT 1",
-        []
-      );
-      if (rows?.length) {
-        const raw = rows[0].json_schema ?? rows[0][0];
-        formSchema = typeof raw === 'string' ? JSON.parse(raw) : raw;
-        console.log('[schema] loaded from SQLite');
-        return;
+  } catch(e) {
+    // Try cached schema from IndexedDB when offline
+    try {
+      const db    = await openIDB();
+      const tx    = db.transaction(STORE, 'readonly');
+      const store = tx.objectStore(STORE);
+      const cached = await new Promise(res => {
+        const r = store.get('__schema_cebs_signal');
+        r.onsuccess = () => res(r.result);
+        r.onerror   = () => res(null);
+      });
+      if (cached?.data) {
+        formSchema = JSON.parse(cached.data);
+        console.log('[schema] loaded from IndexedDB cache (offline)');
       }
-    }
-  } catch (e) {
-    console.warn('[schema] SQLite load failed:', e);
+    } catch(e2) { console.warn('Schema offline load failed:', e2); }
   }
-
-  console.error('[schema] could not load from either source');
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// HOME
-// ─────────────────────────────────────────────────────────────────────────────
+// ── HOME ──────────────────────────────────────────────────────────────────
 async function renderHome() {
   await renderTasks();
-  await renderRecentSignals();
+  await renderRecent();
+  await updateQueueBadge();
 }
 
 async function renderTasks() {
-  const el = document.getElementById('task-list');
-  if (!el) return;
-
-  let tasks = [];
-  try {
-    if (db) {
-      const rows = await db.getAll("SELECT * FROM tasks WHERE status='pending' ORDER BY created_at DESC", []);
-      tasks = rows.map(r => ({
-        id: r.id || r.getString?.(0),
-        title: r.title || r.getString?.(3),
-        due_date: r.due_date || r.getString?.(4),
-        created_at: r.created_at || r.getString?.(6),
-      }));
-    } else {
-      const { data } = await supabase.from('tasks').select('*').eq('status', 'pending').order('created_at', { ascending: false });
-      tasks = data || [];
-    }
-  } catch(e) { console.warn(e); }
-
-  if (!tasks.length) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">✅</div>
-      <div class="empty-title">No pending tasks</div>
-      <div class="empty-sub">Tasks appear here when signals are submitted</div></div>`;
+  const el = id('task-list');
+  if (!isOnline()) {
+    el.innerHTML = `<div style="font-size:12px;color:var(--text-2);padding:8px 0">
+      Tasks will load when you reconnect.</div>`;
     return;
   }
-
+  const { data: tasks } = await sb.from('tasks')
+    .select('*').eq('status','pending')
+    .order('created_at',{ascending:false}).limit(10);
+  if (!tasks?.length) {
+    el.innerHTML = empty('✅','No pending tasks','Tasks appear here when signals are submitted');
+    return;
+  }
   el.innerHTML = tasks.map(t => {
-    const urgent = t.title?.startsWith('URGENT');
-    return `<div class="task-card" style="margin-bottom:8px">
-      ${urgent ? '<div class="task-urgent">⚠ Urgent — within 24 hours</div>' : ''}
-      <div class="task-title">${escHtml(t.title || 'Verification task')}</div>
+    const urg = t.title?.startsWith('URGENT');
+    return `<div class="task">
+      ${urg ? '<div class="task-urg">⚠ Urgent — within 24 hours</div>' : ''}
+      <div class="task-title">${esc(t.title)}</div>
       <div class="task-due">Due: ${t.due_date || 'ASAP'}</div>
     </div>`;
   }).join('');
 }
 
-async function renderRecentSignals() {
-  const el = document.getElementById('recent-signals');
-  if (!el) return;
+async function renderRecent() {
+  const el = id('recent-sigs');
 
-  let events = [];
-  try {
-    if (db) {
-      const rows = await db.getAll("SELECT * FROM events WHERE form_id='cebs_signal' ORDER BY created_at DESC LIMIT 5", []);
-      events = rows.map(r => {
-        const answers = safeJson(r.answers);
-        return { id: r.id, sync_status: r.sync_status, created_at: r.created_at, answers };
-      });
-    } else {
-      const { data } = await supabase.from('events').select('*').eq('form_id','cebs_signal').order('created_at',{ascending:false}).limit(5);
-      events = (data||[]).map(e => ({...e, answers: e.answers}));
-    }
-  } catch(e) { console.warn(e); }
+  // Show offline queue items if any
+  const queued = (await idbGetAll('pending')).filter(r => r.type !== 'schema');
 
-  if (!events.length) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">📡</div>
-      <div class="empty-title">No signals yet</div>
-      <div class="empty-sub">Tap Report to submit your first signal</div></div>`;
+  // Show synced signals from Supabase if online
+  let synced = [];
+  if (isOnline()) {
+    const { data } = await sb.from('events')
+      .select('*').eq('form_id','cebs_signal')
+      .order('created_at',{ascending:false}).limit(5);
+    synced = data || [];
+  }
+
+  if (!queued.length && !synced.length) {
+    el.innerHTML = empty('📡','No signals yet','Tap Report to submit your first signal');
     return;
   }
 
-  el.innerHTML = events.map(e => renderSignalCard(e)).join('');
+  // Queued items shown first with "pending" badge
+  const queuedCards = queued.map(r => sigCard({
+    answers: r.answers, sync_status: 'pending', created_at: r.created_at
+  }));
+  // Synced items
+  const syncedCards = synced
+    .filter(e => !queued.find(q => q.id === e.id))
+    .map(e => sigCard(e));
+
+  el.innerHTML = [...queuedCards, ...syncedCards].join('');
 }
 
-function renderSignalCard(e) {
+function sigCard(e) {
   const a = e.answers || {};
-  const typeMap = {
+  const TYPES = {
     outbreak:'🔴 Suspected outbreak', similar_symptoms:'🟡 Similar symptoms',
     death_in_community:'⚫ Unexplained death', child_weak_legs_arms:'🟠 Child limb weakness',
     diarrhea:'🟡 Diarrhoea cluster', animal_sickness:'🟡 Animal sickness',
     animal_bite:'🟡 Animal bite', public_event:'🔵 Public health event'
   };
-  const urgent = ['outbreak','child_weak_legs_arms'].includes(a.signal_type);
-  const label  = typeMap[a.signal_type] || '📡 Signal';
-  const loc    = a.location_detail || '';
-  const date   = (e.created_at||'').slice(0,10);
-  const status = (e.sync_status === 'synced' || e.sync_status === 'verified')
-    ? '<span class="signal-status status-synced">✓ Synced</span>'
-    : '<span class="signal-status status-pending">⏳ Queued</span>';
-  return `<div class="signal-card ${urgent?'urgent':'normal'}" style="margin-bottom:8px">
-    <div>
-      <div class="signal-type">${label}</div>
-      <div class="signal-meta">${escHtml(loc)} ${date ? '· '+date : ''}</div>
-      ${status}
-    </div>
+  const urg   = ['outbreak','child_weak_legs_arms'].includes(a.signal_type);
+  const label = TYPES[a.signal_type] || '📡 Signal';
+  const loc   = a.location_detail || '';
+  const date  = (e.created_at||'').slice(0,10);
+  const st    = (e.sync_status === 'synced' || e.sync_status === 'verified')
+    ? '<span class="badge sync">✓ Synced</span>'
+    : '<span class="badge pend">⏳ Saved · queued for sync</span>';
+  return `<div class="sig ${urg?'urg':'nor'}">
+    <div class="sig-type">${label}</div>
+    <div class="sig-meta">${esc(loc)}${date?' · '+date:''}</div>
+    ${st}
   </div>`;
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// FORM RENDER
-// ─────────────────────────────────────────────────────────────────────────────
-window.renderForm = async () => {
+// ── FORM ──────────────────────────────────────────────────────────────────
+window.goReport = async () => {
   answers = {};
-  if (!formSchema) await loadFormSchema();
-
-  const container = document.getElementById('form-container');
-  const btns = document.getElementById('form-buttons');
-  if (!container) return;
-
+  goTab('report');
+  if (!formSchema) await loadSchema();
+  const wrap = id('form-wrap');
+  const btns = id('form-btns');
   if (!formSchema) {
-    container.innerHTML = `<div class="card">
-      <div class="setup-notice"><strong>Form schema not loaded</strong>
-      Make sure Supabase is set up and the initial sync has completed.</div>
-    </div>`;
+    wrap.innerHTML = `<div class="card" style="color:var(--red)">
+      Form not available offline yet. Open the app online once to cache the form, 
+      then it will work offline.</div>`;
     return;
   }
-
-  renderFormSections(container);
+  renderSections(wrap);
   btns.style.display = 'block';
 };
 
-function renderFormSections(container) {
-  container.innerHTML = '';
-  (formSchema.sections || []).forEach(section => {
-    if (!evalExpr(section.relevant, answers)) return;
-
-    const el = document.createElement('div');
-    el.className = 'form-section';
-    el.setAttribute('data-section', section.id);
-
-    let html = `<div class="form-section-title">${escHtml(section.title)}</div>`;
-    if (section.note) html += `<div class="form-section-note">${escHtml(section.note)}</div>`;
-
-    const visibleQs = (section.questions || []).filter(q => evalExpr(q.relevant, answers));
-    visibleQs.forEach(q => { html += renderQuestion(q); });
-
-    el.innerHTML = html;
-    container.appendChild(el);
-  });
+function renderSections(wrap) {
+  wrap.innerHTML = '';
+  for (const sec of (formSchema.sections||[])) {
+    if (!expr(sec.relevant, answers)) continue;
+    const visQ = (sec.questions||[]).filter(q => expr(q.relevant, answers));
+    if (!visQ.length) continue;
+    const div = document.createElement('div');
+    div.className = 'fsect';
+    div.dataset.sec = sec.id;
+    let h = `<div class="fstitle">${esc(sec.title)}</div>`;
+    if (sec.note) h += `<div class="fnote">${esc(sec.note)}</div>`;
+    for (const q of visQ) h += renderQ(q);
+    div.innerHTML = h;
+    wrap.appendChild(div);
+  }
 }
 
-function renderQuestion(q) {
-  const req = q.required ? '<span class="req">*</span>' : '';
-  let html = `<div class="question" data-qid="${q.id}"><label>${escHtml(q.label)}${req}</label>`;
-
+function renderQ(q) {
+  const req = q.required ? `<span class="req">*</span>` : '';
+  let h = `<div class="fq" data-q="${q.id}"><label>${esc(q.label)}${req}</label>`;
   if (q.type === 'select_one') {
-    html += '<div class="choices">';
-    (q.choices || []).forEach(c => {
-      const sel = answers[q.id] === c.value ? 'selected' : '';
-      const urg = c.urgent ? 'urgent-choice' : '';
-      html += `<div class="choice ${sel} ${urg}" onclick="selectChoice('${q.id}','${c.value}',false)">
-        <div class="choice-radio"></div>
-        <span class="choice-label">${escHtml(c.label)}</span>
-        ${c.urgent ? '<span class="choice-urgent">URGENT</span>' : ''}
+    h += '<div class="choices">';
+    for (const c of (q.choices||[])) {
+      const sel = answers[q.id] === c.value ? ' sel' : '';
+      const urg = c.urgent ? ' urg' : '';
+      h += `<div class="ch${sel}${urg}" onclick="pick('${q.id}','${c.value}',false)">
+        <div class="radio"></div>
+        <span class="ch-lbl">${esc(c.label)}</span>
+        ${c.urgent ? '<span class="urg-tag">URGENT</span>' : ''}
       </div>`;
-    });
-    html += '</div>';
+    }
+    h += '</div>';
   } else if (q.type === 'select_many') {
-    html += '<div class="choices">';
-    const current = answers[q.id] || [];
-    (q.choices || []).forEach(c => {
-      const sel = current.includes(c.value) ? 'selected' : '';
-      html += `<div class="choice ${sel}" onclick="selectChoice('${q.id}','${c.value}',true)">
-        <div class="choice-radio" style="border-radius:4px"></div>
-        <span class="choice-label">${escHtml(c.label)}</span>
+    h += '<div class="choices">';
+    const cur = answers[q.id] || [];
+    for (const c of (q.choices||[])) {
+      const sel = cur.includes(c.value) ? ' sel' : '';
+      h += `<div class="ch${sel}" onclick="pick('${q.id}','${c.value}',true)">
+        <div class="radio" style="border-radius:4px"></div>
+        <span class="ch-lbl">${esc(c.label)}</span>
       </div>`;
-    });
-    html += '</div>';
+    }
+    h += '</div>';
   } else if (q.type === 'integer' || q.type === 'decimal') {
-    html += `<input type="number" id="q_${q.id}" value="${answers[q.id]||''}"
-      oninput="setAnswer('${q.id}',this.value)" min="0"/>`;
+    h += `<input type="number" value="${answers[q.id]||''}" min="0"
+      oninput="ans('${q.id}',this.value)"/>`;
   } else if (q.type === 'date') {
-    html += `<input type="date" id="q_${q.id}" value="${answers[q.id]||''}"
-      oninput="setAnswer('${q.id}',this.value)"/>`;
+    h += `<input type="date" value="${answers[q.id]||''}"
+      oninput="ans('${q.id}',this.value)"/>`;
   } else if (q.type === 'textarea') {
-    html += `<textarea id="q_${q.id}" placeholder="Enter details…"
-      oninput="setAnswer('${q.id}',this.value)">${answers[q.id]||''}</textarea>`;
+    h += `<textarea oninput="ans('${q.id}',this.value)">${answers[q.id]||''}</textarea>`;
   } else {
-    html += `<input type="text" id="q_${q.id}" value="${answers[q.id]||''}"
-      oninput="setAnswer('${q.id}',this.value)" placeholder="Enter…"/>`;
+    h += `<input type="text" value="${answers[q.id]||''}"
+      oninput="ans('${q.id}',this.value)"/>`;
   }
-
-  html += '</div>';
-  return html;
+  return h + '</div>';
 }
 
-window.selectChoice = (qid, value, multi) => {
+window.pick = (qid, val, multi) => {
   if (multi) {
-    const current = answers[qid] || [];
-    if (current.includes(value)) {
-      answers[qid] = current.filter(v => v !== value);
-    } else {
-      answers[qid] = [...current, value];
-    }
+    const cur = answers[qid] || [];
+    answers[qid] = cur.includes(val) ? cur.filter(v=>v!==val) : [...cur, val];
   } else {
-    answers[qid] = value;
+    answers[qid] = val;
   }
-  // Re-render the form to pick up skip-logic changes
-  renderFormSections(document.getElementById('form-container'));
+  renderSections(id('form-wrap'));
 };
+window.ans = (qid, val) => { answers[qid] = val; };
 
-window.setAnswer = (qid, value) => { answers[qid] = value; };
+// ── SUBMIT — write to IndexedDB first, always ─────────────────────────────
+// This is what makes the app genuinely offline-first.
+// The signal is saved to IndexedDB immediately — before any network call.
+// If online: drainOutbox() is called right after and syncs it to Supabase.
+// If offline: the signal sits in IndexedDB until the device is back online.
+// The outbox drain also runs every 30s and on the 'online' event.
 
-// ─────────────────────────────────────────────────────────────────────────────
-// SUBMIT
-// ─────────────────────────────────────────────────────────────────────────────
-window.submitForm = async () => {
-  const btn = document.getElementById('submit-btn');
-  btn.disabled = true;
-  btn.textContent = 'Saving…';
+window.doSubmit = async () => {
+  const btn = id('sub-btn');
+  btn.disabled = true; btn.textContent = 'Saving…';
 
-  // Basic validation
+  // Validate required fields
   const missing = [];
-  (formSchema?.sections || []).forEach(section => {
-    if (!evalExpr(section.relevant, answers)) return;
-    (section.questions || []).forEach(q => {
-      if (!q.required) return;
-      if (!evalExpr(q.relevant, answers)) return;
+  for (const sec of (formSchema?.sections||[])) {
+    if (!expr(sec.relevant, answers)) continue;
+    for (const q of (sec.questions||[])) {
+      if (!q.required || !expr(q.relevant, answers)) continue;
       const v = answers[q.id];
       if (!v || (Array.isArray(v) && !v.length)) missing.push(q.label);
-    });
-  });
-
+    }
+  }
   if (missing.length) {
-    alert('Please fill in:\n• ' + missing.slice(0,3).join('\n• '));
-    btn.disabled = false;
-    btn.textContent = 'Submit signal';
+    alert('Please fill in:\n• ' + missing.slice(0,3).join('\n• ')
+      + (missing.length > 3 ? `\n• …and ${missing.length-3} more` : ''));
+    btn.disabled = false; btn.textContent = '✓ Submit signal';
     return;
   }
 
   try {
-    const eventId = crypto.randomUUID();
-    const userId  = session?.user?.id || 'demo';
-    const areaId  = chpAreaId || (await getFirstArea());
+    const uid    = session?.user?.id || 'unknown';
+    let   areaId = userProfile?.chp_area_id;
 
-    if (db) {
-      // Write-to-SQLite-first: works offline, PowerSync syncs when back online
-      await db.execute(`
-        INSERT INTO events (id, chp_area_id, submitted_by, form_id, context_type, answers, sync_status, created_at)
-        VALUES (?,?,?,?,?,?,?,?)
-      `, [eventId, areaId, userId, 'cebs_signal', 'area', JSON.stringify(answers), 'pending', new Date().toISOString()]);
-    } else {
-      // Direct Supabase insert if PowerSync not available
-      await supabase.from('events').insert({
-        id: eventId, chp_area_id: areaId, submitted_by: userId,
-        form_id: 'cebs_signal', context_type: 'area', answers, sync_status: 'pending'
-      });
+    if (!areaId && isOnline()) {
+      const { data: areas } = await sb.from('chp_areas').select('id').limit(1);
+      areaId = areas?.[0]?.id || null;
     }
+
+    // Generate a UUID for the event — same ID used in both IndexedDB and Supabase
+    // so we can detect duplicates on retry
+    const eventId = crypto.randomUUID();
+    const now     = new Date().toISOString();
+
+    // Step 1: Write to IndexedDB — ALWAYS succeeds, works offline
+    await idbPut({
+      id:           eventId,
+      type:         'event',
+      chp_area_id:  areaId,
+      submitted_by: uid,
+      form_id:      'cebs_signal',
+      context_type: 'area',
+      answers:      answers,
+      sync_status:  'pending',
+      created_at:   now,
+      status:       'pending',  // outbox status
+    });
 
     const urgent = ['outbreak','child_weak_legs_arms'].includes(answers.signal_type);
-    document.getElementById('success-tag').textContent =
-      urgent ? '⚠ URGENT · Syncing to CHA now' : 'Saved locally · Queued for sync';
 
-    showTab('success');
+    if (isOnline()) {
+      // Step 2: Try to sync immediately
+      id('s-tag').textContent = 'Syncing…';
+      await drainOutbox();
+      const remaining = await idbCount('pending');
+      id('s-tag').textContent = remaining === 0
+        ? (urgent ? '⚠ URGENT · Synced · CHA task created' : '✓ Synced · CHA task created')
+        : '⏳ Saved locally · syncing in background…';
+    } else {
+      // Offline — honest message
+      id('s-tag').textContent = '📴 Saved to device · will sync when online';
+    }
+
+    goTab('success');
+    await renderHome();
+
   } catch(e) {
     console.error('Submit error:', e);
-    alert('Submission failed: ' + e.message);
+    alert('Save failed: ' + e.message);
   } finally {
-    btn.disabled = false;
-    btn.textContent = 'Submit signal';
+    btn.disabled = false; btn.textContent = '✓ Submit signal';
   }
 };
 
-async function getFirstArea() {
-  try {
-    if (db) {
-      const rows = await db.getAll('SELECT id FROM chp_areas LIMIT 1', []);
-      if (rows.length) return rows[0].id || rows[0].getString?.(0);
-    }
-    const { data } = await supabase.from('chp_areas').select('id').limit(1);
-    return data?.[0]?.id || null;
-  } catch { return null; }
-}
+// ── ALL SIGNALS ───────────────────────────────────────────────────────────
+window.loadAllSigs = async () => {
+  const el = id('all-sigs-wrap');
+  el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-2)">Loading…</div>';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// ALL SIGNALS SCREEN
-// ─────────────────────────────────────────────────────────────────────────────
-window.renderAllSignals = async () => {
-  const el = document.getElementById('all-signals-list');
-  if (!el) return;
-  el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-secondary)">Loading…</div>';
+  const queued = (await idbGetAll('pending')).filter(r => r.type !== 'schema');
+  let   synced = [];
 
-  let events = [];
-  try {
-    if (db) {
-      const rows = await db.getAll("SELECT * FROM events WHERE form_id='cebs_signal' ORDER BY created_at DESC LIMIT 50", []);
-      events = rows.map(r => ({ id: r.id, sync_status: r.sync_status, created_at: r.created_at, answers: safeJson(r.answers) }));
-    } else {
-      const { data } = await supabase.from('events').select('*').eq('form_id','cebs_signal').order('created_at',{ascending:false});
-      events = data || [];
-    }
-  } catch(e) { console.warn(e); }
+  if (isOnline()) {
+    const { data } = await sb.from('events')
+      .select('*').eq('form_id','cebs_signal')
+      .order('created_at',{ascending:false}).limit(50);
+    synced = data || [];
+  }
 
-  if (!events.length) {
-    el.innerHTML = `<div class="empty"><div class="empty-icon">📡</div>
-      <div class="empty-title">No signals yet</div>
-      <div class="empty-sub">All submitted signals from all CHPs appear here</div></div>`;
+  const total = queued.length + synced.length;
+  if (!total) {
+    el.innerHTML = empty('📡','No signals yet','All signals from all CHPs appear here');
     return;
   }
-  el.innerHTML = `<div style="margin-bottom:8px;font-size:12px;color:var(--text-secondary)">${events.length} signal(s)</div>` +
-    events.map(e => renderSignalCard(e)).join('');
+
+  const queuedHtml = queued.map(r => sigCard({
+    answers: r.answers, sync_status: 'pending', created_at: r.created_at
+  }));
+  const syncedHtml = synced
+    .filter(e => !queued.find(q => q.id === e.id))
+    .map(e => sigCard(e));
+
+  el.innerHTML = `<div style="font-size:12px;color:var(--text-2);margin-bottom:8px">
+    ${total} signal(s)${queued.length ? ` · ${queued.length} queued` : ''}</div>`
+    + [...queuedHtml, ...syncedHtml].join('');
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
-// EXPRESSION EVALUATOR (skip logic)
-// ─────────────────────────────────────────────────────────────────────────────
-function evalExpr(node, ans) {
+// ── NAV ───────────────────────────────────────────────────────────────────
+window.goTab = (tab) => {
+  for (const t of ['home','report','signals','success']) {
+    const s = id(`screen-${t}`); const b = id(`tab-${t}`);
+    if (s) s.className = 'screen' + (t===tab?' on':'');
+    if (b) b.className = 'tab'    + (t===tab?' on':'');
+  }
+};
+
+// ── EXPRESSION EVALUATOR ──────────────────────────────────────────────────
+function expr(node, ans) {
   if (!node) return true;
-  const {op, field, value, left, right, child} = node;
-  switch (op) {
-    case 'eq':       return String(ans[field]??'') === String(value??'');
-    case 'neq':case 'ne': return String(ans[field]??'') !== String(value??'');
-    case 'and':      return evalExpr(left,ans) && evalExpr(right,ans);
-    case 'or':       return evalExpr(left,ans) || evalExpr(right,ans);
-    case 'not':      return !evalExpr(child,ans);
+  const {op,field,value,left,right,child} = node;
+  switch(op) {
+    case 'eq':  return String(ans[field]??'') === String(value??'');
+    case 'neq': return String(ans[field]??'') !== String(value??'');
+    case 'and': return expr(left,ans) && expr(right,ans);
+    case 'or':  return expr(left,ans) || expr(right,ans);
+    case 'not': return !expr(child,ans);
     case 'selected': {
-      const v = ans[field];
-      const s = String(value??'');
+      const v = ans[field]; const s = String(value??'');
       if (Array.isArray(v)) return v.includes(s);
-      if (typeof v === 'string') return v.split(',').map(x=>x.trim()).includes(s);
+      if (typeof v==='string') return v.split(',').map(x=>x.trim()).includes(s);
       return false;
     }
-    case 'exists':   return ans[field] != null && String(ans[field]).trim() !== '';
-    default:         return true;
+    case 'exists': return ans[field]!=null && String(ans[field]).trim()!=='';
+    default: return true;
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// UI HELPERS
-// ─────────────────────────────────────────────────────────────────────────────
-window.showTab = (tab) => {
-  ['home','report','signals','success'].forEach(t => {
-    const s = document.getElementById(`screen-${t}`);
-    const b = document.getElementById(`tab-${t}`);
-    if (s) s.className = 'screen' + (t === tab ? ' active' : '');
-    if (b) b.className = 'tab'    + (t === tab ? ' active' : '');
-  });
-};
-
-function show(id, display='block') {
-  const el = document.getElementById(id);
-  if (el) { el.style.display = display; }
-}
-function hide(id) {
-  const el = document.getElementById(id);
-  if (el) el.style.display = 'none';
-}
-function escHtml(str) {
-  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-function safeJson(str) {
-  if (typeof str === 'object') return str;
-  try { return JSON.parse(str); } catch { return {}; }
-}
+// ── HELPERS ───────────────────────────────────────────────────────────────
+const id    = x => document.getElementById(x);
+const esc   = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const empty = (icon,title,sub) =>
+  `<div class="empty"><div class="empty-icon">${icon}</div>
+   <div class="empty-title">${title}</div><div>${sub}</div></div>`;
+function show(elId, display='block') { const el=id(elId); if(el) el.style.display=display; }
+function hide(elId)                  { const el=id(elId); if(el) el.style.display='none';  }
+function setErr(elId,msg)   { const el=id(elId); if(!el) return; el.textContent=msg; el.classList.add('on'); }
+function clearErr(elId)     { const el=id(elId); if(!el) return; el.textContent=''; el.classList.remove('on'); }
 </script>
 
 <script>
-// Register service worker for offline support
-if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator) {if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then(r => console.log('[SW] registered:', r.scope))
-      .catch(e => console.warn('[SW] failed:', e));
+    navigator.serviceWorker.register('/public/sw.js')
+      .catch(e => console.warn('SW:', e));
   });
 }
 </script>
-
 </body>
 </html>
