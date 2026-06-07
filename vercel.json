@@ -1,4 +1,7 @@
 {
+  "buildCommand": "",
+  "outputDirectory": "./",
+  "installCommand": "echo skip",
   "headers": [
     {
       "source": "/(.*)",
