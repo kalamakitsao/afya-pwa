@@ -141,6 +141,75 @@ textarea{min-height:80px;resize:vertical}
 
 .divider{height:1px;background:var(--border);margin:8px 0}
 .hint{font-size:11px;color:var(--text-2);text-align:center;margin-top:8px}
+
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;
+  display:flex;align-items:flex-end;justify-content:center}
+.modal{background:var(--surface);border-radius:20px 20px 0 0;width:100%;
+  max-width:480px;max-height:90vh;overflow-y:auto;padding:0 0 env(safe-area-inset-bottom,16px)}
+.modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;
+  margin:12px auto 0}
+.modal-title{font-size:16px;font-weight:600;padding:16px 16px 0}
+.modal-body{padding:14px 16px}
+.modal-signal{background:var(--bg);border-radius:10px;padding:12px;margin-bottom:14px;
+  font-size:13px;line-height:1.6}
+.modal-signal strong{display:block;font-size:14px;margin-bottom:4px}
+.radio-group{display:flex;flex-direction:column;gap:8px;margin:8px 0 14px}
+.radio-opt{display:flex;align-items:center;gap:10px;padding:11px 13px;
+  border-radius:8px;border:1.5px solid var(--border);cursor:pointer}
+.radio-opt.sel{border-color:var(--green);background:var(--green-light)}
+.radio-opt.sel.danger{border-color:var(--red);background:var(--red-light)}
+.radio-circle{width:18px;height:18px;border-radius:50%;border:2px solid var(--border);flex-shrink:0}
+.radio-opt.sel .radio-circle{border-color:var(--green);background:var(--green)}
+.radio-opt.sel.danger .radio-circle{border-color:var(--red);background:var(--red)}
+.radio-opt.sel .radio-circle::after,.radio-opt.sel.danger .radio-circle::after{
+  content:'';display:block;width:7px;height:7px;border-radius:50%;
+  background:#fff;margin:3px auto 0}
+.radio-lbl{font-size:13px;font-weight:500}
+.radio-sub{font-size:11px;color:var(--text-2)}
+.escalate-box{background:var(--red-light);border:1px solid #F7C1C1;border-radius:10px;
+  padding:12px;margin:10px 0;display:none}
+.escalate-box.show{display:block}
+.modal-footer{padding:0 16px 8px;display:flex;gap:8px}
+.btn-sm{flex:1;padding:11px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer}
+.btn-sm-p{background:var(--green);color:#E1F5EE}
+.btn-sm-p:disabled{background:#B4B2A9}
+.btn-sm-o{background:var(--bg);border:1px solid var(--border);color:var(--text)}
+.btn-sm-d{background:var(--red);color:#fff}
+
+/* ANALYTICS */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:12px}
+.kpi{border-radius:10px;padding:10px 10px 8px;border:1px solid transparent;text-align:center}
+.kpi-num{font-size:20px;font-weight:700;line-height:1.1}
+.kpi-lbl{font-size:10px;font-weight:500;margin-top:3px;line-height:1.3}
+.kpi-pct{font-size:9px;font-weight:600;margin-top:2px}
+.chart-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px}
+.chart-card-full{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:12px;margin-bottom:10px}
+.chart-label{font-size:11px;font-weight:600;color:var(--text);margin-bottom:8px}
+.chart-legend{display:flex;gap:12px;margin-bottom:8px;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text-2)}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.bar-row{display:flex;align-items:center;gap:6px;margin-bottom:5px}
+.bar-lbl{font-size:10px;color:var(--text-2);width:90px;flex-shrink:0;text-align:right}
+.bar-track{flex:1;background:#F1F5F9;border-radius:3px;height:5px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px}
+.bar-val{font-size:10px;font-weight:600;color:var(--text);min-width:20px}
+.period-row{display:flex;gap:6px;margin-bottom:12px}
+.period-btn{padding:5px 12px;border-radius:20px;border:1px solid var(--border);
+  background:none;font-size:12px;font-weight:500;color:var(--text-2);cursor:pointer}
+.period-btn.on{background:var(--green);color:#E1F5EE;border-color:var(--green)}
+.tl-row{display:flex;justify-content:space-between;align-items:center;
+  padding:7px 0;border-bottom:1px solid #F1F5F9;font-size:12px}
+.tl-row:last-child{border-bottom:none}
+.tl-val{font-weight:600;font-size:13px}
+.alert-row{display:flex;align-items:center;gap:8px;padding:8px 10px;
+  border-radius:7px;margin-bottom:6px}
+.alert-num{font-size:16px;font-weight:700;min-width:24px}
+.seg-bar{display:flex;border-radius:6px;overflow:hidden;height:12px;margin:6px 0}
+.seg-bar div{transition:flex .4s ease}
+
 </style>
 </head>
 <body>
@@ -235,9 +304,45 @@ textarea{min-height:80px;resize:vertical}
     </div>
   </div>
 
-  <!-- ALL SIGNALS -->
+  <!-- SIGNALS / ANALYTICS -->
   <div id="screen-signals" class="screen">
-    <div id="all-sigs-wrap"></div>
+    <div class="period-row">
+      <button class="period-btn" onclick="setPeriod(7,this)">7 days</button>
+      <button class="period-btn on" onclick="setPeriod(30,this)">30 days</button>
+      <button class="period-btn" onclick="setPeriod(90,this)">90 days</button>
+    </div>
+    <!-- KPI cascade -->
+    <div class="kpi-row" id="kpi-row"></div>
+    <!-- Trend chart -->
+    <div class="chart-card-full">
+      <div class="chart-label">Weekly trend</div>
+      <div class="chart-legend">
+        <div class="leg-item"><div class="leg-dot" style="background:#A32D2D"></div>Reported</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#0F6E56"></div>Verified</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#534AB7"></div>Escalated</div>
+      </div>
+      <div style="height:140px;position:relative">
+        <canvas id="trend-chart"></canvas>
+      </div>
+    </div>
+    <!-- Signal types + timeliness -->
+    <div class="chart-row">
+      <div class="chart-card">
+        <div class="chart-label">Signal types</div>
+        <div id="sig-type-bars"></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-label">Timeliness</div>
+        <div id="timeliness-panel"></div>
+        <div class="br" style="margin:8px 0"></div>
+        <div id="alert-panel"></div>
+      </div>
+    </div>
+    <!-- Signal list -->
+    <div class="chart-card-full">
+      <div class="chart-label">All signals</div>
+      <div id="all-sigs-wrap"></div>
+    </div>
   </div>
 
   <div class="tabs">
@@ -256,16 +361,75 @@ textarea{min-height:80px;resize:vertical}
         right:calc(50% - 20px);background:#A32D2D;color:#fff;border-radius:10px;
         padding:1px 5px;font-size:9px;font-weight:600"></span>
     </button>
-    <button class="tab" id="tab-signals" onclick="goTab('signals');loadAllSigs()">
+    <button class="tab" id="tab-signals" onclick="goTab('signals');loadAnalytics()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
       </svg>Signals
     </button>
   </div>
+
+<!-- VERIFICATION MODAL -->
+<div id="verify-modal" class="modal-bg" style="display:none" onclick="closeVerifyModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="vm-title">Verify Signal</div>
+    <div class="modal-body">
+      <div class="modal-signal" id="vm-signal"></div>
+
+      <div style="font-size:12px;font-weight:600;color:var(--text-2);
+                  text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">
+        Is this signal credible?
+      </div>
+      <div class="radio-group">
+        <div class="radio-opt" id="vo-yes" onclick="setCredible(true)">
+          <div class="radio-circle"></div>
+          <div><div class="radio-lbl">Yes — credible signal</div>
+            <div class="radio-sub">I verified this event is real and warrants action</div></div>
+        </div>
+        <div class="radio-opt danger" id="vo-no" onclick="setCredible(false)">
+          <div class="radio-circle"></div>
+          <div><div class="radio-lbl">No — not credible</div>
+            <div class="radio-sub">False alarm or insufficient information</div></div>
+        </div>
+      </div>
+
+      <div class="escalate-box" id="escalate-box">
+        <div style="font-size:12px;font-weight:600;color:var(--red);margin-bottom:8px">
+          ⬆ Escalate to SCSFP?
+        </div>
+        <div class="radio-group" style="margin-bottom:0">
+          <div class="radio-opt" id="eo-yes" onclick="setEscalate(true)">
+            <div class="radio-circle"></div>
+            <div><div class="radio-lbl">Yes — escalate to sub-county</div>
+              <div class="radio-sub">Signal requires SCSFP investigation</div></div>
+          </div>
+          <div class="radio-opt" id="eo-no" onclick="setEscalate(false)">
+            <div class="radio-circle"></div>
+            <div><div class="radio-lbl">No — CHA-level response sufficient</div></div>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:12px">
+        <label style="font-size:12px;font-weight:600;color:var(--text-2);display:block;margin-bottom:6px">
+          Verification notes (optional)
+        </label>
+        <textarea id="vm-notes" placeholder="Describe what you observed when verifying…"
+          style="min-height:64px"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-sm btn-sm-o" onclick="closeVerifyModal()">Cancel</button>
+      <button class="btn-sm btn-sm-p" id="vm-submit" onclick="submitVerification()" disabled>
+        Submit verification
+      </button>
+    </div>
+  </div>
 </div>
 
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script src="/config.js"></script>
 <script type="module">
 // ── CONFIG ────────────────────────────────────────────────────────────────
@@ -543,7 +707,7 @@ async function loadSchema() {
 
 // ── HOME ──────────────────────────────────────────────────────────────────
 async function renderHome() {
-  await renderTasks();
+  await renderTasksVerify();
   await renderRecent();
   await updateQueueBadge();
 }
@@ -826,6 +990,372 @@ window.loadAllSigs = async () => {
     ${total} signal(s)${queued.length ? ` · ${queued.length} queued` : ''}</div>`
     + [...queuedHtml, ...syncedHtml].join('');
 };
+
+// ── VERIFICATION MODAL ───────────────────────────────────────────────────
+let verifyState = { taskId: null, eventId: null, credible: null, escalate: null };
+
+window.openVerifyModal = async (taskId, eventId, signalTitle) => {
+  verifyState = { taskId, eventId, credible: null, escalate: null };
+
+  id('vm-title').textContent = 'Verify signal';
+  id('vm-notes').value = '';
+  id('vm-submit').disabled = true;
+  id('escalate-box').classList.remove('show');
+  ['vo-yes','vo-no','eo-yes','eo-no'].forEach(x => {
+    const el = id(x);
+    if (el) el.classList.remove('sel');
+  });
+
+  // Load signal detail
+  const { data: evt } = await sb.from('events')
+    .select('answers,created_at').eq('id', eventId).maybeSingle();
+
+  const a = evt?.answers || {};
+  const TYPES = {
+    outbreak:'🔴 Suspected outbreak', similar_symptoms:'🟡 Similar symptoms',
+    death_in_community:'⚫ Unexplained death', child_weak_legs_arms:'🟠 Child limb weakness',
+    diarrhea:'🟡 Diarrhoea cluster', animal_sickness:'🟡 Animal sickness',
+    animal_bite:'🟡 Animal bite', public_event:'🔵 Public health event'
+  };
+  const sigType = TYPES[a.signal_type] || '📡 Signal';
+  const date    = (evt?.created_at||'').slice(0,10);
+
+  id('vm-signal').innerHTML = `
+    <strong>${sigType}</strong>
+    ${a.location_detail ? '<div>📍 '+esc(a.location_detail)+'</div>' : ''}
+    ${a.approx_people_affected ? '<div>👥 ~'+a.approx_people_affected+' people affected</div>' : ''}
+    ${a.approx_people_dead    ? '<div>💀 '+a.approx_people_dead+' death(s) reported</div>' : ''}
+    ${a.signal_description    ? '<div style="margin-top:4px;color:var(--text-2);font-size:12px">'+esc(a.signal_description)+'</div>' : ''}
+    <div style="font-size:11px;color:var(--text-2);margin-top:4px">Reported: ${date}</div>`;
+
+  id('verify-modal').style.display = 'flex';
+};
+
+window.closeVerifyModal = (e) => {
+  if (e && e.target !== id('verify-modal')) return;
+  id('verify-modal').style.display = 'none';
+};
+
+window.setCredible = (val) => {
+  verifyState.credible = val;
+  id('vo-yes').classList.toggle('sel', val === true);
+  id('vo-no').classList.toggle('sel',  val === false);
+  // Show escalate section only if credible
+  id('escalate-box').classList.toggle('show', val === true);
+  if (!val) { verifyState.escalate = false; }
+  checkVerifyReady();
+};
+
+window.setEscalate = (val) => {
+  verifyState.escalate = val;
+  id('eo-yes').classList.toggle('sel', val === true);
+  id('eo-no').classList.toggle('sel',  val === false);
+  checkVerifyReady();
+};
+
+function checkVerifyReady() {
+  const credibleSet  = verifyState.credible !== null;
+  const escalateSet  = !verifyState.credible || verifyState.escalate !== null;
+  id('vm-submit').disabled = !(credibleSet && escalateSet);
+}
+
+window.submitVerification = async () => {
+  const btn = id('vm-submit');
+  btn.disabled = true; btn.textContent = 'Submitting…';
+  try {
+    const { error } = await sb.from('verifications').insert({
+      event_id:    verifyState.eventId,
+      verified_by: session.user.id,
+      credible:    verifyState.credible,
+      escalate:    verifyState.escalate || false,
+      notes:       id('vm-notes').value.trim() || null,
+    });
+    if (error) throw error;
+
+    id('verify-modal').style.display = 'none';
+    await renderHome();
+
+    // Brief toast
+    showToast(verifyState.credible
+      ? (verifyState.escalate ? '✓ Verified & escalated to SCSFP' : '✓ Verified — CHA response')
+      : '✓ Marked not credible');
+
+  } catch(e) {
+    alert('Verification failed: ' + e.message);
+  } finally {
+    btn.disabled = false; btn.textContent = 'Submit verification';
+  }
+};
+
+function showToast(msg) {
+  let t = id('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    Object.assign(t.style, {
+      position:'fixed', bottom:'80px', left:'50%', transform:'translateX(-50%)',
+      background:'#1E293B', color:'#fff', padding:'10px 18px', borderRadius:'20px',
+      fontSize:'13px', fontWeight:'500', zIndex:'200', transition:'opacity .3s',
+      whiteSpace:'nowrap', maxWidth:'90vw', textAlign:'center'
+    });
+    document.body.appendChild(t);
+  }
+  t.textContent = msg; t.style.opacity = '1';
+  setTimeout(() => { t.style.opacity = '0'; }, 2500);
+}
+
+// ── UPDATED renderTasks — now tappable for CHA ────────────────────────────
+async function renderTasksVerify() {
+  const el = id('task-list');
+  if (!isOnline()) {
+    el.innerHTML = `<div style="font-size:12px;color:var(--text-2);padding:8px 0">
+      Tasks load when reconnected.</div>`;
+    return;
+  }
+  const { data: tasks } = await sb.from('tasks')
+    .select('*').eq('status','pending')
+    .order('created_at',{ascending:false}).limit(10);
+  if (!tasks?.length) {
+    el.innerHTML = empty('✅','No pending tasks','Tasks appear here when signals are submitted');
+    return;
+  }
+  el.innerHTML = tasks.map(t => {
+    const urg = t.title?.startsWith('URGENT');
+    return `<div class="task" style="cursor:pointer"
+        onclick="openVerifyModal('${t.id}','${t.event_id}','${esc(t.title)}')">
+      ${urg ? '<div class="task-urg">⚠ Tap to verify — urgent</div>' : ''}
+      <div class="task-title">${esc(t.title)}</div>
+      <div class="task-due">Due: ${t.due_date||'ASAP'} &nbsp;·&nbsp;
+        <span style="color:var(--green);font-weight:600">Tap to verify →</span></div>
+    </div>`;
+  }).join('');
+}
+
+// ── ANALYTICS ─────────────────────────────────────────────────────────────
+let analyticsPeriod = 30;
+let trendChart      = null;
+
+window.setPeriod = (p, btn) => {
+  analyticsPeriod = p;
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  loadAnalytics();
+};
+
+window.loadAnalytics = async () => {
+  // Fetch raw data from Supabase
+  const since = new Date(Date.now() - analyticsPeriod * 86400000).toISOString();
+
+  const [evtRes, verRes, taskRes] = await Promise.all([
+    sb.from('events').select('id,answers,created_at,sync_status')
+      .eq('form_id','cebs_signal').gte('created_at',since).order('created_at'),
+    sb.from('verifications').select('event_id,credible,escalate,verified_at')
+      .gte('verified_at',since),
+    sb.from('tasks').select('event_id,status,created_at,due_date'),
+  ]);
+
+  const events = evtRes.data || [];
+  const verifs = verRes.data || [];
+  const tasks  = taskRes.data || [];
+
+  // Also include queued offline signals
+  const queued = (await idbGetAll('pending')).filter(r => r.type !== 'schema');
+
+  const reported   = events.length + queued.length;
+  const verified   = verifs.length;
+  const credible   = verifs.filter(v => v.credible).length;
+  const escalated  = verifs.filter(v => v.escalate).length;
+  const responded  = escalated; // in PoC, escalated = investigated
+
+  // ── KPI Cascade ──────────────────────────────────────────────────────
+  const CASCADE = [
+    { lbl:'Reported',  num:reported,  bg:'#FCEBEB', fg:'#A32D2D', pct:null },
+    { lbl:'Verified',  num:verified,  bg:'#FAEEDA', fg:'#854F0B', pct:reported },
+    { lbl:'Credible',  num:credible,  bg:'#EFF6FF', fg:'#1E40AF', pct:reported },
+    { lbl:'Escalated', num:escalated, bg:'#EDE9FE', fg:'#3730A3', pct:reported },
+    { lbl:'Responded', num:responded, bg:'#DCFCE7', fg:'#166534', pct:reported },
+  ];
+  id('kpi-row').innerHTML = CASCADE.map((k,i) => {
+    const pct = k.pct ? Math.round(k.num/k.pct*100)+'%' : '—';
+    return `<div class="kpi" style="background:${k.bg};border-color:${k.fg}33">
+      <div class="kpi-num" style="color:${k.fg}">${k.num}</div>
+      <div class="kpi-lbl" style="color:${k.fg}">${k.lbl}</div>
+      <div class="kpi-pct" style="color:${k.fg}">${pct}</div>
+    </div>`;
+  }).join('');
+
+  // ── Weekly Trend ──────────────────────────────────────────────────────
+  const weeks = buildWeekBuckets(analyticsPeriod);
+  events.forEach(e => bumpWeek(weeks, e.created_at, 'rep'));
+  verifs.forEach(v => bumpWeek(weeks, v.verified_at, 'ver'));
+  verifs.filter(v=>v.escalate).forEach(v => bumpWeek(weeks, v.verified_at, 'esc'));
+
+  const labels   = weeks.map(w => w.label);
+  const repData  = weeks.map(w => w.rep);
+  const verData  = weeks.map(w => w.ver);
+  const escData  = weeks.map(w => w.esc);
+
+  if (typeof Chart !== 'undefined') {
+    if (trendChart) { trendChart.destroy(); trendChart = null; }
+    const ctx = id('trend-chart').getContext('2d');
+    trendChart = new Chart(ctx, {
+      type: 'line',
+      data: { labels, datasets: [
+        { label:'Reported',  data:repData, borderColor:'#A32D2D', backgroundColor:'rgba(162,45,45,.08)',
+          fill:true, borderWidth:2, pointRadius:2, tension:.3 },
+        { label:'Verified',  data:verData, borderColor:'#0F6E56', backgroundColor:'transparent',
+          borderWidth:2, borderDash:[4,2], pointRadius:2, tension:.3 },
+        { label:'Escalated', data:escData, borderColor:'#534AB7', backgroundColor:'transparent',
+          borderWidth:2, borderDash:[2,3], pointRadius:2, tension:.3 },
+      ]},
+      options: { responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false}, tooltip:{mode:'index',intersect:false} },
+        scales:{
+          x:{ grid:{color:'rgba(0,0,0,.04)'}, ticks:{font:{size:9},maxRotation:0,autoSkip:true,maxTicksLimit:7} },
+          y:{ grid:{color:'rgba(0,0,0,.04)'}, ticks:{font:{size:9}}, beginAtZero:true }
+        }
+      }
+    });
+  }
+
+  // ── Signal type breakdown ─────────────────────────────────────────────
+  const TYPE_LABELS = {
+    outbreak:'Outbreak', similar_symptoms:'Similar symptoms',
+    death_in_community:'Unexplained death', child_weak_legs_arms:'Child limb weakness',
+    diarrhea:'Diarrhoea cluster', animal_sickness:'Animal sickness',
+    animal_bite:'Animal bite', public_event:'Public event'
+  };
+  const TYPE_COLORS = {
+    outbreak:'#A32D2D', similar_symptoms:'#854F0B',
+    death_in_community:'#1E293B', child_weak_legs_arms:'#92400E',
+    diarrhea:'#1E40AF', animal_sickness:'#065F46',
+    animal_bite:'#4C1D95', public_event:'#374151'
+  };
+  const typeCounts = {};
+  [...events, ...queued].forEach(e => {
+    const t = (e.answers||{}).signal_type || 'unknown';
+    typeCounts[t] = (typeCounts[t]||0) + 1;
+  });
+  const typeSorted = Object.entries(typeCounts).sort((a,b)=>b[1]-a[1]);
+  const maxType    = typeSorted[0]?.[1] || 1;
+  id('sig-type-bars').innerHTML = typeSorted.slice(0,6).map(([t,n]) => `
+    <div class="bar-row">
+      <div class="bar-lbl">${(TYPE_LABELS[t]||t).slice(0,14)}</div>
+      <div class="bar-track"><div class="bar-fill"
+        style="width:${Math.round(n/maxType*100)}%;background:${TYPE_COLORS[t]||'#64748B'}"></div></div>
+      <div class="bar-val">${n}</div>
+    </div>`).join('') || '<div style="font-size:12px;color:var(--text-2)">No signals yet</div>';
+
+  // ── Timeliness ────────────────────────────────────────────────────────
+  // Median hours: report → verification
+  const verTimes = verifs.map(v => {
+    const ev = events.find(e => e.id === v.event_id);
+    if (!ev) return null;
+    return (new Date(v.verified_at) - new Date(ev.created_at)) / 3600000;
+  }).filter(Boolean);
+  const medVerify = verTimes.length
+    ? median(verTimes).toFixed(0) + ' h' : 'N/A';
+
+  // Unverified >48h
+  const now48   = Date.now() - 48 * 3600000;
+  const unverif = events.filter(e =>
+    !verifs.find(v => v.event_id === e.id) &&
+    new Date(e.created_at).getTime() < now48
+  ).length;
+
+  id('timeliness-panel').innerHTML = `
+    <div class="tl-row"><span>Report → verify</span>
+      <span class="tl-val" style="color:${medVerify==='N/A'?'#64748B':'#854F0B'}">${medVerify}</span></div>
+    <div class="tl-row"><span>Verified credible</span>
+      <span class="tl-val" style="color:#0F6E56">${credible}</span></div>
+    <div class="tl-row"><span>Escalated</span>
+      <span class="tl-val" style="color:#534AB7">${escalated}</span></div>
+    <div class="tl-row"><span>Cascade completion</span>
+      <span class="tl-val" style="color:${responded/Math.max(reported,1)<.1?'#A32D2D':'#0F6E56'}">
+        ${reported ? Math.round(responded/reported*100)+'%' : '0%'}</span></div>`;
+
+  id('alert-panel').innerHTML = `
+    <div class="alert-row" style="background:var(--red-light)">
+      <div class="alert-num" style="color:var(--red)">${unverif}</div>
+      <div style="font-size:11px"><strong style="color:#791F1F">Unverified &gt;48 h</strong><br>
+        <span style="color:var(--text-2)">Require CHA action</span></div>
+    </div>`;
+
+  // ── Signal list ────────────────────────────────────────────────────────
+  const allSigs = [
+    ...queued.map(r => ({ answers:r.answers, sync_status:'pending', created_at:r.created_at })),
+    ...events.map(e => ({
+      ...e,
+      verified: verifs.find(v => v.event_id === e.id) || null
+    }))
+  ];
+
+  id('all-sigs-wrap').innerHTML = allSigs.length
+    ? allSigs.map(e => sigCardFull(e, verifs)).join('')
+    : '<div style="font-size:12px;color:var(--text-2)">No signals in this period</div>';
+};
+
+function sigCardFull(e, verifs) {
+  const a = e.answers || {};
+  const TYPES = {
+    outbreak:'🔴 Suspected outbreak', similar_symptoms:'🟡 Similar symptoms',
+    death_in_community:'⚫ Unexplained death', child_weak_legs_arms:'🟠 Child limb weakness',
+    diarrhea:'🟡 Diarrhoea cluster', animal_sickness:'🟡 Animal sickness',
+    animal_bite:'🟡 Animal bite', public_event:'🔵 Public health event'
+  };
+  const urg    = ['outbreak','child_weak_legs_arms'].includes(a.signal_type);
+  const label  = TYPES[a.signal_type] || '📡 Signal';
+  const loc    = a.location_detail || '';
+  const date   = (e.created_at||'').slice(0,10);
+  const verif  = e.verified || (verifs||[]).find(v => v.event_id === e.id);
+
+  let statusBadge;
+  if (e.sync_status === 'pending') {
+    statusBadge = '<span class="badge pend">⏳ Queued</span>';
+  } else if (!verif) {
+    statusBadge = '<span class="badge pend">⏳ Awaiting CHA verify</span>';
+  } else if (!verif.credible) {
+    statusBadge = '<span class="badge" style="background:#F1F5F9;color:#64748B">✕ Not credible</span>';
+  } else if (verif.escalate) {
+    statusBadge = '<span class="badge" style="background:#EDE9FE;color:#3730A3">⬆ Escalated</span>';
+  } else {
+    statusBadge = '<span class="badge sync">✓ Verified</span>';
+  }
+
+  return `<div class="sig ${urg?'urg':'nor'}">
+    <div class="sig-type">${label}</div>
+    <div class="sig-meta">${esc(loc)}${date?' · '+date:''}</div>
+    ${statusBadge}
+  </div>`;
+}
+
+// ── WEEK BUCKET HELPERS ───────────────────────────────────────────────────
+function buildWeekBuckets(days) {
+  const numWeeks = Math.ceil(days / 7);
+  const now      = Date.now();
+  const buckets  = [];
+  for (let i = numWeeks - 1; i >= 0; i--) {
+    const start = now - (i + 1) * 7 * 86400000;
+    const end   = now - i * 7 * 86400000;
+    const label = 'W' + (numWeeks - i);
+    buckets.push({ start, end, label, rep:0, ver:0, esc:0 });
+  }
+  return buckets;
+}
+
+function bumpWeek(buckets, dateStr, key) {
+  if (!dateStr) return;
+  const t = new Date(dateStr).getTime();
+  const b = buckets.find(w => t >= w.start && t < w.end);
+  if (b) b[key]++;
+}
+
+function median(arr) {
+  if (!arr.length) return 0;
+  const s = [...arr].sort((a,b) => a-b);
+  const m = Math.floor(s.length/2);
+  return s.length % 2 ? s[m] : (s[m-1]+s[m])/2;
+}
 
 // ── NAV ───────────────────────────────────────────────────────────────────
 window.goTab = (tab) => {
