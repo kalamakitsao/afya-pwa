@@ -398,7 +398,7 @@ window.doLogin = async () => {
 // POWERSYNC INIT
 // ─────────────────────────────────────────────────────────────────────────────
 async function initPowerSync() {
-  const { PowerSyncDatabase } = await import('https://esm.sh/@powersync/web@1.37.2');
+    const { PowerSyncDatabase, WASQLiteOpenFactory, WASQLiteVFS } = await import('https://esm.sh/@powersync/web@1.37.2');
 
   // Schema — mirrors what we created in Supabase
   const { Schema, Table, column } = await import('https://esm.sh/@powersync/web@1.37.2');
@@ -450,7 +450,17 @@ async function initPowerSync() {
     }
   };
 
-  db = new PowerSyncDatabase({ schema, connector, database: { dbFilename: 'afya.db' } });
+  db = new PowerSyncDatabase({
+    schema,
+    connector,
+    database: new WASQLiteOpenFactory({
+      dbFilename: 'afya.db',
+      vfs: WASQLiteVFS.IDBBatchAtomicVFS,
+    }),
+    flags: {
+      enableMultiTabs: false,   // disables SharedWorker — no COOP/COEP needed
+    }
+  });
   await db.connect(connector);
 
   // Watch sync status
