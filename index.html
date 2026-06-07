@@ -268,16 +268,9 @@ textarea{min-height:80px;resize:vertical}
     <span>Offline — signals saved to device, will sync when reconnected</span>
   </div>
 
-  <!-- HOME -->
+  <!-- HOME — role-aware, rendered by JS -->
   <div id="screen-home" class="screen on">
-    <div class="card">
-      <div class="card-title">Pending tasks</div>
-      <div id="task-list"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Recent signals</div>
-      <div id="recent-sigs"></div>
-    </div>
+    <div id="home-content"></div>
   </div>
 
   <!-- REPORT -->
@@ -302,6 +295,11 @@ textarea{min-height:80px;resize:vertical}
         <button class="btn btn-o" onclick="goTab('home')">Go to home</button>
       </div>
     </div>
+  </div>
+
+  <!-- TASKS — full screen for CHA (tab) -->
+  <div id="screen-tasks" class="screen">
+    <div id="tasks-content"></div>
   </div>
 
   <!-- SIGNALS / ANALYTICS -->
@@ -345,27 +343,8 @@ textarea{min-height:80px;resize:vertical}
     </div>
   </div>
 
-  <div class="tabs">
-    <button class="tab on" id="tab-home" onclick="goTab('home')">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
-        <polyline points="9 22 9 12 15 12 15 22"/>
-      </svg>Home
-    </button>
-    <button class="tab" id="tab-report" onclick="goReport()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/>
-        <line x1="8" y1="12" x2="16" y2="12"/>
-      </svg>Report
-      <span id="queue-badge" style="display:none;position:absolute;top:6px;
-        right:calc(50% - 20px);background:#A32D2D;color:#fff;border-radius:10px;
-        padding:1px 5px;font-size:9px;font-weight:600"></span>
-    </button>
-    <button class="tab" id="tab-signals" onclick="goTab('signals');loadAnalytics()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-      </svg>Signals
-    </button>
+  <div class="tabs" id="tab-bar">
+    <!-- tabs rendered by JS based on role -->
   </div>
 
 <!-- VERIFICATION MODAL -->
@@ -656,21 +635,75 @@ async function enterApp() {
     .select('*').eq('id', uid).maybeSingle();
   userProfile = profile;
 
-  const name = profile?.display_name || session.user.email;
   const role = profile?.role || 'chp';
-  id('nav-user').textContent = `${name} · ${role.toUpperCase()}`;
+  const name = profile?.display_name || session.user.email;
+
+  // Role badge colour
+  const roleBg  = role === 'cha' ? '#1D9E75' : role === 'supervisor' ? '#534AB7' : '#085041';
+  id('nav-user').innerHTML = `<span>${esc(name)}</span>
+    <span style="background:${roleBg};color:#fff;padding:1px 7px;border-radius:10px;
+      font-size:10px;font-weight:600;margin-left:6px">${role.toUpperCase()}</span>`;
+
+  // Render role-specific tabs
+  renderTabs(role);
 
   await loadSchema();
   await renderHome();
-
-  // Drain any queued signals now that we have a session
   drainOutbox();
 
-  // Supabase Realtime for live updates
+  // Live updates
   sb.channel('afya-live')
-    .on('postgres_changes', {event:'INSERT',schema:'public',table:'tasks'},   () => renderHome())
-    .on('postgres_changes', {event:'INSERT',schema:'public',table:'events'},  () => { renderHome(); updateQueueBadge(); })
+    .on('postgres_changes', {event:'INSERT',schema:'public',table:'tasks'},
+        () => renderHome())
+    .on('postgres_changes', {event:'INSERT',schema:'public',table:'events'},
+        () => { renderHome(); updateQueueBadge(); })
     .subscribe();
+}
+
+// ── RENDER TABS — role-specific ───────────────────────────────────────────
+function renderTabs(role) {
+  const bar   = id('tab-bar');
+  if (!bar) return;
+
+  // Tab definitions per role
+  // CHP:        Home (area) | Report signal | Signals (analytics)
+  // CHA:        Home (CHU)  | Tasks          | Signals (analytics)
+  // supervisor: Home        | Signals
+  const homeSvg    = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+    <polyline points="9 22 9 12 15 12 15 22"/></svg>`;
+  const reportSvg  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/>
+    <line x1="8" y1="12" x2="16" y2="12"/></svg>`;
+  const taskSvg    = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>`;
+  const sigSvg     = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`;
+
+  const chpTabs = [
+    { id:'home',    icon:homeSvg,   label:'Home',    action:"goTab('home')" },
+    { id:'report',  icon:reportSvg, label:'Report',  action:"goReport()",
+      extra:`<span id="queue-badge" style="display:none;position:absolute;top:6px;
+        right:calc(50% - 20px);background:#A32D2D;color:#fff;border-radius:10px;
+        padding:1px 5px;font-size:9px;font-weight:600"></span>` },
+    { id:'signals', icon:sigSvg,    label:'Signals', action:"goTab('signals');loadAnalytics()" },
+  ];
+  const chaTabs = [
+    { id:'home',    icon:homeSvg,   label:'Home',    action:"goTab('home')" },
+    { id:'tasks',   icon:taskSvg,   label:'Tasks',   action:"goTab('tasks')" },
+    { id:'signals', icon:sigSvg,    label:'Signals', action:"goTab('signals');loadAnalytics()" },
+  ];
+  const supTabs = [
+    { id:'home',    icon:homeSvg,   label:'Home',    action:"goTab('home')" },
+    { id:'signals', icon:sigSvg,    label:'Signals', action:"goTab('signals');loadAnalytics()" },
+  ];
+
+  const tabs = role === 'cha' ? chaTabs : role === 'supervisor' ? supTabs : chpTabs;
+
+  bar.innerHTML = tabs.map((t,i) => `
+    <button class="tab ${i===0?'on':''}" id="tab-${t.id}" onclick="${t.action}" style="position:relative">
+      ${t.icon}${t.label}${t.extra||''}
+    </button>`).join('');
 }
 
 // ── SCHEMA ────────────────────────────────────────────────────────────────
@@ -707,33 +740,168 @@ async function loadSchema() {
 
 // ── HOME ──────────────────────────────────────────────────────────────────
 async function renderHome() {
-  await renderTasksVerify();
-  await renderRecent();
+  const role = userProfile?.role || 'chp';
+  if (role === 'cha') {
+    await renderChaHome();
+  } else {
+    await renderChpHome();
+  }
   await updateQueueBadge();
 }
 
-async function renderTasks() {
-  const el = id('task-list');
-  if (!isOnline()) {
-    el.innerHTML = `<div style="font-size:12px;color:var(--text-2);padding:8px 0">
-      Tasks will load when you reconnect.</div>`;
-    return;
+// ── CHP HOME — area details + recent signals ──────────────────────────────
+async function renderChpHome() {
+  const el = id('home-content');
+
+  // Area info from userProfile
+  let areaHtml = '';
+  if (userProfile?.chp_area_id) {
+    const { data: area } = await sb.from('chp_areas').select('*')
+      .eq('id', userProfile.chp_area_id).maybeSingle();
+    if (area) {
+      areaHtml = `
+        <div class="card" style="margin-bottom:12px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">
+            <div>
+              <div style="font-size:16px;font-weight:700">${esc(area.name)}</div>
+              <div style="font-size:12px;color:var(--text-2);margin-top:2px">
+                ${esc(area.chu_name)} · ${esc(area.sub_county)} · ${esc(area.county)}
+              </div>
+            </div>
+            <div style="background:var(--green-light);border-radius:20px;padding:4px 10px;
+              font-size:11px;font-weight:600;color:var(--green)">My area</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            ${areaStatTile('🏠', 'Households', area.household_count || '—')}
+            ${areaStatTile('👥', 'Population', area.population_count || '—')}
+          </div>
+        </div>`;
+    }
   }
-  const { data: tasks } = await sb.from('tasks')
-    .select('*').eq('status','pending')
-    .order('created_at',{ascending:false}).limit(10);
-  if (!tasks?.length) {
-    el.innerHTML = empty('✅','No pending tasks','Tasks appear here when signals are submitted');
-    return;
+
+  // Recent signals from this CHP
+  const queued = (await idbGetAll('pending')).filter(r => r.type !== 'schema');
+  let synced = [];
+  if (isOnline()) {
+    const { data } = await sb.from('events').select('*')
+      .eq('form_id','cebs_signal')
+      .eq('submitted_by', session.user.id)
+      .order('created_at',{ascending:false}).limit(5);
+    synced = data || [];
   }
-  el.innerHTML = tasks.map(t => {
-    const urg = t.title?.startsWith('URGENT');
-    return `<div class="task">
-      ${urg ? '<div class="task-urg">⚠ Urgent — within 24 hours</div>' : ''}
-      <div class="task-title">${esc(t.title)}</div>
-      <div class="task-due">Due: ${t.due_date || 'ASAP'}</div>
+  const allRecent = [
+    ...queued.map(r => ({ answers:r.answers, sync_status:'pending', created_at:r.created_at })),
+    ...synced.filter(e => !queued.find(q => q.id === e.id))
+  ];
+  const recentHtml = allRecent.length
+    ? allRecent.map(e => sigCard(e)).join('')
+    : empty('📡','No signals yet','Tap Report below to submit your first signal');
+
+  el.innerHTML = `
+    ${areaHtml}
+    <div class="card">
+      <div class="card-title">My recent signals</div>
+      ${recentHtml}
     </div>`;
-  }).join('');
+}
+
+function areaStatTile(icon, label, value) {
+  return `<div style="background:var(--bg);border-radius:8px;padding:10px 12px;
+    display:flex;align-items:center;gap:8px">
+    <span style="font-size:20px">${icon}</span>
+    <div>
+      <div style="font-size:15px;font-weight:700">${value}</div>
+      <div style="font-size:11px;color:var(--text-2)">${label}</div>
+    </div>
+  </div>`;
+}
+
+// ── CHA HOME — CHU summary + all pending tasks ────────────────────────────
+async function renderChaHome() {
+  const el = id('home-content');
+
+  // CHU stats — count areas, households, clients, pending tasks
+  let statsHtml = '';
+  let areas = [];
+  if (isOnline()) {
+    const [areaRes, taskRes] = await Promise.all([
+      sb.from('chp_areas').select('*').order('name'),
+      sb.from('tasks').select('*,events(answers,created_at)')
+        .eq('status','pending').order('created_at', {ascending:false}).limit(20),
+    ]);
+    areas = areaRes.data || [];
+    const tasks = taskRes.data || [];
+
+    const urgentCount = tasks.filter(t => t.title?.startsWith('URGENT')).length;
+
+    statsHtml = `
+      <div class="card" style="margin-bottom:12px">
+        <div style="font-size:16px;font-weight:700;margin-bottom:2px">Kiharu CHU</div>
+        <div style="font-size:12px;color:var(--text-2);margin-bottom:10px">
+          Kaptum Sub-county · Baringo County
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">
+          ${areaStatTile('🗺', 'CHP Areas', areas.length)}
+          ${areaStatTile('📋', 'Pending tasks', tasks.length)}
+          ${urgentCount ? areaStatTile('⚠', 'Urgent', urgentCount) : areaStatTile('✅','All verified','0 urgent')}
+        </div>
+        <div style="font-size:12px;font-weight:600;color:var(--text-2);
+          text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">CHP Areas</div>
+        ${areas.map(a => `
+          <div style="display:flex;align-items:center;justify-content:space-between;
+            padding:8px 0;border-bottom:1px solid #F1F5F9">
+            <div>
+              <div style="font-size:13px;font-weight:500">${esc(a.name)}</div>
+              <div style="font-size:11px;color:var(--text-2)">${a.household_count||0} households · ${a.population_count||0} people</div>
+            </div>
+          </div>`).join('')}
+      </div>`;
+
+    // Tasks list with verification action
+    const tasksHtml = tasks.length
+      ? tasks.map(t => renderTaskCard(t)).join('')
+      : empty('✅','No pending tasks','All signals have been verified');
+
+    el.innerHTML = statsHtml + `
+      <div class="card">
+        <div class="card-title">Pending verifications (${tasks.length})</div>
+        ${tasksHtml}
+      </div>`;
+  } else {
+    el.innerHTML = statsHtml + `<div style="font-size:12px;color:var(--text-2);padding:8px 0">
+      Tasks and area details load when reconnected.</div>`;
+  }
+}
+
+function renderTaskCard(t) {
+  const urg     = t.title?.startsWith('URGENT');
+  const eventId = t.event_id || '';
+  const evt     = t.events || {};
+  const answers = evt.answers || {};
+  const TYPES   = {
+    outbreak:'🔴 Outbreak', similar_symptoms:'🟡 Similar symptoms',
+    death_in_community:'⚫ Unexplained death', child_weak_legs_arms:'🟠 Limb weakness',
+    diarrhea:'🟡 Diarrhoea', animal_sickness:'🟡 Animal sickness',
+    animal_bite:'🟡 Animal bite', public_event:'🔵 Public event'
+  };
+  const sigLabel = TYPES[answers.signal_type] || '📡 Signal';
+  const loc      = answers.location_detail || '';
+  const date     = (evt.created_at||'').slice(0,10);
+
+  return `<div class="task" style="cursor:pointer;margin-bottom:8px"
+      onclick="openVerifyModal('${t.id}','${eventId}','${esc(t.title)}')">
+    ${urg ? '<div class="task-urg">⚠ Urgent — verify within 24 hours</div>'
+           : '<div style="font-size:10px;color:var(--green);font-weight:600;margin-bottom:3px">Tap to verify →</div>'}
+    <div class="task-title">${esc(t.title)}</div>
+    <div style="font-size:12px;color:var(--text-2);margin-top:3px">
+      ${sigLabel}${loc ? ' · '+esc(loc) : ''}${date ? ' · '+date : ''}
+    </div>
+    <div class="task-due">Due: ${t.due_date||'ASAP'}</div>
+  </div>`;
+}
+
+async function renderTasks() {
+  // kept for compatibility — not used in new role-aware home
 }
 
 async function renderRecent() {
@@ -792,6 +960,11 @@ function sigCard(e) {
 
 // ── FORM ──────────────────────────────────────────────────────────────────
 window.goReport = async () => {
+  const role = userProfile?.role || 'chp';
+  if (role === 'cha') {
+    showToast('CHAs verify signals — use the Tasks tab');
+    return;
+  }
   answers = {};
   goTab('report');
   if (!formSchema) await loadSchema();
@@ -1117,8 +1290,15 @@ function showToast(msg) {
   setTimeout(() => { t.style.opacity = '0'; }, 2500);
 }
 
-// ── UPDATED renderTasks — tappable for CHA verification ───────────────────
+// ── renderTasksVerify — now delegates to renderChaHome ───────────────────
 async function renderTasksVerify() {
+  // kept for compatibility; renderHome() calls renderChaHome() for CHAs
+  const role = userProfile?.role || 'chp';
+  if (role === 'cha') return; // handled by renderChaHome
+  // For CHP, do nothing here
+}
+
+async function _renderTasksVerify_unused() {
   const el = id('task-list');
   if (!isOnline()) {
     el.innerHTML = `<div style="font-size:12px;color:var(--text-2);padding:8px 0">
@@ -1425,12 +1605,78 @@ function median(arr) {
 
 // ── NAV ───────────────────────────────────────────────────────────────────
 window.goTab = (tab) => {
-  for (const t of ['home','report','signals','success']) {
+  // Guard: CHA cannot access report screen
+  const role = userProfile?.role || 'chp';
+  if (tab === 'report' && role === 'cha') {
+    showToast('Verification is done from the Tasks tab');
+    return;
+  }
+
+  for (const t of ['home','report','tasks','signals','success','verify-done']) {
     const s = id(`screen-${t}`); const b = id(`tab-${t}`);
     if (s) s.className = 'screen' + (t===tab?' on':'');
     if (b) b.className = 'tab'    + (t===tab?' on':'');
   }
+
+  // Load tasks screen content when navigating there
+  if (tab === 'tasks') renderTasksScreen();
 };
+
+async function renderTasksScreen() {
+  const el = id('tasks-content');
+  if (!el) return;
+  el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-2)">Loading…</div>';
+
+  if (!isOnline()) {
+    el.innerHTML = '<div style="padding:16px;font-size:13px;color:var(--text-2)">Tasks load when reconnected.</div>';
+    return;
+  }
+
+  const { data: tasks } = await sb.from('tasks')
+    .select('*,events(answers,created_at)')
+    .eq('status','pending')
+    .order('created_at',{ascending:false}).limit(30);
+
+  const { data: doneTasks } = await sb.from('tasks')
+    .select('*,events(answers,created_at),verifications(credible,escalate,notes,verified_at)')
+    .eq('status','done')
+    .order('created_at',{ascending:false}).limit(10);
+
+  const pendingHtml = tasks?.length
+    ? tasks.map(t => renderTaskCard(t)).join('')
+    : empty('✅','No pending tasks','All signals verified — great work');
+
+  const doneHtml = doneTasks?.length
+    ? doneTasks.map(t => {
+        const v    = t.verifications;
+        const cred = v?.credible;
+        const esc2 = v?.escalate;
+        const badge = !v ? '' : !cred
+          ? '<span class="badge" style="background:#F1F5F9;color:#64748B">✕ Not credible</span>'
+          : esc2
+            ? '<span class="badge" style="background:#EDE9FE;color:#3730A3">⬆ Escalated</span>'
+            : '<span class="badge sync">✓ Verified</span>';
+        return `<div style="padding:10px 0;border-bottom:1px solid #F1F5F9">
+          <div style="font-size:13px;font-weight:500">${esc(t.title)}</div>
+          <div style="font-size:11px;color:var(--text-2);margin-top:2px">${badge}</div>
+        </div>`;
+      }).join('')
+    : '<div style="font-size:12px;color:var(--text-2)">No completed verifications yet</div>';
+
+  el.innerHTML = `
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-title">Pending verifications (${tasks?.length||0})</div>
+      ${pendingHtml}
+      <button onclick="createTestTask()" class="btn btn-o"
+        style="margin-top:10px;font-size:12px;padding:8px 14px;width:auto">
+        + Create test task (demo)
+      </button>
+    </div>
+    <div class="card">
+      <div class="card-title">Recently verified</div>
+      ${doneHtml}
+    </div>`;
+}
 
 // ── EXPRESSION EVALUATOR ──────────────────────────────────────────────────
 function expr(node, ans) {
