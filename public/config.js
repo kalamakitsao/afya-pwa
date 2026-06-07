@@ -10,7 +10,7 @@
 // This file is intentionally NOT a .env file so it works without a build step.
 
 window.__CONFIG__ = {
-  SUPABASE_URL:  'REPLACE_WITH_YOUR_SUPABASE_URL',
-  SUPABASE_ANON: 'REPLACE_WITH_YOUR_SUPABASE_ANON_KEY',
-  POWERSYNC_URL: 'REPLACE_WITH_YOUR_POWERSYNC_INSTANCE_URL',
+  SUPABASE_URL:  'https://itteubobnnwysohdxttb.supabase.co',
+  SUPABASE_ANON: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml0dGV1Ym9ibm53eXNvaGR4dHRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA3Nzk1MTYsImV4cCI6MjA5NjM1NTUxNn0.uG4oZiUDwDkCPwzw06Cx15yLHPwzO5dr2TGRYc1luwU',
+  POWERSYNC_URL: 'https://6a24e2e90ef84ed6719f996a.powersync.journeyapps.com',
 };
