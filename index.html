@@ -506,23 +506,44 @@ async function enterApp() {
 }
 
 async function loadFormSchema() {
+  // Always try Supabase directly first — most reliable path
+  try {
+    const { data, error } = await supabase
+      .from('config_forms')
+      .select('json_schema')
+      .eq('form_id', 'cebs_signal')
+      .order('version', { ascending: false })
+      .limit(1);
+    if (!error && data?.[0]) {
+      formSchema = typeof data[0].json_schema === 'string'
+        ? JSON.parse(data[0].json_schema)
+        : data[0].json_schema;
+      console.log('[schema] loaded from Supabase');
+      return;
+    }
+  } catch (e) {
+    console.warn('[schema] Supabase load failed:', e);
+  }
+
+  // Secondary: try PowerSync local SQLite
   try {
     if (db) {
       const rows = await db.getAll(
-        "SELECT json_schema FROM config_forms WHERE form_id='cebs_signal' ORDER BY version DESC LIMIT 1", []);
-      if (rows.length) {
-        formSchema = JSON.parse(rows[0].getString ? rows[0].getString(0) : rows[0].json_schema);
+        "SELECT json_schema FROM config_forms WHERE form_id='cebs_signal' ORDER BY version DESC LIMIT 1",
+        []
+      );
+      if (rows?.length) {
+        const raw = rows[0].json_schema ?? rows[0][0];
+        formSchema = typeof raw === 'string' ? JSON.parse(raw) : raw;
+        console.log('[schema] loaded from SQLite');
         return;
       }
     }
-    // Fallback: load directly from Supabase if PowerSync hasn't synced yet
-    const { data } = await supabase
-      .from('config_forms').select('json_schema')
-      .eq('form_id', 'cebs_signal').order('version', { ascending: false }).limit(1);
-    if (data?.[0]) formSchema = data[0].json_schema;
   } catch (e) {
-    console.warn('Schema load error:', e);
+    console.warn('[schema] SQLite load failed:', e);
   }
+
+  console.error('[schema] could not load from either source');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
