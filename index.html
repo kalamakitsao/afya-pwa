@@ -254,9 +254,21 @@ textarea{min-height:80px;resize:vertical}
       <div class="nav-title">Afya Nyumbani</div>
       <div class="nav-sub" id="nav-user">Loading…</div>
     </div>
-    <div style="display:flex;align-items:center;gap:6px">
+    <div style="display:flex;align-items:center;gap:10px">
       <span style="font-size:11px;color:#9FE1CB" id="sync-lbl">Connecting…</span>
       <div class="dot sync" id="sync-dot"></div>
+      <button onclick="doLogout()" title="Sign out"
+        style="background:rgba(255,255,255,.15);border:none;border-radius:8px;
+          padding:6px 8px;cursor:pointer;display:flex;align-items:center;
+          color:#E1F5EE;font-size:11px;font-weight:500;gap:5px;line-height:1">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
+          <polyline points="16 17 21 12 16 7"/>
+          <line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+        Sign out
+      </button>
     </div>
   </div>
 
@@ -623,6 +635,41 @@ window.doLogin = async () => {
     setErr('login-err', e.message || 'Login failed');
     btn.disabled = false; btn.textContent = 'Sign in';
   }
+};
+
+// ── LOGOUT ────────────────────────────────────────────────────────────────
+window.doLogout = async () => {
+  if (!confirm('Sign out of Afya Nyumbani?')) return;
+
+  // Check for unsynced signals before logging out
+  const pending = (await idbGetAll('pending')).filter(r => r.type !== 'schema');
+  if (pending.length > 0) {
+    const ok = confirm(
+      `You have ${pending.length} signal(s) not yet synced to the server.\n\n` +
+      `They will be lost if you sign out now.\n\nSign out anyway?`
+    );
+    if (!ok) return;
+  }
+
+  try {
+    await sb.auth.signOut();
+  } catch(e) {
+    console.warn('Supabase signOut error:', e);
+  }
+
+  // Clear state
+  session     = null;
+  userProfile = null;
+  formSchema  = null;
+  answers     = {};
+
+  // Reset UI
+  const app = id('s-app');
+  if (app) app.style.display = 'none';
+  id('f-email').value = '';
+  id('f-pass').value  = '';
+  clearErr('login-err');
+  show('s-login');
 };
 
 // ── ENTER APP ─────────────────────────────────────────────────────────────
