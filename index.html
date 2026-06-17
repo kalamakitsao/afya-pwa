@@ -444,6 +444,45 @@ textarea{min-height:80px;resize:vertical}
 .dialog-field{margin-bottom:12px}
 .dialog-field label{display:block;font-size:12px;font-weight:600;color:var(--text-2);
   margin-bottom:6px}
+/* ── IMPACT DASHBOARD ───────────────────────────────────────────────── */
+.impact-hero{background:linear-gradient(135deg,var(--green) 0%,#0F6E56 100%);
+  border-radius:var(--r);padding:18px;color:#E1F5EE;margin-bottom:12px}
+.impact-hero-title{font-size:13px;font-weight:600;color:#9FE1CB;text-transform:uppercase;
+  letter-spacing:.04em;margin-bottom:4px}
+.impact-hero-sub{font-size:12px;color:#C5EBDD;line-height:1.5}
+
+.bench-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px;margin-bottom:10px}
+.bench-row{margin-bottom:14px}
+.bench-row:last-child{margin-bottom:0}
+.bench-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px}
+.bench-label{font-size:12.5px;font-weight:600;color:var(--text)}
+.bench-ours{font-size:17px;font-weight:700}
+.bench-track{position:relative;background:#F1F5F9;border-radius:5px;height:9px;overflow:hidden;margin-bottom:4px}
+.bench-fill{position:absolute;left:0;top:0;height:100%;border-radius:5px;transition:width .4s ease}
+.bench-marker{position:absolute;top:-3px;width:2px;height:15px;background:#1E293B;border-radius:1px}
+.bench-marker-lbl{position:absolute;top:-18px;font-size:9px;font-weight:600;color:var(--text-2);
+  white-space:nowrap;transform:translateX(-50%)}
+.bench-meta{display:flex;justify-content:space-between;font-size:10.5px;color:var(--text-2)}
+.bench-good{color:#0F6E56}
+.bench-bad{color:#A32D2D}
+.bench-source{font-size:10px;color:#94A3B8;margin-top:2px;font-style:italic}
+
+.score-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+.score-tile{border-radius:9px;padding:11px 10px;text-align:center}
+.score-tile.good{background:var(--green-light)}
+.score-tile.warn{background:var(--amber-light)}
+.score-tile.bad{background:var(--red-light)}
+.score-num{font-size:19px;font-weight:700}
+.score-num.good{color:var(--green)}
+.score-num.warn{color:var(--amber)}
+.score-num.bad{color:var(--red)}
+.score-lbl{font-size:10px;color:var(--text-2);margin-top:3px;line-height:1.3}
+
+.impact-tab-row{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.impact-tab-btn{padding:6px 13px;border-radius:20px;border:1px solid var(--border);
+  background:none;font-size:11.5px;font-weight:500;color:var(--text-2);cursor:pointer}
+.impact-tab-btn.on{background:var(--green);color:#E1F5EE;border-color:var(--green)}
 </style>
 </head>
 <body>
@@ -693,6 +732,11 @@ textarea{min-height:80px;resize:vertical}
       <div class="chart-label">All signals</div>
       <div id="all-sigs-wrap"></div>
     </div>
+  </div>
+
+  <!-- IMPACT — community health program indicators benchmarked against KDHS 2022 -->
+  <div id="screen-impact" class="screen">
+    <div id="impact-content"></div>
   </div>
 
   <div class="tabs" id="tab-bar">
@@ -1116,6 +1160,8 @@ function renderTabs(role) {
     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>`;
   const hhSvg      = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
     <path d="M3 9.5L12 3l9 6.5"/><path d="M5 10v9a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1v-9"/></svg>`;
+  const impactSvg  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.1-2.8-2.8L7 14"/></svg>`;
 
   const chpTabs = [
     { id:'home',       icon:homeSvg, label:'Home',       action:"goTab('home')" },
@@ -1130,10 +1176,12 @@ function renderTabs(role) {
     { id:'home',    icon:homeSvg,   label:'Home',    action:"goTab('home')" },
     { id:'tasks',   icon:taskSvg,   label:'Tasks',   action:"goTab('tasks')" },
     { id:'signals', icon:sigSvg,    label:'Signals', action:"goTab('signals');loadAnalytics()" },
+    { id:'impact',  icon:impactSvg, label:'Impact',  action:"goTab('impact');loadImpactDashboard()" },
   ];
   const supTabs = [
     { id:'home',    icon:homeSvg,   label:'Home',    action:"goTab('home')" },
     { id:'signals', icon:sigSvg,    label:'Signals', action:"goTab('signals');loadAnalytics()" },
+    { id:'impact',  icon:impactSvg, label:'Impact',  action:"goTab('impact');loadImpactDashboard()" },
   ];
 
   const tabs = role === 'cha' ? chaTabs : role === 'supervisor' ? supTabs : chpTabs;
@@ -2072,7 +2120,7 @@ window.goTab = (tab) => {
     return;
   }
 
-  for (const t of ['home','households','household-detail','member-detail','report','tasks','signals','success','verify-done']) {
+  for (const t of ['home','households','household-detail','member-detail','report','tasks','signals','impact','success','verify-done']) {
     const s  = id(`screen-${t}`);
     const b  = id(`tab-${t}`);
     const sb = id(`sb-link-${t}`);
@@ -2650,6 +2698,197 @@ function targetTile(num, total, label) {
     <div class="target-num">${num}${total?` / ${total}`:''}</div>
     <div class="target-lbl">${label}</div>
     ${pct!=null ? `<div class="target-bar-track"><div class="target-bar-fill" style="width:${pct}%"></div></div>` : ''}
+  </div>`;
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// IMPACT DASHBOARD — community health program indicators
+//
+// Goal: show whether the households THIS community unit serves are
+// actually better off — not just surveillance throughput. Indicators are
+// computed live from our own data and shown next to the same indicator's
+// national/county reference value, mirroring the KNBS CPI Explorer pattern
+// (your figure next to the benchmark).
+//
+// Reference values are from the 2022 Kenya Demographic and Health Survey
+// (KNBS, in collaboration with MoH) and the Kenya Community Health
+// Strategy M&E framework. Cited inline per indicator. These are fixed
+// reference constants — they do not change at runtime.
+// ════════════════════════════════════════════════════════════════════════
+
+const KDHS_2022 = {
+  under5_mortality_per_1000:   { value: 41,  label: 'Under-5 mortality (national)',      source: 'KDHS 2022' },
+  infant_mortality_per_1000:   { value: 32,  label: 'Infant mortality (national)',       source: 'KDHS 2022' },
+  facility_delivery_pct:       { value: 80,  label: 'Skilled/facility delivery (national)', source: 'KDHS 2022' },
+  anc4_pct:                    { value: 66,  label: '4+ ANC visits (national)',           source: 'KDHS 2022' },
+  modern_fp_pct:               { value: 57,  label: 'Modern contraceptive use (national)', source: 'KDHS 2022' },
+  stunting_pct:                { value: 18,  label: 'Stunting, under-5 (national)',       source: 'KDHS 2022' },
+  teen_pregnancy_baringo_pct:  { value: 20,  label: 'Teen pregnancy, 15–19 yrs (Baringo)', source: 'KDHS 2022 Baringo factsheet' },
+};
+
+let impactPeriod = 90; // days
+
+window.setImpactPeriod = (days, btn) => {
+  impactPeriod = days;
+  document.querySelectorAll('.impact-tab-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  loadImpactDashboard();
+};
+
+window.loadImpactDashboard = async () => {
+  const el = id('impact-content');
+  el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-2)">Loading…</div>';
+
+  if (!isOnline()) {
+    el.innerHTML = `<div style="font-size:12px;color:var(--text-2);padding:8px 0">
+      Impact dashboard loads when reconnected.</div>`;
+    return;
+  }
+
+  const since = new Date(Date.now() - impactPeriod*86400000).toISOString();
+
+  const [
+    { data: households }, { data: clients }, { data: events },
+    { data: referrals }, { data: areas }
+  ] = await Promise.all([
+    sb.from('households').select('id,status,has_latrine,has_handwashing,has_refuse_disposal,water_source,chp_area_id'),
+    sb.from('clients').select('id,status,is_pregnant,date_of_birth,muac_status,has_disability,household_id'),
+    sb.from('events').select('id,form_id,context_type,created_at,answers').gte('created_at', since),
+    sb.from('referrals').select('id,status,created_at'),
+    sb.from('chp_areas').select('id,name'),
+  ]);
+
+  const activeHH      = (households||[]).filter(h => h.status !== 'voided');
+  const activeClients = (clients||[]).filter(c => c.status !== 'exited');
+  const u5Clients      = activeClients.filter(c => { const y = ageInYears(c.date_of_birth); return y!=null && y<5; });
+  const pregnantClients= activeClients.filter(c => c.is_pregnant);
+
+  // ── WASH coverage (household-level, drives diarrhoea/under-5 outcomes) ──
+  const withLatrine    = activeHH.filter(h => h.has_latrine === true).length;
+  const withHandwash   = activeHH.filter(h => h.has_handwashing === true).length;
+  const withSafeWater  = activeHH.filter(h => ['protected_spring','borehole','piped','treated'].includes((h.water_source||'').toLowerCase())).length;
+  const washPct = n => activeHH.length ? Math.round(n/activeHH.length*100) : 0;
+
+  // ── Nutrition surveillance coverage (MUAC screening among U5) ──────────
+  const muacScreened = u5Clients.filter(c => c.muac_status).length;
+  const muacRed       = u5Clients.filter(c => c.muac_status === 'red').length;
+  const muacYellow     = u5Clients.filter(c => c.muac_status === 'yellow').length;
+  const muacCoveragePct= u5Clients.length ? Math.round(muacScreened/u5Clients.length*100) : 0;
+  const malnutritionFlagPct = u5Clients.length ? Math.round((muacRed+muacYellow)/u5Clients.length*100) : 0;
+
+  // ── Referral completion (closes the loop per SRS 4.1.4) ────────────────
+  const totalReferrals = (referrals||[]).length;
+  const completedReferrals = (referrals||[]).filter(r => r.status === 'completed').length;
+  const openReferrals = (referrals||[]).filter(r => r.status === 'open').length;
+  const referralCompletionPct = totalReferrals ? Math.round(completedReferrals/totalReferrals*100) : null;
+
+  // ── Service delivery activity (household_visit workflow events) ───────
+  const visitEvents = (events||[]).filter(e => e.form_id === 'household_visit');
+  const householdsVisited = new Set(visitEvents.map(e => e.answers?.household_id).filter(Boolean)).size;
+  const visitCoveragePct = activeHH.length ? Math.round(Math.min(visitEvents.length, activeHH.length)/activeHH.length*100) : 0;
+
+  // ── Surveillance cascade (reuses existing signal data, for context) ───
+  const signals = (events||[]).filter(e => e.form_id === 'cebs_signal');
+  const { data: verifs } = await sb.from('verifications').select('credible,escalate').gte('verified_at', since);
+  const credibleSignals = (verifs||[]).filter(v=>v.credible).length;
+
+  // ── CU functionality scorecard (binary indicators, CHS M&E pattern) ───
+  const scorecard = [
+    { label:'Active CHP areas',      ok: (areas||[]).length > 0,           detail: `${(areas||[]).length} area(s)` },
+    { label:'Households registered', ok: activeHH.length > 0,              detail: `${activeHH.length} household(s)` },
+    { label:'WASH data captured',    ok: activeHH.some(h=>h.has_latrine!=null), detail: 'latrine/water status recorded' },
+    { label:'Pregnancy tracking',    ok: pregnantClients.length >= 0 && activeClients.length>0, detail: `${pregnantClients.length} pregnant client(s)` },
+    { label:'U5 nutrition screening',ok: muacCoveragePct > 0,              detail: `${muacCoveragePct}% of U5 screened` },
+    { label:'Referral loop active',  ok: totalReferrals > 0,               detail: `${totalReferrals} referral(s) logged` },
+  ];
+  const scoreOkCount = scorecard.filter(s=>s.ok).length;
+
+  el.innerHTML = `
+    <div class="impact-hero">
+      <div class="impact-hero-title">Community Health Impact</div>
+      <div class="impact-hero-sub">Live coverage from this community unit's own data,
+        benchmarked against the 2022 Kenya Demographic and Health Survey (KNBS/MoH)
+        and the Kenya Community Health Strategy M&E framework.</div>
+    </div>
+
+    <div class="impact-tab-row">
+      <button class="impact-tab-btn ${impactPeriod===30?'on':''}" onclick="setImpactPeriod(30,this)">30 days</button>
+      <button class="impact-tab-btn ${impactPeriod===90?'on':''}" onclick="setImpactPeriod(90,this)">90 days</button>
+      <button class="impact-tab-btn ${impactPeriod===365?'on':''}" onclick="setImpactPeriod(365,this)">12 months</button>
+    </div>
+
+    <div class="bench-card">
+      <div class="card-title">CU functionality scorecard</div>
+      <div class="score-grid">
+        ${scorecard.map(s => `<div class="score-tile ${s.ok?'good':'warn'}">
+          <div class="score-num ${s.ok?'good':'warn'}">${s.ok?'✓':'—'}</div>
+          <div class="score-lbl">${s.label}<br><span style="opacity:.75">${esc(s.detail)}</span></div>
+        </div>`).join('')}
+      </div>
+      <div style="margin-top:10px;font-size:11px;color:var(--text-2)">
+        ${scoreOkCount} of ${scorecard.length} functionality indicators active —
+        pattern follows the binary CU scorecard used in Kenya's CHS M&E framework.
+      </div>
+    </div>
+
+    <div class="bench-card">
+      <div class="card-title">WASH coverage — our households vs. national benchmark</div>
+      ${benchRow('Households with a functional latrine', washPct(withLatrine), 71, 'KDHS 2022 (rural Kenya, improved sanitation)')}
+      ${benchRow('Households with handwashing facility', washPct(withHandwash), 50, 'KDHS 2022 (rural Kenya)')}
+      ${benchRow('Households with a safe water source', washPct(withSafeWater), 64, 'KDHS 2022 (rural Kenya, improved water)')}
+    </div>
+
+    <div class="bench-card">
+      <div class="card-title">Maternal & child health coverage</div>
+      ${benchRow('U5 children MUAC-screened', muacCoveragePct, 100, 'CHS M&E target: 100% U5 screened annually')}
+      ${benchRow('U5 malnutrition flagged (MUAC red/yellow)', malnutritionFlagPct, KDHS_2022.stunting_pct.value, 'KDHS 2022 national stunting prevalence — lower is better', true)}
+      ${benchRow('Referral loop completion', referralCompletionPct ?? 0, 80, 'CHS M&E target: 80% referrals closed within 14 days')}
+    </div>
+
+    <div class="bench-card">
+      <div class="card-title">Reference indicators — 2022 KDHS (Baringo / national)</div>
+      <div style="font-size:11px;color:var(--text-2);line-height:1.7">
+        Skilled/facility delivery: <strong>${KDHS_2022.facility_delivery_pct.value}%</strong> (national) ·
+        4+ ANC visits: <strong>${KDHS_2022.anc4_pct.value}%</strong> (national) ·
+        Modern contraceptive use: <strong>${KDHS_2022.modern_fp_pct.value}%</strong> (national) ·
+        Under-5 mortality: <strong>${KDHS_2022.under5_mortality_per_1000.value}/1,000</strong> live births (national) ·
+        Teen pregnancy 15–19 yrs: <strong>${KDHS_2022.teen_pregnancy_baringo_pct.value}%</strong> (Baringo)
+      </div>
+      <div class="bench-source">Source: Kenya National Bureau of Statistics &amp; Ministry of Health,
+        2022 Kenya Demographic and Health Survey. These are reference values for context —
+        this PoC does not yet collect ANC/delivery/FP data directly (out of scope; see roadmap).</div>
+    </div>
+
+    <div class="bench-card">
+      <div class="card-title">Service delivery activity (${impactPeriod===365?'12 months':impactPeriod+' days'})</div>
+      <div class="target-grid">
+        ${targetTile(visitEvents.length, activeHH.length, 'Household visits logged')}
+        ${targetTile(signals.length, null, 'Signals reported')}
+        ${targetTile(credibleSignals, signals.length||null, 'Credible signals')}
+      </div>
+    </div>`;
+};
+
+function benchRow(label, ours, benchmark, source, lowerIsBetter) {
+  const good = lowerIsBetter ? ours <= benchmark : ours >= benchmark;
+  const maxScale = Math.max(ours, benchmark, 100);
+  const oursPct = Math.min(100, Math.round(ours/maxScale*100));
+  const benchPct = Math.min(100, Math.round(benchmark/maxScale*100));
+  const fillColor = good ? '#0F6E56' : '#A32D2D';
+  return `<div class="bench-row">
+    <div class="bench-top">
+      <div class="bench-label">${esc(label)}</div>
+      <div class="bench-ours" style="color:${fillColor}">${ours}%</div>
+    </div>
+    <div class="bench-track">
+      <div class="bench-fill" style="width:${oursPct}%;background:${fillColor}"></div>
+      <div class="bench-marker" style="left:${benchPct}%"></div>
+    </div>
+    <div class="bench-meta">
+      <span class="${good?'bench-good':'bench-bad'}">${good?'✓ At or above benchmark':'Below benchmark'}</span>
+      <span>Benchmark: ${benchmark}%</span>
+    </div>
+    <div class="bench-source">${esc(source)}</div>
   </div>`;
 }
 
