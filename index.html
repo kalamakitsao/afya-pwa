@@ -1943,7 +1943,7 @@ function clearErr(elId)     { const el=id(elId); if(!el) return; el.textContent=
 </script>
 
 <script>
-if ('serviceWorker' in navigator) {if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/public/sw.js')
       .catch(e => console.warn('SW:', e));
