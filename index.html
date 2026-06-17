@@ -483,6 +483,41 @@ textarea{min-height:80px;resize:vertical}
 .impact-tab-btn{padding:6px 13px;border-radius:20px;border:1px solid var(--border);
   background:none;font-size:11.5px;font-weight:500;color:var(--text-2);cursor:pointer}
 .impact-tab-btn.on{background:var(--green);color:#E1F5EE;border-color:var(--green)}
+
+/* ── CPI-EXPLORER STYLE: headline figure + named category card grid ──── */
+.cpi-headline{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:20px 18px;margin-bottom:12px;text-align:center}
+.cpi-headline-lbl{font-size:11.5px;font-weight:600;color:var(--text-2);text-transform:uppercase;
+  letter-spacing:.05em;margin-bottom:6px}
+.cpi-headline-num{font-size:40px;font-weight:800;line-height:1;color:var(--green)}
+.cpi-headline-sub{font-size:12px;color:var(--text-2);margin-top:6px;line-height:1.5}
+.cpi-headline-period{font-size:11px;color:#94A3B8;margin-top:2px}
+
+.cpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.cpi-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:14px 13px;cursor:pointer;transition:border-color .12s}
+.cpi-card:active{border-color:var(--green)}
+.cpi-card-icon{font-size:18px;margin-bottom:6px;display:block}
+.cpi-card-lbl{font-size:11px;font-weight:600;color:var(--text-2);line-height:1.3;margin-bottom:7px;
+  min-height:28px}
+.cpi-card-num{font-size:24px;font-weight:800;line-height:1}
+.cpi-card-trend{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:600;
+  margin-top:4px;padding:1px 6px;border-radius:8px}
+.cpi-card-trend.up{background:var(--green-light);color:var(--green)}
+.cpi-card-trend.down{background:var(--red-light);color:var(--red)}
+.cpi-card-trend.flat{background:#F1F5F9;color:#64748B}
+.cpi-card-detail{font-size:10px;color:#94A3B8;margin-top:5px;line-height:1.4}
+
+.cpi-section-title{font-size:13px;font-weight:700;color:var(--text);margin:18px 0 10px}
+.cpi-section-title:first-child{margin-top:0}
+
+.cpi-back{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;
+  color:var(--green);cursor:pointer;margin-bottom:12px;width:fit-content}
+.cpi-detail-header{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:16px;margin-bottom:12px}
+.cpi-detail-icon{font-size:28px;margin-bottom:6px}
+.cpi-detail-num{font-size:36px;font-weight:800;line-height:1}
+.cpi-detail-lbl{font-size:13px;font-weight:600;color:var(--text-2);margin-top:4px}
 </style>
 </head>
 <body>
@@ -2735,7 +2770,134 @@ window.setImpactPeriod = (days, btn) => {
   loadImpactDashboard();
 };
 
+// ── IMPACT: data computation (unchanged logic, restructured presentation) ─
+let impactData = null;       // cached computed indicators, reused by detail views
+let impactCategory = null;   // currently open category id, or null for grid view
+
+async function computeImpactData() {
+  const since = new Date(Date.now() - impactPeriod*86400000).toISOString();
+
+  const [
+    { data: households }, { data: clients }, { data: events },
+    { data: referrals }, { data: areas }, { data: verifs }
+  ] = await Promise.all([
+    sb.from('households').select('id,status,has_latrine,has_handwashing,has_refuse_disposal,water_source,chp_area_id'),
+    sb.from('clients').select('id,status,is_pregnant,date_of_birth,muac_status,has_disability,household_id'),
+    sb.from('events').select('id,form_id,context_type,created_at,answers').gte('created_at', since),
+    sb.from('referrals').select('id,status,created_at'),
+    sb.from('chp_areas').select('id,name'),
+    sb.from('verifications').select('credible,escalate').gte('verified_at', since),
+  ]);
+
+  const activeHH       = (households||[]).filter(h => h.status !== 'voided');
+  const activeClients  = (clients||[]).filter(c => c.status !== 'exited');
+  const u5Clients       = activeClients.filter(c => { const y = ageInYears(c.date_of_birth); return y!=null && y<5; });
+  const pregnantClients = activeClients.filter(c => c.is_pregnant);
+
+  const withLatrine   = activeHH.filter(h => h.has_latrine === true).length;
+  const withHandwash  = activeHH.filter(h => h.has_handwashing === true).length;
+  const withSafeWater = activeHH.filter(h => ['protected_spring','borehole','piped','treated'].includes((h.water_source||'').toLowerCase())).length;
+  const washPct = n => activeHH.length ? Math.round(n/activeHH.length*100) : 0;
+
+  const muacScreened  = u5Clients.filter(c => c.muac_status).length;
+  const muacRed        = u5Clients.filter(c => c.muac_status === 'red').length;
+  const muacYellow      = u5Clients.filter(c => c.muac_status === 'yellow').length;
+  const muacCoveragePct = u5Clients.length ? Math.round(muacScreened/u5Clients.length*100) : 0;
+  const malnutritionFlagPct = u5Clients.length ? Math.round((muacRed+muacYellow)/u5Clients.length*100) : 0;
+
+  const totalReferrals = (referrals||[]).length;
+  const completedReferrals = (referrals||[]).filter(r => r.status === 'completed').length;
+  const openReferrals = (referrals||[]).filter(r => r.status === 'open').length;
+  const referralCompletionPct = totalReferrals ? Math.round(completedReferrals/totalReferrals*100) : 0;
+
+  const visitEvents = (events||[]).filter(e => e.form_id === 'household_visit');
+  const visitCoveragePct = activeHH.length ? Math.round(Math.min(visitEvents.length, activeHH.length)/activeHH.length*100) : 0;
+
+  const signals = (events||[]).filter(e => e.form_id === 'cebs_signal');
+  const credibleSignals = (verifs||[]).filter(v=>v.credible).length;
+  const escalatedSignals = (verifs||[]).filter(v=>v.escalate).length;
+  const signalVerifiedPct = signals.length ? Math.round((verifs||[]).length/signals.length*100) : 0;
+
+  const scorecard = [
+    { label:'Active CHP areas',      ok: (areas||[]).length > 0,           detail: `${(areas||[]).length} area(s)` },
+    { label:'Households registered', ok: activeHH.length > 0,              detail: `${activeHH.length} household(s)` },
+    { label:'WASH data captured',    ok: activeHH.some(h=>h.has_latrine!=null), detail: 'latrine/water status recorded' },
+    { label:'Pregnancy tracking',    ok: activeClients.length>0,           detail: `${pregnantClients.length} pregnant client(s)` },
+    { label:'U5 nutrition screening',ok: muacCoveragePct > 0,              detail: `${muacCoveragePct}% of U5 screened` },
+    { label:'Referral loop active',  ok: totalReferrals > 0,               detail: `${totalReferrals} referral(s) logged` },
+  ];
+  const scoreOkCount = scorecard.filter(s=>s.ok).length;
+  const scorecardPct = Math.round(scoreOkCount/scorecard.length*100);
+
+  // Composite headline figure: simple average of the six category scores,
+  // each category score itself an average of its component coverage rates.
+  // This is a PoC-level composite, not an official index — labeled as such in the UI.
+  const categories = {
+    maternal: {
+      label: 'Maternal & Newborn Health', icon: '🤰',
+      score: pregnantClients.length ? 100 : 0, // proxy: are pregnancies being identified at all
+      rows: [
+        { label:'Pregnant clients identified', ours: activeClients.length?Math.round(pregnantClients.length/activeClients.length*100):0,
+          benchmark: 5, source:'Approx. share of population pregnant at any time (demographic proxy)' },
+        { label:'Facility/skilled delivery', ours: null, benchmark: KDHS_2022.facility_delivery_pct.value,
+          source:'KDHS 2022 national — not yet captured by this PoC' },
+        { label:'4+ ANC visits completed', ours: null, benchmark: KDHS_2022.anc4_pct.value,
+          source:'KDHS 2022 national — not yet captured by this PoC' },
+      ],
+    },
+    child: {
+      label: 'Child Health & Nutrition', icon: '🧒',
+      score: muacCoveragePct,
+      rows: [
+        { label:'U5 children MUAC-screened', ours: muacCoveragePct, benchmark: 100, source:'CHS M&E target: 100% U5 screened annually' },
+        { label:'U5 malnutrition flagged (red/yellow)', ours: malnutritionFlagPct, benchmark: KDHS_2022.stunting_pct.value,
+          source:'KDHS 2022 national stunting prevalence — lower is better', lowerIsBetter:true },
+      ],
+    },
+    wash: {
+      label: 'WASH', icon: '🚰',
+      score: Math.round((washPct(withLatrine)+washPct(withHandwash)+washPct(withSafeWater))/3),
+      rows: [
+        { label:'Functional latrine', ours: washPct(withLatrine), benchmark: 71, source:'KDHS 2022 (rural Kenya, improved sanitation)' },
+        { label:'Handwashing facility', ours: washPct(withHandwash), benchmark: 50, source:'KDHS 2022 (rural Kenya)' },
+        { label:'Safe water source', ours: washPct(withSafeWater), benchmark: 64, source:'KDHS 2022 (rural Kenya, improved water)' },
+      ],
+    },
+    surveillance: {
+      label: 'Disease Surveillance', icon: '📡',
+      score: signalVerifiedPct,
+      rows: [
+        { label:'Signals verified by CHA', ours: signalVerifiedPct, benchmark: 90, source:'CHS M&E target: 90% signals verified within 48h' },
+        { label:'Verified signals found credible', ours: (verifs||[]).length?Math.round(credibleSignals/(verifs||[]).length*100):0,
+          benchmark: 50, source:'Internal quality indicator — higher means CHPs report well-targeted signals' },
+      ],
+    },
+    referral: {
+      label: 'Referral & Linkage', icon: '⬆',
+      score: referralCompletionPct,
+      rows: [
+        { label:'Referral loop completion', ours: referralCompletionPct, benchmark: 80, source:'CHS M&E target: 80% referrals closed within 14 days' },
+      ],
+    },
+    cu: {
+      label: 'CU Functionality', icon: '✓',
+      score: scorecardPct,
+      rows: scorecard.map(s => ({ label:s.label, ours: s.ok?100:0, benchmark:100, source:s.detail })),
+    },
+  };
+
+  const compositeScore = Math.round(
+    Object.values(categories).reduce((sum,c)=>sum+c.score,0) / Object.keys(categories).length
+  );
+
+  return {
+    activeHH, activeClients, u5Clients, pregnantClients, visitEvents, signals, scorecard,
+    visitCoveragePct, openReferrals, totalReferrals, completedReferrals, compositeScore, categories,
+  };
+}
+
 window.loadImpactDashboard = async () => {
+  impactCategory = null;
   const el = id('impact-content');
   el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-2)">Loading…</div>';
 
@@ -2745,70 +2907,32 @@ window.loadImpactDashboard = async () => {
     return;
   }
 
-  const since = new Date(Date.now() - impactPeriod*86400000).toISOString();
+  impactData = await computeImpactData();
+  renderImpactGrid();
+};
 
-  const [
-    { data: households }, { data: clients }, { data: events },
-    { data: referrals }, { data: areas }
-  ] = await Promise.all([
-    sb.from('households').select('id,status,has_latrine,has_handwashing,has_refuse_disposal,water_source,chp_area_id'),
-    sb.from('clients').select('id,status,is_pregnant,date_of_birth,muac_status,has_disability,household_id'),
-    sb.from('events').select('id,form_id,context_type,created_at,answers').gte('created_at', since),
-    sb.from('referrals').select('id,status,created_at'),
-    sb.from('chp_areas').select('id,name'),
-  ]);
+function trendBadge(score) {
+  // PoC scope: no historical snapshots stored yet, so trend is inferred
+  // from distance to target rather than period-over-period change.
+  // Documented honestly in the UI rather than fabricating a trend line.
+  if (score >= 70) return { dir:'up',   icon:'▲', cls:'up',   text:'On track' };
+  if (score >= 40) return { dir:'flat', icon:'■', cls:'flat', text:'Needs attention' };
+  return { dir:'down', icon:'▼', cls:'down', text:'Below target' };
+}
 
-  const activeHH      = (households||[]).filter(h => h.status !== 'voided');
-  const activeClients = (clients||[]).filter(c => c.status !== 'exited');
-  const u5Clients      = activeClients.filter(c => { const y = ageInYears(c.date_of_birth); return y!=null && y<5; });
-  const pregnantClients= activeClients.filter(c => c.is_pregnant);
-
-  // ── WASH coverage (household-level, drives diarrhoea/under-5 outcomes) ──
-  const withLatrine    = activeHH.filter(h => h.has_latrine === true).length;
-  const withHandwash   = activeHH.filter(h => h.has_handwashing === true).length;
-  const withSafeWater  = activeHH.filter(h => ['protected_spring','borehole','piped','treated'].includes((h.water_source||'').toLowerCase())).length;
-  const washPct = n => activeHH.length ? Math.round(n/activeHH.length*100) : 0;
-
-  // ── Nutrition surveillance coverage (MUAC screening among U5) ──────────
-  const muacScreened = u5Clients.filter(c => c.muac_status).length;
-  const muacRed       = u5Clients.filter(c => c.muac_status === 'red').length;
-  const muacYellow     = u5Clients.filter(c => c.muac_status === 'yellow').length;
-  const muacCoveragePct= u5Clients.length ? Math.round(muacScreened/u5Clients.length*100) : 0;
-  const malnutritionFlagPct = u5Clients.length ? Math.round((muacRed+muacYellow)/u5Clients.length*100) : 0;
-
-  // ── Referral completion (closes the loop per SRS 4.1.4) ────────────────
-  const totalReferrals = (referrals||[]).length;
-  const completedReferrals = (referrals||[]).filter(r => r.status === 'completed').length;
-  const openReferrals = (referrals||[]).filter(r => r.status === 'open').length;
-  const referralCompletionPct = totalReferrals ? Math.round(completedReferrals/totalReferrals*100) : null;
-
-  // ── Service delivery activity (household_visit workflow events) ───────
-  const visitEvents = (events||[]).filter(e => e.form_id === 'household_visit');
-  const householdsVisited = new Set(visitEvents.map(e => e.answers?.household_id).filter(Boolean)).size;
-  const visitCoveragePct = activeHH.length ? Math.round(Math.min(visitEvents.length, activeHH.length)/activeHH.length*100) : 0;
-
-  // ── Surveillance cascade (reuses existing signal data, for context) ───
-  const signals = (events||[]).filter(e => e.form_id === 'cebs_signal');
-  const { data: verifs } = await sb.from('verifications').select('credible,escalate').gte('verified_at', since);
-  const credibleSignals = (verifs||[]).filter(v=>v.credible).length;
-
-  // ── CU functionality scorecard (binary indicators, CHS M&E pattern) ───
-  const scorecard = [
-    { label:'Active CHP areas',      ok: (areas||[]).length > 0,           detail: `${(areas||[]).length} area(s)` },
-    { label:'Households registered', ok: activeHH.length > 0,              detail: `${activeHH.length} household(s)` },
-    { label:'WASH data captured',    ok: activeHH.some(h=>h.has_latrine!=null), detail: 'latrine/water status recorded' },
-    { label:'Pregnancy tracking',    ok: pregnantClients.length >= 0 && activeClients.length>0, detail: `${pregnantClients.length} pregnant client(s)` },
-    { label:'U5 nutrition screening',ok: muacCoveragePct > 0,              detail: `${muacCoveragePct}% of U5 screened` },
-    { label:'Referral loop active',  ok: totalReferrals > 0,               detail: `${totalReferrals} referral(s) logged` },
-  ];
-  const scoreOkCount = scorecard.filter(s=>s.ok).length;
+function renderImpactGrid() {
+  const el = id('impact-content');
+  const d = impactData;
+  const periodLbl = impactPeriod===365 ? '12 months' : impactPeriod+' days';
 
   el.innerHTML = `
-    <div class="impact-hero">
-      <div class="impact-hero-title">Community Health Impact</div>
-      <div class="impact-hero-sub">Live coverage from this community unit's own data,
-        benchmarked against the 2022 Kenya Demographic and Health Survey (KNBS/MoH)
-        and the Kenya Community Health Strategy M&E framework.</div>
+    <div class="cpi-headline">
+      <div class="cpi-headline-lbl">Community Health Impact Index</div>
+      <div class="cpi-headline-num">${d.compositeScore}</div>
+      <div class="cpi-headline-sub">Composite of six service-delivery categories below,
+        each benchmarked against KDHS 2022 and CHS M&E reference targets.
+        This is a PoC-level composite for this community unit, not an official national index.</div>
+      <div class="cpi-headline-period">Period: ${periodLbl}</div>
     </div>
 
     <div class="impact-tab-row">
@@ -2817,36 +2941,30 @@ window.loadImpactDashboard = async () => {
       <button class="impact-tab-btn ${impactPeriod===365?'on':''}" onclick="setImpactPeriod(365,this)">12 months</button>
     </div>
 
+    <div class="cpi-section-title">By category</div>
+    <div class="cpi-grid">
+      ${Object.entries(d.categories).map(([key,cat]) => {
+        const t = trendBadge(cat.score);
+        return `<div class="cpi-card" onclick="openImpactCategory('${key}')">
+          <span class="cpi-card-icon">${cat.icon}</span>
+          <div class="cpi-card-lbl">${esc(cat.label)}</div>
+          <div class="cpi-card-num">${cat.score}</div>
+          <div class="cpi-card-trend ${t.cls}">${t.icon} ${t.text}</div>
+        </div>`;
+      }).join('')}
+    </div>
+
+    <div class="cpi-section-title">Service delivery activity</div>
     <div class="bench-card">
-      <div class="card-title">CU functionality scorecard</div>
-      <div class="score-grid">
-        ${scorecard.map(s => `<div class="score-tile ${s.ok?'good':'warn'}">
-          <div class="score-num ${s.ok?'good':'warn'}">${s.ok?'✓':'—'}</div>
-          <div class="score-lbl">${s.label}<br><span style="opacity:.75">${esc(s.detail)}</span></div>
-        </div>`).join('')}
+      <div class="target-grid">
+        ${targetTile(d.visitEvents.length, d.activeHH.length, 'Household visits logged')}
+        ${targetTile(d.signals.length, null, 'Signals reported')}
+        ${targetTile(d.openReferrals, d.totalReferrals||null, 'Open referrals')}
       </div>
-      <div style="margin-top:10px;font-size:11px;color:var(--text-2)">
-        ${scoreOkCount} of ${scorecard.length} functionality indicators active —
-        pattern follows the binary CU scorecard used in Kenya's CHS M&E framework.
-      </div>
     </div>
 
+    <div class="cpi-section-title">Reference indicators — 2022 KDHS</div>
     <div class="bench-card">
-      <div class="card-title">WASH coverage — our households vs. national benchmark</div>
-      ${benchRow('Households with a functional latrine', washPct(withLatrine), 71, 'KDHS 2022 (rural Kenya, improved sanitation)')}
-      ${benchRow('Households with handwashing facility', washPct(withHandwash), 50, 'KDHS 2022 (rural Kenya)')}
-      ${benchRow('Households with a safe water source', washPct(withSafeWater), 64, 'KDHS 2022 (rural Kenya, improved water)')}
-    </div>
-
-    <div class="bench-card">
-      <div class="card-title">Maternal & child health coverage</div>
-      ${benchRow('U5 children MUAC-screened', muacCoveragePct, 100, 'CHS M&E target: 100% U5 screened annually')}
-      ${benchRow('U5 malnutrition flagged (MUAC red/yellow)', malnutritionFlagPct, KDHS_2022.stunting_pct.value, 'KDHS 2022 national stunting prevalence — lower is better', true)}
-      ${benchRow('Referral loop completion', referralCompletionPct ?? 0, 80, 'CHS M&E target: 80% referrals closed within 14 days')}
-    </div>
-
-    <div class="bench-card">
-      <div class="card-title">Reference indicators — 2022 KDHS (Baringo / national)</div>
       <div style="font-size:11px;color:var(--text-2);line-height:1.7">
         Skilled/facility delivery: <strong>${KDHS_2022.facility_delivery_pct.value}%</strong> (national) ·
         4+ ANC visits: <strong>${KDHS_2022.anc4_pct.value}%</strong> (national) ·
@@ -2855,19 +2973,42 @@ window.loadImpactDashboard = async () => {
         Teen pregnancy 15–19 yrs: <strong>${KDHS_2022.teen_pregnancy_baringo_pct.value}%</strong> (Baringo)
       </div>
       <div class="bench-source">Source: Kenya National Bureau of Statistics &amp; Ministry of Health,
-        2022 Kenya Demographic and Health Survey. These are reference values for context —
-        this PoC does not yet collect ANC/delivery/FP data directly (out of scope; see roadmap).</div>
-    </div>
-
-    <div class="bench-card">
-      <div class="card-title">Service delivery activity (${impactPeriod===365?'12 months':impactPeriod+' days'})</div>
-      <div class="target-grid">
-        ${targetTile(visitEvents.length, activeHH.length, 'Household visits logged')}
-        ${targetTile(signals.length, null, 'Signals reported')}
-        ${targetTile(credibleSignals, signals.length||null, 'Credible signals')}
-      </div>
+        2022 Kenya Demographic and Health Survey, and the Kenya Community Health Strategy M&E framework.
+        Some indicators (ANC, facility delivery, contraceptive use) are shown for context only —
+        this PoC does not yet capture them directly.</div>
     </div>`;
+}
+
+window.openImpactCategory = (key) => {
+  impactCategory = key;
+  renderImpactCategoryDetail(key);
 };
+
+function renderImpactCategoryDetail(key) {
+  const el = id('impact-content');
+  const cat = impactData.categories[key];
+  const t = trendBadge(cat.score);
+
+  el.innerHTML = `
+    <div class="cpi-back" onclick="renderImpactGrid()">‹ Back to all categories</div>
+    <div class="cpi-detail-header">
+      <div class="cpi-detail-icon">${cat.icon}</div>
+      <div class="cpi-detail-num">${cat.score}</div>
+      <div class="cpi-detail-lbl">${esc(cat.label)}</div>
+      <div class="cpi-card-trend ${t.cls}" style="margin-top:8px">${t.icon} ${t.text}</div>
+    </div>
+    <div class="bench-card">
+      <div class="card-title">Indicators in this category</div>
+      ${cat.rows.map(r => r.ours == null
+        ? `<div class="bench-row">
+            <div class="bench-top"><div class="bench-label">${esc(r.label)}</div>
+              <div class="bench-ours" style="color:#94A3B8">—</div></div>
+            <div class="bench-source">Benchmark: ${r.benchmark}% · ${esc(r.source)}</div>
+          </div>`
+        : benchRow(r.label, r.ours, r.benchmark, r.source, r.lowerIsBetter)
+      ).join('')}
+    </div>`;
+}
 
 function benchRow(label, ours, benchmark, source, lowerIsBetter) {
   const good = lowerIsBetter ? ours <= benchmark : ours >= benchmark;
