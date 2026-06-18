@@ -7,31 +7,57 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="Afya Nyumbani"/>
-<meta name="theme-color" content="#085041"/>
+<meta name="theme-color" content="#06352B"/>
 <title>Afya Nyumbani</title>
 <link rel="manifest" href="/public/manifest.json"/>
+
+<!-- Tailwind CSS (CDN, JIT runtime build — no compile step needed for a single-file app) -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Fonts: Fraunces (display — warm, institutional-but-human serif for headers and the
+     role/hierarchy signature) · Inter (body/UI — reads cleanly at small sizes on phones)
+     · JetBrains Mono (data/stat figures — gives dashboards an instrument-panel precision) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --green:#085041;--green-mid:#0F6E56;--green-light:#E1F5EE;
-  --red:#A32D2D;--red-light:#FCEBEB;--amber:#854F0B;--amber-light:#FAEEDA;
-  --text:#1E293B;--text-2:#64748B;--border:#E2E8F0;
-  --bg:#F8FAFC;--surface:#fff;--r:12px;
+  /* Core palette — grounded in the Baringo/Rift Valley landscape this app serves:
+     deep forest canopy green (carried over from the app's established identity),
+     a warm acacia-bark clay as the one accent spent deliberately (role hierarchy,
+     signature marks), and a cool mist background rather than generic slate-grey. */
+  --canopy:#06352B;--forest:#0E6B53;--moss:#DFF0E8;
+  --clay:#B5562F;--clay-light:#F7E6DD;
+  --rust:#9A2E1F;--rust-light:#FBEAE5;--amber:#92600B;--amber-light:#FBF0DC;
+  --ink:#0B1F1A;--ink-2:#5C6F68;--line:#E3E9E5;
+  --mist:#F5F8F6;--paper:#fff;--r:14px;
+  /* Back-compat aliases — every existing rule below was written against these
+     names; remapping them here means the whole app inherits the new palette
+     without touching ~500 markup blocks. */
+  --green:var(--canopy);--green-mid:var(--forest);--green-light:var(--moss);
+  --red:var(--rust);--red-light:var(--rust-light);
+  --text:var(--ink);--text-2:var(--ink-2);--border:var(--line);
+  --bg:var(--mist);--surface:var(--paper);
   --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px)
 }
-html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
-  background:var(--bg);color:var(--text);overscroll-behavior:none}
+html,body{height:100%;font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;
+  background:var(--bg);color:var(--text);overscroll-behavior:none;
+  -webkit-font-smoothing:antialiased}
+.font-display{font-family:'Fraunces','Inter',serif}
+.font-mono{font-family:'JetBrains Mono',ui-monospace,monospace}
 #root{height:100%;display:flex;flex-direction:column;max-width:480px;margin:0 auto;
-  background:var(--surface);box-shadow:0 0 40px rgba(0,0,0,.08);width:100%}
+  background:var(--surface);box-shadow:0 0 40px rgba(6,53,43,.10);width:100%}
 
 /* Mobile default: sidebar+main stack vertically (sidebar is hidden anyway below 768px) */
 #s-app{flex-direction:column}
 #desktop-main{display:flex;flex-direction:column;flex:1;min-width:0;overflow:hidden}
 
 /* NAV */
-.nav{background:var(--green);color:#E1F5EE;padding:calc(var(--sat) + 12px) 16px 12px;
+.nav{background:var(--green);color:#E3F3EB;padding:calc(var(--sat) + 12px) 16px 12px;
   display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.nav-title{font-size:17px;font-weight:600}
+.nav-title{font-family:'Fraunces',serif;font-size:18px;font-weight:600;letter-spacing:-.01em}
 .nav-sub{font-size:11px;color:#9FE1CB;margin-top:1px}
 .dot{width:8px;height:8px;border-radius:50%;background:#9FE1CB;transition:background .3s}
 .dot.ok{background:#4ade80}.dot.err{background:#f87171}
@@ -51,8 +77,10 @@ html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sy
 .tab svg{width:22px;height:22px}
 
 /* CARDS */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px}
-.card-title{font-size:13px;font-weight:600;margin-bottom:8px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;
+  box-shadow:0 1px 2px rgba(11,31,26,.04)}
+.card-title{font-family:'Fraunces',serif;font-size:14px;font-weight:600;margin-bottom:9px;
+  letter-spacing:-.005em;color:var(--canopy)}
 
 /* SIGNAL CARDS */
 .sig{border-radius:var(--r);padding:12px 14px;border:1px solid transparent;margin-bottom:8px}
@@ -101,11 +129,14 @@ input:focus,textarea:focus{border-color:var(--green)}
 textarea{min-height:80px;resize:vertical}
 
 /* BUTTONS */
-.btn{width:100%;padding:14px;border-radius:10px;font-size:15px;font-weight:600;
-  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
-.btn-p{background:var(--green);color:#E1F5EE}
-.btn-p:disabled{background:#B4B2A9;cursor:not-allowed}
+.btn{width:100%;padding:14px;border-radius:var(--r);font-size:15px;font-weight:600;
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:transform .08s ease,box-shadow .08s ease}
+.btn-p{background:var(--forest);color:#E3F3EB;box-shadow:0 2px 8px rgba(14,107,83,.25)}
+.btn-p:active{transform:translateY(1px);box-shadow:0 1px 3px rgba(14,107,83,.25)}
+.btn-p:disabled{background:#B4B2A9;cursor:not-allowed;box-shadow:none}
 .btn-o{background:none;border:1.5px solid var(--border);color:var(--text)}
+.btn-o:active{background:var(--bg)}
 
 /* LOGIN */
 #s-login{background:linear-gradient(160deg,#F4F7F6 0%,#EAF2EF 55%,#E3EEEA 100%)}
@@ -120,7 +151,8 @@ textarea{min-height:80px;resize:vertical}
 .logo-emblem::after{content:'';position:absolute;inset:-6px;border-radius:50%;
   border:1.5px solid rgba(8,80,65,.14);pointer-events:none}
 .logo-emblem svg{width:62px;height:54px;filter:drop-shadow(0 1px 1px rgba(0,0,0,.08))}
-.app-name{font-size:21px;font-weight:700;text-align:center;color:var(--text);letter-spacing:-.01em}
+.app-name{font-family:'Fraunces',serif;font-size:25px;font-weight:600;text-align:center;
+  color:var(--canopy);letter-spacing:-.015em}
 .tagline{font-size:12.5px;color:var(--text-2);margin-top:3px;text-align:center;margin-bottom:26px;
   letter-spacing:.01em}
 .login-divider{width:100%;height:1px;background:var(--border);margin:4px 0 22px}
@@ -190,7 +222,7 @@ textarea{min-height:80px;resize:vertical}
 .escalate-box.show{display:block}
 .modal-footer{padding:0 16px 8px;display:flex;gap:8px}
 .btn-sm{flex:1;padding:11px;border-radius:8px;font-size:13px;font-weight:600;border:none;cursor:pointer}
-.btn-sm-p{background:var(--green);color:#E1F5EE}
+.btn-sm-p{background:var(--green);color:#E3F3EB}
 .btn-sm-p:disabled{background:#B4B2A9}
 .btn-sm-o{background:var(--bg);border:1px solid var(--border);color:var(--text)}
 .btn-sm-d{background:var(--red);color:#fff}
@@ -217,7 +249,7 @@ textarea{min-height:80px;resize:vertical}
 .period-row{display:flex;gap:6px;margin-bottom:12px}
 .period-btn{padding:5px 12px;border-radius:20px;border:1px solid var(--border);
   background:none;font-size:12px;font-weight:500;color:var(--text-2);cursor:pointer}
-.period-btn.on{background:var(--green);color:#E1F5EE;border-color:var(--green)}
+.period-btn.on{background:var(--green);color:#E3F3EB;border-color:var(--green)}
 .tl-row{display:flex;justify-content:space-between;align-items:center;
   padding:7px 0;border-bottom:1px solid #F1F5F9;font-size:12px}
 .tl-row:last-child{border-bottom:none}
@@ -263,7 +295,7 @@ textarea{min-height:80px;resize:vertical}
     width:240px;
     flex-shrink:0;
     background:var(--green);
-    color:#E1F5EE;
+    color:#E3F3EB;
     padding:20px 14px;
     height:100vh;
     overflow-y:auto;
@@ -271,7 +303,7 @@ textarea{min-height:80px;resize:vertical}
   .sb-brand{display:flex;align-items:center;gap:10px;margin-bottom:28px;padding:0 6px}
   .sb-brand-icon{width:36px;height:36px;background:rgba(255,255,255,.12);border-radius:10px;
     display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .sb-brand-name{font-size:15px;font-weight:700;color:#E1F5EE;line-height:1.2}
+  .sb-brand-name{font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:#E3F3EB;line-height:1.2}
   .sb-brand-sub{font-size:10px;color:#9FE1CB}
   .sb-nav{display:flex;flex-direction:column;gap:2px;flex:1}
   .sb-link{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:9px;
@@ -280,7 +312,7 @@ textarea{min-height:80px;resize:vertical}
   .sb-link:hover{background:rgba(255,255,255,.08)}
   .sb-link.on{background:rgba(255,255,255,.16);color:#fff}
   .sb-link svg{width:18px;height:18px;flex-shrink:0}
-  .sb-link .sb-badge{position:static;margin-left:auto;background:#A32D2D;color:#fff;
+  .sb-link .sb-badge{position:static;margin-left:auto;background:#9A2E1F;color:#fff;
     border-radius:10px;padding:1px 7px;font-size:10px;font-weight:700}
   .sb-divider{height:1px;background:rgba(255,255,255,.12);margin:14px 6px}
   .sb-footer{padding:0 6px}
@@ -290,7 +322,7 @@ textarea{min-height:80px;resize:vertical}
     display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;
     color:#fff;flex-shrink:0}
   .sb-user-name{font-size:12px;font-weight:600;color:#fff;line-height:1.3}
-  .sb-user-role{font-size:10px;color:#9FE1CB}
+  .sb-user-role{font-family:'Fraunces',serif;font-style:italic;font-size:10.5px;color:#9FE1CB}
   .sb-signout{display:flex;align-items:center;gap:9px;padding:9px 12px;border-radius:9px;
     color:#9FE1CB;font-size:12px;font-weight:500;cursor:pointer;border:none;background:none;
     width:100%;text-align:left}
@@ -371,7 +403,7 @@ textarea{min-height:80px;resize:vertical}
 .hh-card-chevron{color:var(--text-2);flex-shrink:0}
 .hh-card.voided{opacity:.55}
 .hh-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;margin-left:6px}
-.hh-tag-voided{background:#F1F5F9;color:#64748B}
+.hh-tag-voided{background:#F1F5F9;color:#5C6F68}
 
 .member-row{display:flex;align-items:center;gap:10px;padding:11px 0;
   border-bottom:1px solid #F1F5F9;cursor:pointer}
@@ -434,7 +466,7 @@ textarea{min-height:80px;resize:vertical}
 
 .target-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
 .target-tile{background:var(--bg);border-radius:9px;padding:10px 8px;text-align:center}
-.target-num{font-size:18px;font-weight:700;line-height:1.1}
+.target-num{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;line-height:1.1}
 .target-lbl{font-size:10px;color:var(--text-2);margin-top:3px;line-height:1.3}
 .target-bar-track{background:#E2E8F0;border-radius:4px;height:6px;overflow:hidden;margin-top:6px}
 .target-bar-fill{height:100%;border-radius:4px;background:var(--green)}
@@ -445,8 +477,8 @@ textarea{min-height:80px;resize:vertical}
 .dialog-field label{display:block;font-size:12px;font-weight:600;color:var(--text-2);
   margin-bottom:6px}
 /* ── IMPACT DASHBOARD ───────────────────────────────────────────────── */
-.impact-hero{background:linear-gradient(135deg,var(--green) 0%,#0F6E56 100%);
-  border-radius:var(--r);padding:18px;color:#E1F5EE;margin-bottom:12px}
+.impact-hero{background:linear-gradient(135deg,var(--green) 0%,#0E6B53 100%);
+  border-radius:var(--r);padding:18px;color:#E3F3EB;margin-bottom:12px}
 .impact-hero-title{font-size:13px;font-weight:600;color:#9FE1CB;text-transform:uppercase;
   letter-spacing:.04em;margin-bottom:4px}
 .impact-hero-sub{font-size:12px;color:#C5EBDD;line-height:1.5}
@@ -457,15 +489,15 @@ textarea{min-height:80px;resize:vertical}
 .bench-row:last-child{margin-bottom:0}
 .bench-top{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px}
 .bench-label{font-size:12.5px;font-weight:600;color:var(--text)}
-.bench-ours{font-size:17px;font-weight:700}
+.bench-ours{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700}
 .bench-track{position:relative;background:#F1F5F9;border-radius:5px;height:9px;overflow:hidden;margin-bottom:4px}
 .bench-fill{position:absolute;left:0;top:0;height:100%;border-radius:5px;transition:width .4s ease}
-.bench-marker{position:absolute;top:-3px;width:2px;height:15px;background:#1E293B;border-radius:1px}
+.bench-marker{position:absolute;top:-3px;width:2px;height:15px;background:#0B1F1A;border-radius:1px}
 .bench-marker-lbl{position:absolute;top:-18px;font-size:9px;font-weight:600;color:var(--text-2);
   white-space:nowrap;transform:translateX(-50%)}
 .bench-meta{display:flex;justify-content:space-between;font-size:10.5px;color:var(--text-2)}
-.bench-good{color:#0F6E56}
-.bench-bad{color:#A32D2D}
+.bench-good{color:#0E6B53}
+.bench-bad{color:#9A2E1F}
 .bench-source{font-size:10px;color:#94A3B8;margin-top:2px;font-style:italic}
 
 .score-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
@@ -473,7 +505,7 @@ textarea{min-height:80px;resize:vertical}
 .score-tile.good{background:var(--green-light)}
 .score-tile.warn{background:var(--amber-light)}
 .score-tile.bad{background:var(--red-light)}
-.score-num{font-size:19px;font-weight:700}
+.score-num{font-family:'JetBrains Mono',monospace;font-size:19px;font-weight:700}
 .score-num.good{color:var(--green)}
 .score-num.warn{color:var(--amber)}
 .score-num.bad{color:var(--red)}
@@ -482,14 +514,14 @@ textarea{min-height:80px;resize:vertical}
 .impact-tab-row{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
 .impact-tab-btn{padding:6px 13px;border-radius:20px;border:1px solid var(--border);
   background:none;font-size:11.5px;font-weight:500;color:var(--text-2);cursor:pointer}
-.impact-tab-btn.on{background:var(--green);color:#E1F5EE;border-color:var(--green)}
+.impact-tab-btn.on{background:var(--green);color:#E3F3EB;border-color:var(--green)}
 
 /* ── CPI-EXPLORER STYLE: headline figure + named category card grid ──── */
 .cpi-headline{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
   padding:20px 18px;margin-bottom:12px;text-align:center}
 .cpi-headline-lbl{font-size:11.5px;font-weight:600;color:var(--text-2);text-transform:uppercase;
   letter-spacing:.05em;margin-bottom:6px}
-.cpi-headline-num{font-size:40px;font-weight:800;line-height:1;color:var(--green)}
+.cpi-headline-num{font-family:'JetBrains Mono',monospace;font-size:44px;font-weight:700;line-height:1;color:var(--forest)}
 .cpi-headline-sub{font-size:12px;color:var(--text-2);margin-top:6px;line-height:1.5}
 .cpi-headline-period{font-size:11px;color:#94A3B8;margin-top:2px}
 
@@ -500,12 +532,12 @@ textarea{min-height:80px;resize:vertical}
 .cpi-card-icon{font-size:18px;margin-bottom:6px;display:block}
 .cpi-card-lbl{font-size:11px;font-weight:600;color:var(--text-2);line-height:1.3;margin-bottom:7px;
   min-height:28px}
-.cpi-card-num{font-size:24px;font-weight:800;line-height:1}
+.cpi-card-num{font-family:'JetBrains Mono',monospace;font-size:25px;font-weight:700;line-height:1}
 .cpi-card-trend{display:inline-flex;align-items:center;gap:3px;font-size:10.5px;font-weight:600;
   margin-top:4px;padding:1px 6px;border-radius:8px}
 .cpi-card-trend.up{background:var(--green-light);color:var(--green)}
 .cpi-card-trend.down{background:var(--red-light);color:var(--red)}
-.cpi-card-trend.flat{background:#F1F5F9;color:#64748B}
+.cpi-card-trend.flat{background:#F1F5F9;color:#5C6F68}
 .cpi-card-detail{font-size:10px;color:#94A3B8;margin-top:5px;line-height:1.4}
 
 .cpi-section-title{font-size:13px;font-weight:700;color:var(--text);margin:18px 0 10px}
@@ -516,7 +548,7 @@ textarea{min-height:80px;resize:vertical}
 .cpi-detail-header{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
   padding:16px;margin-bottom:12px}
 .cpi-detail-icon{font-size:28px;margin-bottom:6px}
-.cpi-detail-num{font-size:36px;font-weight:800;line-height:1}
+.cpi-detail-num{font-family:'JetBrains Mono',monospace;font-size:38px;font-weight:700;line-height:1}
 .cpi-detail-lbl{font-size:13px;font-weight:600;color:var(--text-2);margin-top:4px}
 /* ── OUTBREAK INVESTIGATION WORKFLOW (IDSR) ────────────────────────────── */
 .outbreak-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
@@ -534,7 +566,7 @@ textarea{min-height:80px;resize:vertical}
 .status-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:9px}
 .status-under_investigation{background:#FEF3C7;color:#92400E}
 .status-confirmed{background:var(--red-light);color:var(--red)}
-.status-ruled_out{background:#F1F5F9;color:#64748B}
+.status-ruled_out{background:#F1F5F9;color:#5C6F68}
 .status-closed{background:var(--green-light);color:var(--green)}
 
 .rrt-toggle{display:flex;gap:8px;margin:10px 0}
@@ -553,13 +585,13 @@ textarea{min-height:80px;resize:vertical}
 .outcome-alive{background:var(--green-light);color:var(--green)}
 .outcome-recovered{background:#DBEAFE;color:#1E40AF}
 .outcome-died{background:var(--red-light);color:var(--red)}
-.outcome-unknown{background:#F1F5F9;color:#64748B}
+.outcome-unknown{background:#F1F5F9;color:#5C6F68}
 
 .analysis-stat{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;
   border-bottom:1px solid #F1F5F9}
 .analysis-stat:last-child{border-bottom:none}
 .analysis-stat-lbl{font-size:12px;color:var(--text-2)}
-.analysis-stat-val{font-size:18px;font-weight:700}
+.analysis-stat-val{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700}
 
 .escalate-county-banner{background:#EDE9FE;border:1px solid #DDD6FE;border-radius:10px;
   padding:11px 13px;font-size:12px;color:#4C1D95;margin-bottom:12px;line-height:1.5}
@@ -656,7 +688,7 @@ textarea{min-height:80px;resize:vertical}
       <div class="sb-brand-icon">
         <svg width="20" height="20" viewBox="0 0 44 44" fill="none">
           <path d="M22 8C22 8 10 14 10 24C10 30.6 15.4 36 22 36C28.6 36 34 30.6 34 24C34 14 22 8 22 8Z" fill="#9FE1CB"/>
-          <circle cx="22" cy="24" r="5" fill="#085041"/>
+          <circle cx="22" cy="24" r="5" fill="#06352B"/>
         </svg>
       </div>
       <div>
@@ -704,7 +736,7 @@ textarea{min-height:80px;resize:vertical}
       <button onclick="doLogout()" title="Sign out"
         style="background:rgba(255,255,255,.15);border:none;border-radius:8px;
           padding:6px 8px;cursor:pointer;display:flex;align-items:center;
-          color:#E1F5EE;font-size:11px;font-weight:500;gap:5px;line-height:1">
+          color:#E3F3EB;font-size:11px;font-weight:500;gap:5px;line-height:1">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round">
           <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
@@ -786,8 +818,8 @@ textarea{min-height:80px;resize:vertical}
     <div class="chart-card-full">
       <div class="chart-label">Weekly trend</div>
       <div class="chart-legend">
-        <div class="leg-item"><div class="leg-dot" style="background:#A32D2D"></div>Reported</div>
-        <div class="leg-item"><div class="leg-dot" style="background:#0F6E56"></div>Verified</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#9A2E1F"></div>Reported</div>
+        <div class="leg-item"><div class="leg-dot" style="background:#0E6B53"></div>Verified</div>
         <div class="leg-item"><div class="leg-dot" style="background:#534AB7"></div>Escalated</div>
       </div>
       <div style="height:140px;position:relative">
@@ -1193,14 +1225,35 @@ async function enterApp() {
   const role = profile?.role || 'chp';
   const name = profile?.display_name || session.user.email;
 
-  // Role badge colour
-  const roleBg  = role === 'cha' ? '#1D9E75'
-    : role === 'scfp' ? '#C2410C'
-    : role === 'cfp' ? '#7C3AED'
-    : role === 'supervisor' ? '#534AB7' : '#085041';
-  id('nav-user').innerHTML = `<span>${esc(name)}</span>
-    <span style="background:${roleBg};color:#fff;padding:1px 7px;border-radius:10px;
-      font-size:10px;font-weight:600;margin-left:6px">${role.toUpperCase()}</span>`;
+  // Role hierarchy depth: CHP(1) -> CHA(2) -> SCFP(3) -> CFP(4). Supervisor sits
+  // outside the line hierarchy (cross-cutting oversight), shown without notches.
+  const ROLE_META = {
+    chp:        { label:'Community Health Promoter',  depth:1 },
+    cha:        { label:'Community Health Assistant',  depth:2 },
+    scfp:       { label:'Sub-County Focal Person',     depth:3 },
+    cfp:        { label:'County Focal Person',         depth:4 },
+    supervisor: { label:'Supervisor',                  depth:0 },
+  };
+  const meta = ROLE_META[role] || ROLE_META.chp;
+  // Signature mark: a row of notches the width of the hierarchy depth, the
+  // current level filled in clay, the levels below it filled in translucent
+  // white — a single glance shows both who this is and where they sit in
+  // the CHP→CHA→SCFP→CFP chain of command.
+  const notches = meta.depth
+    ? Array.from({length:4}, (_,i) => i < meta.depth
+        ? `<span style="width:5px;height:${i===meta.depth-1?'13px':'8px'};border-radius:2px;
+            background:${i===meta.depth-1?'#B5562F':'rgba(255,255,255,.35)'};
+            display:inline-block;align-self:flex-end"></span>`
+        : '').join('')
+    : '';
+  id('nav-user').innerHTML = `<span style="display:flex;align-items:center;gap:8px">
+      <span style="display:flex;align-items:flex-end;gap:2px;height:13px">${notches}</span>
+      <span>
+        <span style="display:block;font-size:13px">${esc(name)}</span>
+        <span style="display:block;font-family:'Fraunces',serif;font-style:italic;
+          font-size:10.5px;color:#E3F3EB;opacity:.85;line-height:1.3">${esc(meta.label)}</span>
+      </span>
+    </span>`;
 
   // Desktop sidebar user card
   const initials = name.trim().split(/\s+/).map(p => p[0]).slice(0,2).join('').toUpperCase();
@@ -1209,7 +1262,7 @@ async function enterApp() {
   const sbRole   = id('sb-user-role');
   if (sbAvatar) sbAvatar.textContent = initials || '?';
   if (sbName)   sbName.textContent   = name;
-  if (sbRole)   sbRole.textContent   = role.toUpperCase();
+  if (sbRole)   sbRole.textContent   = meta.label;
 
   // Render role-specific tabs (mobile bottom bar + desktop sidebar)
   renderTabs(role);
@@ -1264,7 +1317,7 @@ function renderTabs(role) {
     { id:'households',  icon:hhSvg,   label:'Households', action:"goTab('households');renderHouseholdsScreen()" },
     { id:'report',      icon:reportSvg, label:'Report',  action:"goReport()",
       extra:`<span id="queue-badge" style="display:none;position:absolute;top:6px;
-        right:calc(50% - 20px);background:#A32D2D;color:#fff;border-radius:10px;
+        right:calc(50% - 20px);background:#9A2E1F;color:#fff;border-radius:10px;
         padding:1px 5px;font-size:9px;font-weight:600"></span>` },
     { id:'signals', icon:sigSvg,    label:'Signals', action:"goTab('signals');loadAnalytics()" },
   ];
@@ -2009,7 +2062,7 @@ function showToast(msg) {
     t.id = 'toast';
     Object.assign(t.style, {
       position:'fixed', bottom:'80px', left:'50%', transform:'translateX(-50%)',
-      background:'#1E293B', color:'#fff', padding:'10px 18px', borderRadius:'20px',
+      background:'#0B1F1A', color:'#fff', padding:'10px 18px', borderRadius:'20px',
       fontSize:'13px', fontWeight:'500', zIndex:'200', transition:'opacity .3s',
       whiteSpace:'nowrap', maxWidth:'90vw', textAlign:'center'
     });
@@ -2144,8 +2197,8 @@ window.loadAnalytics = async () => {
 
   // ── KPI Cascade ──────────────────────────────────────────────────────
   const CASCADE = [
-    { lbl:'Reported',  num:reported,  bg:'#FCEBEB', fg:'#A32D2D', pct:null },
-    { lbl:'Verified',  num:verified,  bg:'#FAEEDA', fg:'#854F0B', pct:reported },
+    { lbl:'Reported',  num:reported,  bg:'#FBEAE5', fg:'#9A2E1F', pct:null },
+    { lbl:'Verified',  num:verified,  bg:'#FBF0DC', fg:'#92600B', pct:reported },
     { lbl:'Credible',  num:credible,  bg:'#EFF6FF', fg:'#1E40AF', pct:reported },
     { lbl:'Escalated', num:escalated, bg:'#EDE9FE', fg:'#3730A3', pct:reported },
     { lbl:'Responded', num:responded, bg:'#DCFCE7', fg:'#166534', pct:reported },
@@ -2176,9 +2229,9 @@ window.loadAnalytics = async () => {
     trendChart = new Chart(ctx, {
       type: 'line',
       data: { labels, datasets: [
-        { label:'Reported',  data:repData, borderColor:'#A32D2D', backgroundColor:'rgba(162,45,45,.08)',
+        { label:'Reported',  data:repData, borderColor:'#9A2E1F', backgroundColor:'rgba(154,46,31,.08)',
           fill:true, borderWidth:2, pointRadius:2, tension:.3 },
-        { label:'Verified',  data:verData, borderColor:'#0F6E56', backgroundColor:'transparent',
+        { label:'Verified',  data:verData, borderColor:'#0E6B53', backgroundColor:'transparent',
           borderWidth:2, borderDash:[4,2], pointRadius:2, tension:.3 },
         { label:'Escalated', data:escData, borderColor:'#534AB7', backgroundColor:'transparent',
           borderWidth:2, borderDash:[2,3], pointRadius:2, tension:.3 },
@@ -2201,8 +2254,8 @@ window.loadAnalytics = async () => {
     animal_bite:'Animal bite', public_event:'Public event'
   };
   const TYPE_COLORS = {
-    outbreak:'#A32D2D', similar_symptoms:'#854F0B',
-    death_in_community:'#1E293B', child_weak_legs_arms:'#92400E',
+    outbreak:'#9A2E1F', similar_symptoms:'#92600B',
+    death_in_community:'#0B1F1A', child_weak_legs_arms:'#92400E',
     diarrhea:'#1E40AF', animal_sickness:'#065F46',
     animal_bite:'#4C1D95', public_event:'#374151'
   };
@@ -2217,7 +2270,7 @@ window.loadAnalytics = async () => {
     <div class="bar-row">
       <div class="bar-lbl">${(TYPE_LABELS[t]||t).slice(0,14)}</div>
       <div class="bar-track"><div class="bar-fill"
-        style="width:${Math.round(n/maxType*100)}%;background:${TYPE_COLORS[t]||'#64748B'}"></div></div>
+        style="width:${Math.round(n/maxType*100)}%;background:${TYPE_COLORS[t]||'#5C6F68'}"></div></div>
       <div class="bar-val">${n}</div>
     </div>`).join('') || '<div style="font-size:12px;color:var(--text-2)">No signals yet</div>';
 
@@ -2240,13 +2293,13 @@ window.loadAnalytics = async () => {
 
   id('timeliness-panel').innerHTML = `
     <div class="tl-row"><span>Report → verify</span>
-      <span class="tl-val" style="color:${medVerify==='N/A'?'#64748B':'#854F0B'}">${medVerify}</span></div>
+      <span class="tl-val" style="color:${medVerify==='N/A'?'#5C6F68':'#92600B'}">${medVerify}</span></div>
     <div class="tl-row"><span>Verified credible</span>
-      <span class="tl-val" style="color:#0F6E56">${credible}</span></div>
+      <span class="tl-val" style="color:#0E6B53">${credible}</span></div>
     <div class="tl-row"><span>Escalated</span>
       <span class="tl-val" style="color:#534AB7">${escalated}</span></div>
     <div class="tl-row"><span>Cascade completion</span>
-      <span class="tl-val" style="color:${responded/Math.max(reported,1)<.1?'#A32D2D':'#0F6E56'}">
+      <span class="tl-val" style="color:${responded/Math.max(reported,1)<.1?'#9A2E1F':'#0E6B53'}">
         ${reported ? Math.round(responded/reported*100)+'%' : '0%'}</span></div>`;
 
   id('alert-panel').innerHTML = `
@@ -2290,7 +2343,7 @@ function sigCardFull(e, verifs) {
   } else if (!verif) {
     statusBadge = '<span class="badge pend">⏳ Awaiting CHA verify</span>';
   } else if (!verif.credible) {
-    statusBadge = '<span class="badge" style="background:#F1F5F9;color:#64748B">✕ Not credible</span>';
+    statusBadge = '<span class="badge" style="background:#F1F5F9;color:#5C6F68">✕ Not credible</span>';
   } else if (verif.escalate) {
     statusBadge = '<span class="badge" style="background:#EDE9FE;color:#3730A3">⬆ Escalated</span>';
   } else {
@@ -2395,7 +2448,7 @@ async function renderTasksScreen() {
         const cred = v?.credible;
         const esc2 = v?.escalate;
         const badge = !v ? '' : !cred
-          ? '<span class="badge" style="background:#F1F5F9;color:#64748B">✕ Not credible</span>'
+          ? '<span class="badge" style="background:#F1F5F9;color:#5C6F68">✕ Not credible</span>'
           : esc2
             ? '<span class="badge" style="background:#EDE9FE;color:#3730A3">⬆ Escalated</span>'
             : '<span class="badge sync">✓ Verified</span>';
@@ -3212,7 +3265,7 @@ function benchRow(label, ours, benchmark, source, lowerIsBetter) {
   const maxScale = Math.max(ours, benchmark, 100);
   const oursPct = Math.min(100, Math.round(ours/maxScale*100));
   const benchPct = Math.min(100, Math.round(benchmark/maxScale*100));
-  const fillColor = good ? '#0F6E56' : '#A32D2D';
+  const fillColor = good ? '#0E6B53' : '#9A2E1F';
   return `<div class="bench-row">
     <div class="bench-top">
       <div class="bench-label">${esc(label)}</div>
