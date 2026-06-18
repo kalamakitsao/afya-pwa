@@ -518,6 +518,51 @@ textarea{min-height:80px;resize:vertical}
 .cpi-detail-icon{font-size:28px;margin-bottom:6px}
 .cpi-detail-num{font-size:36px;font-weight:800;line-height:1}
 .cpi-detail-lbl{font-size:13px;font-weight:600;color:var(--text-2);margin-top:4px}
+/* ── OUTBREAK INVESTIGATION WORKFLOW (IDSR) ────────────────────────────── */
+.outbreak-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:13px 14px;margin-bottom:8px;cursor:pointer}
+.outbreak-card:active{background:var(--bg)}
+.outbreak-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.outbreak-name{font-size:14px;font-weight:700}
+.outbreak-meta{font-size:11px;color:var(--text-2);margin-top:2px}
+.risk-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:10px;text-transform:uppercase;
+  letter-spacing:.03em}
+.risk-low{background:var(--green-light);color:var(--green)}
+.risk-moderate{background:var(--amber-light);color:var(--amber)}
+.risk-high{background:#FFEDD5;color:#C2410C}
+.risk-very_high{background:var(--red-light);color:var(--red)}
+.status-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:9px}
+.status-under_investigation{background:#FEF3C7;color:#92400E}
+.status-confirmed{background:var(--red-light);color:var(--red)}
+.status-ruled_out{background:#F1F5F9;color:#64748B}
+.status-closed{background:var(--green-light);color:var(--green)}
+
+.rrt-toggle{display:flex;gap:8px;margin:10px 0}
+.rrt-opt{flex:1;text-align:center;padding:11px 8px;border-radius:9px;border:1.5px solid var(--border);
+  cursor:pointer;font-size:12.5px;font-weight:600;color:var(--text-2)}
+.rrt-opt.sel{border-color:var(--green);background:var(--green-light);color:var(--green)}
+
+.linelist-row{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;
+  padding:9px 0;border-bottom:1px solid #F1F5F9;font-size:12px}
+.linelist-row:last-child{border-bottom:none}
+.linelist-num{width:24px;height:24px;border-radius:50%;background:var(--bg);color:var(--text-2);
+  font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.linelist-name{font-weight:600}
+.linelist-meta{font-size:10.5px;color:var(--text-2);margin-top:1px}
+.outcome-tag{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:8px}
+.outcome-alive{background:var(--green-light);color:var(--green)}
+.outcome-recovered{background:#DBEAFE;color:#1E40AF}
+.outcome-died{background:var(--red-light);color:var(--red)}
+.outcome-unknown{background:#F1F5F9;color:#64748B}
+
+.analysis-stat{display:flex;justify-content:space-between;align-items:baseline;padding:8px 0;
+  border-bottom:1px solid #F1F5F9}
+.analysis-stat:last-child{border-bottom:none}
+.analysis-stat-lbl{font-size:12px;color:var(--text-2)}
+.analysis-stat-val{font-size:18px;font-weight:700}
+
+.escalate-county-banner{background:#EDE9FE;border:1px solid #DDD6FE;border-radius:10px;
+  padding:11px 13px;font-size:12px;color:#4C1D95;margin-bottom:12px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -772,6 +817,16 @@ textarea{min-height:80px;resize:vertical}
   <!-- IMPACT — community health program indicators benchmarked against KDHS 2022 -->
   <div id="screen-impact" class="screen">
     <div id="impact-content"></div>
+  </div>
+
+  <!-- OUTBREAKS — sub-county/county investigation workspace (IDSR Section 4) -->
+  <div id="screen-outbreaks" class="screen">
+    <div id="outbreaks-content"></div>
+  </div>
+
+  <!-- OUTBREAK DETAIL — risk assessment / line list / analysis / declaration -->
+  <div id="screen-outbreak-detail" class="screen">
+    <div id="outbreak-detail-content"></div>
   </div>
 
   <div class="tabs" id="tab-bar">
@@ -1139,7 +1194,10 @@ async function enterApp() {
   const name = profile?.display_name || session.user.email;
 
   // Role badge colour
-  const roleBg  = role === 'cha' ? '#1D9E75' : role === 'supervisor' ? '#534AB7' : '#085041';
+  const roleBg  = role === 'cha' ? '#1D9E75'
+    : role === 'scfp' ? '#C2410C'
+    : role === 'cfp' ? '#7C3AED'
+    : role === 'supervisor' ? '#534AB7' : '#085041';
   id('nav-user').innerHTML = `<span>${esc(name)}</span>
     <span style="background:${roleBg};color:#fff;padding:1px 7px;border-radius:10px;
       font-size:10px;font-weight:600;margin-left:6px">${role.toUpperCase()}</span>`;
@@ -1197,6 +1255,9 @@ function renderTabs(role) {
     <path d="M3 9.5L12 3l9 6.5"/><path d="M5 10v9a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1v-9"/></svg>`;
   const impactSvg  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
     <path d="M3 3v18h18"/><path d="M18.7 8l-5.1 5.1-2.8-2.8L7 14"/></svg>`;
+  const outbreakSvg= `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <path d="M12 9v4"/><path d="M12 17h.01"/>
+    <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>`;
 
   const chpTabs = [
     { id:'home',       icon:homeSvg, label:'Home',       action:"goTab('home')" },
@@ -1218,8 +1279,29 @@ function renderTabs(role) {
     { id:'signals', icon:sigSvg,    label:'Signals', action:"goTab('signals');loadAnalytics()" },
     { id:'impact',  icon:impactSvg, label:'Impact',  action:"goTab('impact');loadImpactDashboard()" },
   ];
+  // Sub-County Focal Person: receives escalated signals for risk assessment,
+  // decides RRT mobilization, oversees outbreak investigations in their sub-county.
+  const scfpTabs = [
+    { id:'home',     icon:homeSvg,    label:'Home',     action:"goTab('home')" },
+    { id:'tasks',    icon:taskSvg,    label:'Tasks',    action:"goTab('tasks')" },
+    { id:'outbreaks',icon:outbreakSvg,label:'Outbreaks',action:"goTab('outbreaks');renderOutbreaksScreen()" },
+    { id:'signals',  icon:sigSvg,     label:'Signals',  action:"goTab('signals');loadAnalytics()" },
+    { id:'impact',   icon:impactSvg,  label:'Impact',   action:"goTab('impact');loadImpactDashboard()" },
+  ];
+  // County Focal Person: oversees all sub-counties, confirms/declares outbreaks
+  // that cross sub-county capacity, tracks closure.
+  const cfpTabs = [
+    { id:'home',     icon:homeSvg,    label:'Home',     action:"goTab('home')" },
+    { id:'outbreaks',icon:outbreakSvg,label:'Outbreaks',action:"goTab('outbreaks');renderOutbreaksScreen()" },
+    { id:'signals',  icon:sigSvg,     label:'Signals',  action:"goTab('signals');loadAnalytics()" },
+    { id:'impact',   icon:impactSvg,  label:'Impact',   action:"goTab('impact');loadImpactDashboard()" },
+  ];
 
-  const tabs = role === 'cha' ? chaTabs : role === 'supervisor' ? supTabs : chpTabs;
+  const tabs = role === 'cha' ? chaTabs
+    : role === 'scfp' ? scfpTabs
+    : role === 'cfp' ? cfpTabs
+    : role === 'supervisor' ? supTabs
+    : chpTabs;
 
   // Mobile bottom tab bar (unchanged behaviour)
   bar.innerHTML = tabs.map((t,i) => `
@@ -1278,6 +1360,10 @@ async function renderHome() {
   const role = userProfile?.role || 'chp';
   if (role === 'cha') {
     await renderChaHome();
+  } else if (role === 'scfp') {
+    await renderScfpHome();
+  } else if (role === 'cfp') {
+    await renderCfpHome();
   } else {
     await renderChpHome();
   }
@@ -1372,13 +1458,14 @@ async function renderChaHome() {
     const tasks = taskRes.data || [];
 
     const urgentCount = tasks.filter(t => t.title?.startsWith('URGENT')).length;
+    const locLine = areas[0]
+      ? `${esc(areas[0].sub_county||'')} Sub-county · ${esc(areas[0].county||'')} County`
+      : '';
 
     statsHtml = `
       <div class="card" style="margin-bottom:12px">
-        <div style="font-size:16px;font-weight:700;margin-bottom:2px">Kiharu CHU</div>
-        <div style="font-size:12px;color:var(--text-2);margin-bottom:10px">
-          Kaptum Sub-county · Baringo County
-        </div>
+        <div style="font-size:16px;font-weight:700;margin-bottom:2px">${esc(areas[0]?.chu_name||'My CHU')}</div>
+        <div style="font-size:12px;color:var(--text-2);margin-bottom:10px">${locLine}</div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">
           ${areaStatTile('🗺', 'CHP Areas', areas.length)}
           ${areaStatTile('📋', 'Pending tasks', tasks.length)}
@@ -1410,6 +1497,109 @@ async function renderChaHome() {
     el.innerHTML = statsHtml + `<div style="font-size:12px;color:var(--text-2);padding:8px 0">
       Tasks and area details load when reconnected.</div>`;
   }
+}
+
+// ── SCFP HOME — sub-county summary + pending risk-assessment tasks ────────
+// SCFP receives a task when a CHA verifies a signal as credible AND escalates
+// it (per the create_scfp_task_on_escalation trigger). Mirrors IDSR: signal
+// verification (CHA) → risk assessment (Sub-County Focal Person).
+async function renderScfpHome() {
+  const el = id('home-content');
+  if (!isOnline()) {
+    el.innerHTML = `<div style="font-size:12px;color:var(--text-2);padding:8px 0">
+      Sub-county overview loads when reconnected.</div>`;
+    return;
+  }
+
+  const subCountyId = userProfile?.sub_county_id;
+  const [{ data: subCounty }, { data: areas }, { data: riskTasks }, { data: outbreaks }] = await Promise.all([
+    subCountyId ? sb.from('sub_counties').select('*,counties(name)').eq('id', subCountyId).maybeSingle() : Promise.resolve({data:null}),
+    subCountyId ? sb.from('chp_areas').select('id').eq('sub_county_id', subCountyId) : sb.from('chp_areas').select('id'),
+    sb.from('tasks').select('*,events(answers,created_at)').eq('status','pending').eq('form_type','risk_assessment').order('created_at',{ascending:false}),
+    subCountyId ? sb.from('outbreaks').select('*').eq('sub_county_id', subCountyId).neq('status','closed') : sb.from('outbreaks').select('*').neq('status','closed'),
+  ]);
+
+  const activeOutbreaks = outbreaks || [];
+
+  el.innerHTML = `
+    <div class="card" style="margin-bottom:12px">
+      <div style="font-size:16px;font-weight:700;margin-bottom:2px">${esc(subCounty?.name||'Sub-county')} Sub-county</div>
+      <div style="font-size:12px;color:var(--text-2);margin-bottom:10px">${esc(subCounty?.counties?.name||'')} County</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+        ${areaStatTile('🗺', 'CHP areas', (areas||[]).length)}
+        ${areaStatTile('🔍', 'Risk assessments', (riskTasks||[]).length)}
+        ${areaStatTile(activeOutbreaks.length?'⚠':'✅', 'Active outbreaks', activeOutbreaks.length)}
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-title">Pending risk assessments (${(riskTasks||[]).length})</div>
+      ${(riskTasks||[]).length
+        ? riskTasks.map(t => renderRiskTaskCard(t)).join('')
+        : empty('✅','No pending risk assessments','Escalated signals from CHAs will appear here')}
+    </div>
+    <div class="card">
+      <div class="card-title">Active outbreak investigations</div>
+      ${activeOutbreaks.length
+        ? activeOutbreaks.map(o => outbreakCard(o)).join('')
+        : '<div style="font-size:12px;color:var(--text-2)">None currently under investigation</div>'}
+    </div>`;
+}
+
+function renderRiskTaskCard(t) {
+  const evt = t.events || {};
+  const answers = evt.answers || {};
+  const TYPES = {
+    outbreak:'🔴 Outbreak', similar_symptoms:'🟡 Similar symptoms',
+    death_in_community:'⚫ Unexplained death', child_weak_legs_arms:'🟠 Limb weakness',
+    diarrhea:'🟡 Diarrhoea', animal_sickness:'🟡 Animal sickness',
+    animal_bite:'🟡 Animal bite', public_event:'🔵 Public event'
+  };
+  const sigLabel = TYPES[answers.signal_type] || '📡 Signal';
+  const loc = answers.location_detail || '';
+  return `<div class="task" style="cursor:pointer;margin-bottom:8px"
+      onclick="openRiskAssessmentModal('${t.id}','${t.event_id}')">
+    <div style="font-size:10px;color:var(--green);font-weight:600;margin-bottom:3px">Tap to assess risk →</div>
+    <div class="task-title">${esc(t.title)}</div>
+    <div style="font-size:12px;color:var(--text-2);margin-top:3px">${sigLabel}${loc?' · '+esc(loc):''}</div>
+    <div class="task-due">Due: ${t.due_date||'ASAP'}</div>
+  </div>`;
+}
+
+// ── CFP HOME — county summary + outbreaks escalated to county level ───────
+async function renderCfpHome() {
+  const el = id('home-content');
+  if (!isOnline()) {
+    el.innerHTML = `<div style="font-size:12px;color:var(--text-2);padding:8px 0">
+      County overview loads when reconnected.</div>`;
+    return;
+  }
+
+  const countyId = userProfile?.county_id;
+  const [{ data: county }, { data: subCounties }, { data: outbreaks }] = await Promise.all([
+    countyId ? sb.from('counties').select('*').eq('id', countyId).maybeSingle() : Promise.resolve({data:null}),
+    countyId ? sb.from('sub_counties').select('id,name').eq('county_id', countyId) : sb.from('sub_counties').select('id,name'),
+    countyId ? sb.from('outbreaks').select('*').eq('county_id', countyId).neq('status','closed') : sb.from('outbreaks').select('*').neq('status','closed'),
+  ]);
+
+  const activeOutbreaks = outbreaks || [];
+  const needsDeclaration = activeOutbreaks.filter(o => o.status === 'under_investigation' && !o.declared_at);
+
+  el.innerHTML = `
+    <div class="card" style="margin-bottom:12px">
+      <div style="font-size:16px;font-weight:700;margin-bottom:2px">${esc(county?.name||'County')} County</div>
+      <div style="font-size:12px;color:var(--text-2);margin-bottom:10px">County Health Management Team</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+        ${areaStatTile('🏛', 'Sub-counties', (subCounties||[]).length)}
+        ${areaStatTile(activeOutbreaks.length?'⚠':'✅', 'Active outbreaks', activeOutbreaks.length)}
+        ${areaStatTile(needsDeclaration.length?'📋':'✅', 'Awaiting declaration', needsDeclaration.length)}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Outbreaks requiring county oversight</div>
+      ${activeOutbreaks.length
+        ? activeOutbreaks.map(o => outbreakCard(o)).join('')
+        : '<div style="font-size:12px;color:var(--text-2)">No active outbreaks across this county</div>'}
+    </div>`;
 }
 
 function renderTaskCard(t) {
@@ -2154,8 +2344,12 @@ window.goTab = (tab) => {
     showToast('Household register is managed by CHPs');
     return;
   }
+  if (tab === 'outbreaks' && !['scfp','cfp'].includes(role)) {
+    showToast('Outbreak investigations are managed by Sub-County and County teams');
+    return;
+  }
 
-  for (const t of ['home','households','household-detail','member-detail','report','tasks','signals','impact','success','verify-done']) {
+  for (const t of ['home','households','household-detail','member-detail','report','tasks','signals','impact','outbreaks','outbreak-detail','success','verify-done']) {
     const s  = id(`screen-${t}`);
     const b  = id(`tab-${t}`);
     const sb = id(`sb-link-${t}`);
@@ -2164,8 +2358,11 @@ window.goTab = (tab) => {
     if (sb) sb.className = 'sb-link' + (t===tab?' on':'');
   }
 
-  // Load tasks screen content when navigating there
-  if (tab === 'tasks') renderTasksScreen();
+  // Load tasks screen content when navigating there — role-specific
+  if (tab === 'tasks') {
+    if (role === 'scfp') renderScfpTasksScreen();
+    else renderTasksScreen();
+  }
 };
 
 async function renderTasksScreen() {
@@ -3032,6 +3229,356 @@ function benchRow(label, ours, benchmark, source, lowerIsBetter) {
     <div class="bench-source">${esc(source)}</div>
   </div>`;
 }
+
+// ════════════════════════════════════════════════════════════════════════
+// OUTBREAK INVESTIGATION WORKFLOW — Sub-County & County levels
+//
+// Mirrors the cascade in Kenya's IDSR Technical Guidelines (3rd ed., 2022)
+// Section 1.7 (signal verification → risk assessment → public health
+// action) and Section 4 (investigate and confirm suspected outbreaks):
+// a CHA-verified, escalated signal triggers a Sub-County Focal Person
+// risk assessment; a "high"/"very high" risk classification opens a
+// formal outbreak investigation with RRT mobilization, IDSR-standard
+// line-listing (Annex 4E), and basic time/place/person analysis
+// (attack rate, case fatality rate) computed live from the line list.
+// County-level oversight handles declaration/closure and cross-sub-county
+// coordination, consistent with WHO AFRO's district-as-integration-point
+// model extended one level up for Kenya's devolved structure.
+// ════════════════════════════════════════════════════════════════════════
+
+let currentRiskTaskId = null;
+let riskAssessState = { riskLevel: null, mobilizeRrt: null };
+
+window.openRiskAssessmentModal = async (taskId, eventId) => {
+  currentRiskTaskId = taskId;
+  riskAssessState = { riskLevel: null, mobilizeRrt: null };
+
+  const { data: evt } = await sb.from('events').select('answers,chp_area_id,created_at').eq('id', eventId).maybeSingle();
+  const a = evt?.answers || {};
+  const TYPES = {
+    outbreak:'🔴 Suspected outbreak', similar_symptoms:'🟡 Similar symptoms',
+    death_in_community:'⚫ Unexplained death', child_weak_legs_arms:'🟠 Child limb weakness',
+    diarrhea:'🟡 Diarrhoea cluster', animal_sickness:'🟡 Animal sickness',
+    animal_bite:'🟡 Animal bite', public_event:'🔵 Public health event'
+  };
+
+  showGenericModal('Risk assessment', `
+    <div class="modal-signal">
+      <strong>${TYPES[a.signal_type]||'📡 Signal'}</strong>
+      ${a.location_detail ? '<div>📍 '+esc(a.location_detail)+'</div>' : ''}
+      ${a.approx_people_affected ? '<div>👥 ~'+a.approx_people_affected+' people affected</div>' : ''}
+      ${a.approx_people_dead ? '<div>💀 '+a.approx_people_dead+' death(s) reported</div>' : ''}
+      ${a.signal_description ? '<div style="margin-top:4px;color:var(--text-2);font-size:12px">'+esc(a.signal_description)+'</div>' : ''}
+    </div>
+    <div class="dialog-field">
+      <label>Risk level (per IDSR risk assessment)</label>
+      <div class="radio-group" style="margin-bottom:0">
+        <div class="radio-opt" onclick="setRiskLevel('low',this)"><div class="radio-circle"></div><div class="radio-lbl">Low</div></div>
+        <div class="radio-opt" onclick="setRiskLevel('moderate',this)"><div class="radio-circle"></div><div class="radio-lbl">Moderate</div></div>
+        <div class="radio-opt" onclick="setRiskLevel('high',this)"><div class="radio-circle"></div><div class="radio-lbl">High</div></div>
+        <div class="radio-opt" onclick="setRiskLevel('very_high',this)"><div class="radio-circle"></div><div class="radio-lbl">Very high</div></div>
+      </div>
+    </div>
+    <div class="dialog-field" id="rrt-field" style="display:none">
+      <label>Mobilize Rapid Response Team (RRT)?</label>
+      <div class="rrt-toggle">
+        <div class="rrt-opt" onclick="setRrt(true,this)">Yes — mobilize RRT</div>
+        <div class="rrt-opt" onclick="setRrt(false,this)">Not yet</div>
+      </div>
+    </div>
+    <div class="dialog-field">
+      <label>Suspected disease / condition (working case definition)</label>
+      <input type="text" id="ra-disease" placeholder="e.g. suspected cholera, suspected VHF"/>
+    </div>
+    <div class="dialog-field">
+      <label>Notes</label>
+      <textarea id="ra-notes" placeholder="Risk assessment rationale"></textarea>
+    </div>
+  `, async () => {
+    if (!riskAssessState.riskLevel) { alert('Please select a risk level'); return false; }
+    const launchInvestigation = ['high','very_high'].includes(riskAssessState.riskLevel);
+
+    // Close the risk-assessment task
+    await sb.from('tasks').update({ status:'done' }).eq('id', currentRiskTaskId);
+
+    if (launchInvestigation) {
+      const { error } = await sb.from('outbreaks').insert({
+        source_event_id: eventId,
+        chp_area_id: evt?.chp_area_id || null,
+        sub_county_id: userProfile?.sub_county_id || null,
+        county_id: null,
+        suspected_disease: id('ra-disease').value.trim() || null,
+        risk_level: riskAssessState.riskLevel,
+        rrt_mobilized: riskAssessState.mobilizeRrt === true,
+        status: 'under_investigation',
+        notes: id('ra-notes').value.trim() || null,
+      });
+      if (error) { alert('Could not open investigation: '+error.message); return false; }
+      showToast(`✓ Risk assessed as ${riskAssessState.riskLevel.replace('_',' ')} — investigation opened`);
+    } else {
+      showToast(`✓ Risk assessed as ${riskAssessState.riskLevel} — no formal investigation needed`);
+    }
+    await renderHome();
+    return true;
+  });
+};
+
+window.setRiskLevel = (level, el) => {
+  riskAssessState.riskLevel = level;
+  el.parentElement.querySelectorAll('.radio-opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+  id('rrt-field').style.display = ['high','very_high'].includes(level) ? 'block' : 'none';
+};
+window.setRrt = (val, el) => {
+  riskAssessState.mobilizeRrt = val;
+  el.parentElement.querySelectorAll('.rrt-opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+};
+
+// ── SCFP TASKS SCREEN (full-screen risk-assessment queue) ─────────────
+window.renderScfpTasksScreen = async () => {
+  const el = id('tasks-content');
+  el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-2)">Loading…</div>';
+  if (!isOnline()) {
+    el.innerHTML = `<div style="padding:16px;font-size:13px;color:var(--text-2)">Tasks load when reconnected.</div>`;
+    return;
+  }
+  const { data: tasks } = await sb.from('tasks')
+    .select('*,events(answers,created_at)')
+    .eq('status','pending').eq('form_type','risk_assessment')
+    .order('created_at',{ascending:false});
+
+  el.innerHTML = `<div class="card">
+    <div class="card-title">Pending risk assessments (${(tasks||[]).length})</div>
+    ${(tasks||[]).length ? tasks.map(t=>renderRiskTaskCard(t)).join('') : empty('✅','No pending risk assessments','Escalated CHA signals will appear here')}
+  </div>`;
+};
+
+// ── OUTBREAKS LIST SCREEN (shared SCFP/CFP) ────────────────────────────
+window.renderOutbreaksScreen = async () => {
+  const el = id('outbreaks-content');
+  el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-2)">Loading…</div>';
+  if (!isOnline()) {
+    el.innerHTML = `<div style="padding:16px;font-size:13px;color:var(--text-2)">Outbreaks load when reconnected.</div>`;
+    return;
+  }
+  const role = userProfile?.role;
+  let query = sb.from('outbreaks').select('*,chp_areas(name)').order('created_at',{ascending:false});
+  if (role === 'scfp' && userProfile?.sub_county_id) query = query.eq('sub_county_id', userProfile.sub_county_id);
+  if (role === 'cfp' && userProfile?.county_id) query = query.eq('county_id', userProfile.county_id);
+  const { data: outbreaks } = await query;
+
+  const active = (outbreaks||[]).filter(o => o.status !== 'closed');
+  const closed = (outbreaks||[]).filter(o => o.status === 'closed');
+
+  el.innerHTML = `
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-title">Active investigations (${active.length})</div>
+      ${active.length ? active.map(o=>outbreakCard(o)).join('') : '<div style="font-size:12px;color:var(--text-2)">None currently active</div>'}
+    </div>
+    ${closed.length ? `<div class="card">
+      <div class="card-title">Closed (${closed.length})</div>
+      ${closed.map(o=>outbreakCard(o)).join('')}
+    </div>` : ''}`;
+};
+
+function outbreakCard(o) {
+  const riskLbl = o.risk_level ? o.risk_level.replace('_',' ') : 'unassessed';
+  const statusLbl = o.status.replace('_',' ');
+  return `<div class="outbreak-card" onclick="openOutbreakDetail('${o.id}')">
+    <div class="outbreak-top">
+      <div class="outbreak-name">${esc(o.suspected_disease || 'Unclassified event')}</div>
+      <span class="status-badge status-${o.status}">${statusLbl}</span>
+    </div>
+    <div class="outbreak-meta">${o.chp_areas?.name ? esc(o.chp_areas.name)+' · ' : ''}
+      ${o.rrt_mobilized ? 'RRT mobilized · ' : ''}Opened ${(o.created_at||'').slice(0,10)}</div>
+    ${o.risk_level ? `<span class="risk-badge risk-${o.risk_level}" style="margin-top:6px;display:inline-block">${riskLbl} risk</span>` : ''}
+  </div>`;
+}
+
+// ── OUTBREAK DETAIL — line list, analysis, declaration/closure ────────
+let currentOutbreakId = null;
+
+window.openOutbreakDetail = async (outbreakId) => {
+  currentOutbreakId = outbreakId;
+  goTab('outbreak-detail');
+  await renderOutbreakDetail(outbreakId);
+};
+
+async function renderOutbreakDetail(outbreakId) {
+  const el = id('outbreak-detail-content');
+  el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-2)">Loading…</div>';
+
+  const { data: o } = await sb.from('outbreaks').select('*,chp_areas(name)').eq('id', outbreakId).maybeSingle();
+  const { data: lineList } = await sb.from('outbreak_line_list').select('*').eq('outbreak_id', outbreakId).order('created_at');
+
+  if (!o) { el.innerHTML = '<div style="padding:16px">Outbreak record not found.</div>'; return; }
+
+  const cases = lineList || [];
+  const totalCases = cases.length;
+  const deaths = cases.filter(c => c.outcome === 'died').length;
+  // Attack rate and case fatality rate — standard IDSR Section 3.2.6/3.2.7
+  // computations. Population denominator uses the linked CHP area's
+  // recorded household population where available; otherwise left blank
+  // rather than guessing a number with no basis.
+  const cfr = totalCases ? Math.round(deaths/totalCases*1000)/10 : 0;
+
+  const role = userProfile?.role;
+  const canDeclare = role === 'scfp' || role === 'cfp';
+
+  el.innerHTML = `
+    <div class="back-link" onclick="goTab('outbreaks');renderOutbreaksScreen()">‹ Back to outbreaks</div>
+
+    <div class="profile-header">
+      <div class="profile-name">${esc(o.suspected_disease || 'Unclassified event')}</div>
+      <div class="profile-sub">${o.chp_areas?.name ? esc(o.chp_areas.name)+' · ' : ''}Opened ${(o.created_at||'').slice(0,10)}</div>
+      <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+        ${o.risk_level ? `<span class="risk-badge risk-${o.risk_level}">${o.risk_level.replace('_',' ')} risk</span>` : ''}
+        <span class="status-badge status-${o.status}">${o.status.replace('_',' ')}</span>
+        ${o.rrt_mobilized ? '<span class="status-badge" style="background:#DBEAFE;color:#1E40AF">RRT mobilized</span>' : ''}
+      </div>
+      ${o.notes ? `<div style="font-size:12px;color:var(--text-2);margin-top:10px">${esc(o.notes)}</div>` : ''}
+    </div>
+
+    ${o.status==='under_investigation' && role==='scfp' && !o.county_notified_at ? `
+      <div class="escalate-county-banner">
+        ⬆ If this event exceeds sub-county response capacity or meets IHR (2005) criteria
+        for a potential public health emergency of international concern, notify the County
+        Health Management Team.
+      </div>
+      <button class="btn btn-o" onclick="notifyCounty('${o.id}')" style="margin-bottom:12px">
+        Notify County Focal Person
+      </button>` : ''}
+
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-title">Time/place/person analysis</div>
+      <div class="analysis-stat"><span class="analysis-stat-lbl">Total cases (line-listed)</span>
+        <span class="analysis-stat-val">${totalCases}</span></div>
+      <div class="analysis-stat"><span class="analysis-stat-lbl">Deaths</span>
+        <span class="analysis-stat-val" style="color:${deaths?'var(--red)':'inherit'}">${deaths}</span></div>
+      <div class="analysis-stat"><span class="analysis-stat-lbl">Case fatality rate</span>
+        <span class="analysis-stat-val">${cfr}%</span></div>
+      <div style="font-size:10.5px;color:#94A3B8;margin-top:8px;font-style:italic">
+        Per IDSR Section 3.2.7: CFR = deaths ÷ total cases × 100. Attack rate requires a
+        population denominator not yet captured for this area in this PoC.</div>
+    </div>
+
+    <div class="card" style="margin-bottom:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="card-title" style="margin-bottom:0">Line list (${totalCases})</div>
+        <button class="btn-sm btn-sm-p" style="width:auto;padding:6px 11px;font-size:11.5px"
+          onclick="openAddLineListCase('${outbreakId}')">+ Add case</button>
+      </div>
+      ${totalCases ? cases.map((c,i) => `
+        <div class="linelist-row">
+          <div class="linelist-num">${i+1}</div>
+          <div>
+            <div class="linelist-name">${esc(c.name||'Unnamed')}</div>
+            <div class="linelist-meta">${c.age_years?c.age_years+' yr · ':''}${esc(c.sex||'')}${c.village?' · '+esc(c.village):''}
+              ${c.date_of_onset?' · onset '+c.date_of_onset:''}</div>
+          </div>
+          <span class="outcome-tag outcome-${c.outcome||'unknown'}">${(c.outcome||'unknown').replace('_',' ')}</span>
+        </div>`).join('') : '<div style="font-size:12px;color:var(--text-2)">No cases logged yet</div>'}
+    </div>
+
+    ${canDeclare && o.status==='under_investigation' ? `
+      <button class="btn btn-p" onclick="declareOutbreak('${o.id}')" style="margin-bottom:8px">
+        Confirm & declare outbreak
+      </button>
+      <button class="btn btn-o" onclick="ruleOutOutbreak('${o.id}')" style="margin-bottom:8px">
+        Rule out — not an outbreak
+      </button>` : ''}
+    ${canDeclare && o.status==='confirmed' ? `
+      <button class="btn btn-o" onclick="closeOutbreak('${o.id}')">Close investigation</button>` : ''}`;
+}
+
+window.openAddLineListCase = (outbreakId) => {
+  showGenericModal('Add case to line list', `
+    <div class="dialog-field"><label>Name</label><input type="text" id="ll-name" placeholder="Case name (or anonymized ID)"/></div>
+    <div class="dialog-field"><label>Age (years)</label><input type="number" id="ll-age" min="0"/></div>
+    <div class="dialog-field"><label>Sex</label>
+      <div class="radio-group" style="margin-bottom:0">
+        <div class="radio-opt" onclick="pickRadio(this,'male')"><div class="radio-circle"></div><div class="radio-lbl">Male</div></div>
+        <div class="radio-opt" onclick="pickRadio(this,'female')"><div class="radio-circle"></div><div class="radio-lbl">Female</div></div>
+      </div>
+    </div>
+    <div class="dialog-field"><label>Village</label><input type="text" id="ll-village"/></div>
+    <div class="dialog-field"><label>Date of onset</label><input type="date" id="ll-onset"/></div>
+    <div class="dialog-field"><label>Outcome</label>
+      <div class="radio-group" id="ll-outcome-group" style="margin-bottom:0">
+        <div class="radio-opt" onclick="pickOutcome(this,'alive')"><div class="radio-circle"></div><div class="radio-lbl">Alive — under care</div></div>
+        <div class="radio-opt" onclick="pickOutcome(this,'recovered')"><div class="radio-circle"></div><div class="radio-lbl">Recovered</div></div>
+        <div class="radio-opt" onclick="pickOutcome(this,'died')"><div class="radio-circle"></div><div class="radio-lbl">Died</div></div>
+        <div class="radio-opt" onclick="pickOutcome(this,'unknown')"><div class="radio-circle"></div><div class="radio-lbl">Unknown</div></div>
+      </div>
+    </div>
+  `, async () => {
+    const name = id('ll-name').value.trim();
+    if (!name) { alert('Name (or anonymized ID) is required'); return false; }
+    const { error } = await sb.from('outbreak_line_list').insert({
+      outbreak_id: outbreakId, name,
+      age_years: id('ll-age').value || null,
+      sex: window.__pickedRadio || null,
+      village: id('ll-village').value.trim() || null,
+      date_of_onset: id('ll-onset').value || null,
+      outcome: window.__pickedOutcome || 'unknown',
+      added_by: session.user.id,
+    });
+    if (error) { alert('Could not add case: '+error.message); return false; }
+    showToast('✓ Case added to line list');
+    renderOutbreakDetail(outbreakId);
+    return true;
+  });
+};
+window.pickOutcome = (el, val) => {
+  window.__pickedOutcome = val;
+  el.parentElement.querySelectorAll('.radio-opt').forEach(o => o.classList.remove('sel'));
+  el.classList.add('sel');
+};
+
+window.notifyCounty = async (outbreakId) => {
+  const { data: o } = await sb.from('outbreaks').select('chp_area_id').eq('id', outbreakId).maybeSingle();
+  const { data: area } = await sb.from('chp_areas').select('sub_county_id').eq('id', o?.chp_area_id).maybeSingle();
+  const { data: subCounty } = await sb.from('sub_counties').select('county_id').eq('id', area?.sub_county_id).maybeSingle();
+
+  const { error } = await sb.from('outbreaks').update({
+    county_id: subCounty?.county_id || null,
+    county_notified_at: new Date().toISOString(),
+  }).eq('id', outbreakId);
+  if (error) { alert('Could not notify county: '+error.message); return; }
+  showToast('✓ County Health Management Team notified');
+  renderOutbreakDetail(outbreakId);
+};
+
+window.declareOutbreak = async (outbreakId) => {
+  if (!confirm('Confirm and declare this as an active outbreak? This notifies the response chain.')) return;
+  const { error } = await sb.from('outbreaks').update({
+    status: 'confirmed', declared_by: session.user.id, declared_at: new Date().toISOString(),
+  }).eq('id', outbreakId);
+  if (error) { alert('Could not declare outbreak: '+error.message); return; }
+  showToast('✓ Outbreak confirmed and declared');
+  renderOutbreakDetail(outbreakId);
+};
+
+window.ruleOutOutbreak = async (outbreakId) => {
+  if (!confirm('Rule out this event as not an outbreak? It will be closed.')) return;
+  const { error } = await sb.from('outbreaks').update({
+    status: 'ruled_out', closed_at: new Date().toISOString(),
+  }).eq('id', outbreakId);
+  if (error) { alert('Could not update: '+error.message); return; }
+  showToast('Event ruled out — investigation closed');
+  goTab('outbreaks'); renderOutbreaksScreen();
+};
+
+window.closeOutbreak = async (outbreakId) => {
+  if (!confirm('Close this outbreak investigation?')) return;
+  const { error } = await sb.from('outbreaks').update({
+    status: 'closed', closed_at: new Date().toISOString(),
+  }).eq('id', outbreakId);
+  if (error) { alert('Could not close: '+error.message); return; }
+  showToast('✓ Outbreak investigation closed');
+  goTab('outbreaks'); renderOutbreaksScreen();
+};
 
 // ── EXPRESSION EVALUATOR ──────────────────────────────────────────────────
 function expr(node, ans) {
