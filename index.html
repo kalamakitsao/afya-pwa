@@ -563,6 +563,28 @@ textarea{min-height:80px;resize:vertical}
 
 .escalate-county-banner{background:#EDE9FE;border:1px solid #DDD6FE;border-radius:10px;
   padding:11px 13px;font-size:12px;color:#4C1D95;margin-bottom:12px;line-height:1.5}
+/* ── SCFP/CFP DECISION-SUPPORT ANALYTICS ───────────────────────────────── */
+.subcounty-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
+  padding:13px 14px;margin-bottom:8px}
+.subcounty-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.subcounty-name{font-size:13.5px;font-weight:700}
+.subcounty-stats{display:flex;gap:14px;font-size:11px;color:var(--text-2)}
+.subcounty-stat-num{font-weight:700;color:var(--text)}
+.funnel-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.funnel-bar-wrap{flex:1;background:#F1F5F9;border-radius:6px;height:26px;position:relative;overflow:hidden}
+.funnel-bar-fill{height:100%;border-radius:6px;display:flex;align-items:center;
+  padding-left:10px;font-size:11px;font-weight:700;color:#fff;white-space:nowrap;
+  transition:width .4s ease}
+.funnel-lbl{font-size:11px;color:var(--text-2);width:92px;flex-shrink:0;text-align:right}
+.cha-load-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.cha-load-name{font-size:11px;color:var(--text-2);width:80px;flex-shrink:0;
+  text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sla-stat{display:flex;justify-content:space-between;align-items:center;padding:9px 0;
+  border-bottom:1px solid #F1F5F9}
+.sla-stat:last-child{border-bottom:none}
+.sla-num{font-size:16px;font-weight:700}
+.sla-num.good{color:var(--green)}
+.sla-num.bad{color:var(--red)}
 </style>
 </head>
 <body>
@@ -775,6 +797,8 @@ textarea{min-height:80px;resize:vertical}
 
   <!-- SIGNALS / ANALYTICS -->
   <div id="screen-signals" class="screen">
+    <!-- CHP/CHA surveillance-cascade view (unchanged) -->
+    <div id="signals-chp-cha-view">
     <div class="period-row">
       <button class="period-btn" onclick="setPeriod(7,this)">7 days</button>
       <button class="period-btn on" onclick="setPeriod(30,this)">30 days</button>
@@ -811,6 +835,17 @@ textarea{min-height:80px;resize:vertical}
     <div class="chart-card-full">
       <div class="chart-label">All signals</div>
       <div id="all-sigs-wrap"></div>
+    </div>
+    </div><!-- /signals-chp-cha-view -->
+
+    <!-- SCFP decision-support analytics (operational, single sub-county) -->
+    <div id="scfp-analytics-view" style="display:none">
+      <div id="scfp-analytics-content"></div>
+    </div>
+
+    <!-- CFP decision-support analytics (strategic, cross-sub-county) -->
+    <div id="cfp-analytics-view" style="display:none">
+      <div id="cfp-analytics-content"></div>
     </div>
   </div>
 
@@ -1285,7 +1320,7 @@ function renderTabs(role) {
     { id:'home',     icon:homeSvg,    label:'Home',     action:"goTab('home')" },
     { id:'tasks',    icon:taskSvg,    label:'Tasks',    action:"goTab('tasks')" },
     { id:'outbreaks',icon:outbreakSvg,label:'Outbreaks',action:"goTab('outbreaks');renderOutbreaksScreen()" },
-    { id:'signals',  icon:sigSvg,     label:'Signals',  action:"goTab('signals');loadAnalytics()" },
+    { id:'signals',  icon:sigSvg,     label:'Analytics',action:"goTab('signals');loadScfpAnalytics()" },
     { id:'impact',   icon:impactSvg,  label:'Impact',   action:"goTab('impact');loadImpactDashboard()" },
   ];
   // County Focal Person: oversees all sub-counties, confirms/declares outbreaks
@@ -1293,7 +1328,7 @@ function renderTabs(role) {
   const cfpTabs = [
     { id:'home',     icon:homeSvg,    label:'Home',     action:"goTab('home')" },
     { id:'outbreaks',icon:outbreakSvg,label:'Outbreaks',action:"goTab('outbreaks');renderOutbreaksScreen()" },
-    { id:'signals',  icon:sigSvg,     label:'Signals',  action:"goTab('signals');loadAnalytics()" },
+    { id:'signals',  icon:sigSvg,     label:'Analytics',action:"goTab('signals');loadCfpAnalytics()" },
     { id:'impact',   icon:impactSvg,  label:'Impact',   action:"goTab('impact');loadImpactDashboard()" },
   ];
 
@@ -3627,6 +3662,336 @@ window.closeOutbreak = async (outbreakId) => {
   if (error) { alert('Could not close: '+error.message); return; }
   showToast('✓ Outbreak investigation closed');
   goTab('outbreaks'); renderOutbreaksScreen();
+};
+
+// ════════════════════════════════════════════════════════════════════════
+// SCFP / CFP DECISION-SUPPORT ANALYTICS
+//
+// Distinct from the CHP/CHA surveillance-cascade view above (reported→
+// verified→escalated throughput). These answer the questions each focal
+// person actually needs answered to do their IDSR-defined job:
+//   SCFP: is risk assessment keeping pace with escalations? which active
+//         outbreaks need attention (by CFR/risk level)? is any one CHA
+//         carrying disproportionate signal volume (relevant now that one
+//         CHA can cover multiple CHUs)?
+//   CFP:  which sub-county needs support right now? is the confirmed/
+//         ruled-out ratio healthy? how fast is county being notified once
+//         sub-county flags a risk?
+// Both reuse the existing Chart.js + KPI-cascade visual language already
+// established in the Signals tab, so they read as native, not bolted on.
+// ════════════════════════════════════════════════════════════════════════
+
+let scfpAnalyticsPeriod = 90;
+let cfpAnalyticsPeriod  = 90;
+let scfpCfrChart = null;
+
+function showAnalyticsView(which) {
+  // Toggles between the CHP/CHA surveillance view and the role-specific
+  // decision-support view inside the same #screen-signals container.
+  id('signals-chp-cha-view').style.display = which === 'chp-cha' ? 'flex' : 'none';
+  id('scfp-analytics-view').style.display  = which === 'scfp'    ? 'block' : 'none';
+  id('cfp-analytics-view').style.display   = which === 'cfp'     ? 'block' : 'none';
+}
+
+// ── SCFP ANALYTICS ──────────────────────────────────────────────────────
+window.setScfpPeriod = (days, btn) => {
+  scfpAnalyticsPeriod = days;
+  document.querySelectorAll('#scfp-analytics-content .period-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  loadScfpAnalytics();
+};
+
+window.loadScfpAnalytics = async () => {
+  showAnalyticsView('scfp');
+  const el = id('scfp-analytics-content');
+  el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-2)">Loading…</div>';
+  if (!isOnline()) {
+    el.innerHTML = `<div style="font-size:12px;color:var(--text-2);padding:8px 0">
+      Analytics load when reconnected.</div>`;
+    return;
+  }
+
+  const subCountyId = userProfile?.sub_county_id;
+  const since = new Date(Date.now() - scfpAnalyticsPeriod*86400000).toISOString();
+
+  const [
+    { data: riskTasksAll }, { data: outbreaks }, { data: lineList }, { data: verifsEsc }
+  ] = await Promise.all([
+    sb.from('tasks').select('id,status,created_at,due_date').eq('form_type','risk_assessment').gte('created_at', since),
+    subCountyId
+      ? sb.from('outbreaks').select('*').eq('sub_county_id', subCountyId).gte('created_at', since)
+      : sb.from('outbreaks').select('*').gte('created_at', since),
+    sb.from('outbreak_line_list').select('outbreak_id,outcome,created_at'),
+    sb.from('verifications').select('event_id,escalate,verified_by,verified_at').eq('escalate', true).gte('verified_at', since),
+  ]);
+
+  const tasksAll   = riskTasksAll || [];
+  const outbreaksAll = outbreaks || [];
+  const lineListAll  = lineList || [];
+
+  // ── Risk-assessment funnel: escalated signals -> assessed -> investigation opened -> RRT mobilized
+  const escalatedCount     = (verifsEsc||[]).length;
+  const assessedCount      = tasksAll.filter(t => t.status === 'done').length;
+  const investigationCount = outbreaksAll.length;
+  const rrtCount           = outbreaksAll.filter(o => o.rrt_mobilized).length;
+
+  const funnelSteps = [
+    { lbl:'Escalated',      num:escalatedCount,     max:escalatedCount||1, color:'#A32D2D' },
+    { lbl:'Assessed',       num:assessedCount,      max:escalatedCount||1, color:'#854F0B' },
+    { lbl:'Investigation',  num:investigationCount, max:escalatedCount||1, color:'#3730A3' },
+    { lbl:'RRT mobilized',  num:rrtCount,           max:escalatedCount||1, color:'#0F6E56' },
+  ];
+  const funnelHtml = funnelSteps.map(s => `
+    <div class="funnel-row">
+      <div class="funnel-lbl">${s.lbl}</div>
+      <div class="funnel-bar-wrap">
+        <div class="funnel-bar-fill" style="width:${Math.max(8,Math.round(s.num/s.max*100))}%;background:${s.color}">${s.num}</div>
+      </div>
+    </div>`).join('');
+
+  // ── Time-to-risk-assessment: SCFP's own SLA (IDSR specifies 24h) ──────
+  // PoC scope: tasks don't store a separate "assessed_at" timestamp, so the
+  // SLA signal used here is overdue-vs-pending against the task's due_date
+  // (set to created_at + 24h at creation) rather than a computed turnaround
+  // median — honest about what this PoC's schema can actually support.
+  const overdueAssessments = tasksAll.filter(t =>
+    t.status === 'pending' && t.due_date && new Date(t.due_date) < new Date()
+  ).length;
+  const pendingAssessments = tasksAll.filter(t => t.status === 'pending').length;
+
+  // ── Active outbreaks: risk level distribution + CFR per outbreak ──────
+  const activeOutbreaks = outbreaksAll.filter(o => o.status !== 'closed');
+  const riskCounts = { low:0, moderate:0, high:0, very_high:0 };
+  activeOutbreaks.forEach(o => { if (o.risk_level) riskCounts[o.risk_level] = (riskCounts[o.risk_level]||0)+1; });
+
+  const cfrByOutbreak = activeOutbreaks.map(o => {
+    const cases = lineListAll.filter(c => c.outbreak_id === o.id);
+    const deaths = cases.filter(c => c.outcome === 'died').length;
+    const cfr = cases.length ? Math.round(deaths/cases.length*1000)/10 : null;
+    return { name: o.suspected_disease || 'Unclassified', cfr, cases: cases.length, risk: o.risk_level };
+  }).filter(o => o.cfr != null).sort((a,b) => b.cfr - a.cfr);
+
+  // ── Line-list activity trend (cases logged per week, all active outbreaks combined) ──
+  const weeks = buildWeekBuckets(scfpAnalyticsPeriod);
+  lineListAll.forEach(c => {
+    if (activeOutbreaks.find(o => o.id === c.outbreak_id)) bumpWeek(weeks, c.created_at, 'rep');
+  });
+
+  el.innerHTML = `
+    <div class="period-row">
+      <button class="period-btn ${scfpAnalyticsPeriod===30?'on':''}" onclick="setScfpPeriod(30,this)">30 days</button>
+      <button class="period-btn ${scfpAnalyticsPeriod===90?'on':''}" onclick="setScfpPeriod(90,this)">90 days</button>
+      <button class="period-btn ${scfpAnalyticsPeriod===365?'on':''}" onclick="setScfpPeriod(365,this)">12 months</button>
+    </div>
+
+    <div class="chart-card-full">
+      <div class="chart-label">Risk assessment funnel</div>
+      ${funnelHtml}
+      <div style="font-size:10.5px;color:#94A3B8;margin-top:6px;font-style:italic">
+        Escalated signals this period that have been risk-assessed, opened as
+        formal investigations, and had an RRT mobilized.</div>
+    </div>
+
+    <div class="chart-row">
+      <div class="chart-card">
+        <div class="chart-label">Risk-assessment SLA</div>
+        <div class="sla-stat"><span>Pending assessments</span>
+          <span class="sla-num ${pendingAssessments>0?'bad':'good'}">${pendingAssessments}</span></div>
+        <div class="sla-stat"><span>Overdue (&gt;24h, IDSR target)</span>
+          <span class="sla-num ${overdueAssessments>0?'bad':'good'}">${overdueAssessments}</span></div>
+        <div class="sla-stat"><span>Active investigations</span>
+          <span class="sla-num">${activeOutbreaks.length}</span></div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-label">Active outbreaks by risk level</div>
+        ${['very_high','high','moderate','low'].map(lvl => {
+          const n = riskCounts[lvl]||0;
+          const max = Math.max(...Object.values(riskCounts),1);
+          const colors = {very_high:'#A32D2D',high:'#C2410C',moderate:'#854F0B',low:'#0F6E56'};
+          return `<div class="bar-row">
+            <div class="bar-lbl">${lvl.replace('_',' ')}</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/max*100)}%;background:${colors[lvl]}"></div></div>
+            <div class="bar-val">${n}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    <div class="chart-card-full">
+      <div class="chart-label">Case fatality rate by active outbreak</div>
+      ${cfrByOutbreak.length ? `<div style="height:${Math.max(100,cfrByOutbreak.length*34)}px;position:relative">
+        <canvas id="scfp-cfr-chart"></canvas></div>`
+        : '<div style="font-size:12px;color:var(--text-2)">No line-listed cases with outcomes recorded yet</div>'}
+    </div>
+
+    <div class="chart-card-full">
+      <div class="chart-label">Line-list activity (cases logged per week, active outbreaks)</div>
+      <div style="height:120px;position:relative"><canvas id="scfp-linelist-trend"></canvas></div>
+    </div>`;
+
+  // Render charts after DOM is in place
+  if (typeof Chart !== 'undefined' && cfrByOutbreak.length) {
+    if (scfpCfrChart) { scfpCfrChart.destroy(); scfpCfrChart = null; }
+    const ctx = id('scfp-cfr-chart').getContext('2d');
+    scfpCfrChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: cfrByOutbreak.map(o => o.name.length > 22 ? o.name.slice(0,20)+'…' : o.name),
+        datasets: [{ label:'CFR %', data: cfrByOutbreak.map(o => o.cfr),
+          backgroundColor: cfrByOutbreak.map(o => o.cfr>=10?'#A32D2D':o.cfr>=2?'#854F0B':'#0F6E56'),
+          borderRadius:4 }]
+      },
+      options: { indexAxis:'y', responsive:true, maintainAspectRatio:false,
+        plugins:{ legend:{display:false} },
+        scales:{ x:{ beginAtZero:true, ticks:{font:{size:9}} }, y:{ ticks:{font:{size:10}} } } }
+    });
+  }
+  if (typeof Chart !== 'undefined') {
+    const trendEl = id('scfp-linelist-trend');
+    if (trendEl) {
+      const ctx2 = trendEl.getContext('2d');
+      new Chart(ctx2, {
+        type: 'bar',
+        data: { labels: weeks.map(w=>w.label), datasets: [
+          { label:'Cases logged', data: weeks.map(w=>w.rep), backgroundColor:'#3730A3', borderRadius:3 }
+        ]},
+        options: { responsive:true, maintainAspectRatio:false,
+          plugins:{ legend:{display:false} },
+          scales:{ x:{ ticks:{font:{size:9}} }, y:{ beginAtZero:true, ticks:{font:{size:9}} } } }
+      });
+    }
+  }
+};
+
+// Maps a display label like "Very high" back to the CSS class slug used by
+// .risk-low/.risk-moderate/.risk-high/.risk-very_high — returns null for
+// the "no data yet" case so callers can fall back to a neutral style.
+function riskLabelToSlug(label) {
+  const map = { 'Low':'low', 'Moderate':'moderate', 'High':'high', 'Very high':'very_high' };
+  return map[label] || null;
+}
+
+// ── CFP ANALYTICS ───────────────────────────────────────────────────────
+window.setCfpPeriod = (days, btn) => {
+  cfpAnalyticsPeriod = days;
+  document.querySelectorAll('#cfp-analytics-content .period-btn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  loadCfpAnalytics();
+};
+
+window.loadCfpAnalytics = async () => {
+  showAnalyticsView('cfp');
+  const el = id('cfp-analytics-content');
+  el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-2)">Loading…</div>';
+  if (!isOnline()) {
+    el.innerHTML = `<div style="font-size:12px;color:var(--text-2);padding:8px 0">
+      Analytics load when reconnected.</div>`;
+    return;
+  }
+
+  const countyId = userProfile?.county_id;
+  const since = new Date(Date.now() - cfpAnalyticsPeriod*86400000).toISOString();
+
+  const [{ data: subCounties }, { data: outbreaks }, { data: lineList }] = await Promise.all([
+    countyId ? sb.from('sub_counties').select('id,name').eq('county_id', countyId) : sb.from('sub_counties').select('id,name'),
+    countyId
+      ? sb.from('outbreaks').select('*').eq('county_id', countyId).gte('created_at', since)
+      : sb.from('outbreaks').select('*').gte('created_at', since),
+    sb.from('outbreak_line_list').select('outbreak_id,outcome'),
+  ]);
+
+  const scList = subCounties || [];
+  const obAll  = outbreaks || [];
+  const llAll  = lineList || [];
+
+  // ── County-wide outbreak funnel: opened -> confirmed -> ruled out -> closed
+  const opened    = obAll.length;
+  const confirmed = obAll.filter(o => o.status === 'confirmed' || (o.status==='closed' && o.declared_at)).length;
+  const ruledOut  = obAll.filter(o => o.status === 'ruled_out').length;
+  const closed    = obAll.filter(o => o.status === 'closed').length;
+  const funnelSteps = [
+    { lbl:'Opened',     num:opened,    max:opened||1, color:'#3730A3' },
+    { lbl:'Confirmed',  num:confirmed, max:opened||1, color:'#A32D2D' },
+    { lbl:'Ruled out',  num:ruledOut,  max:opened||1, color:'#64748B' },
+    { lbl:'Closed',     num:closed,    max:opened||1, color:'#0F6E56' },
+  ];
+  const funnelHtml = funnelSteps.map(s => `
+    <div class="funnel-row">
+      <div class="funnel-lbl">${s.lbl}</div>
+      <div class="funnel-bar-wrap">
+        <div class="funnel-bar-fill" style="width:${Math.max(8,Math.round(s.num/s.max*100))}%;background:${s.color}">${s.num}</div>
+      </div>
+    </div>`).join('');
+  const confirmRatio = opened ? Math.round(confirmed/opened*100) : null;
+
+  // ── Sub-county comparison: active outbreaks, avg risk, time-to-notify ──
+  const subCountyRows = await Promise.all(scList.map(async sc => {
+    const scOutbreaks = obAll.filter(o => o.sub_county_id === sc.id);
+    const active = scOutbreaks.filter(o => o.status !== 'closed').length;
+    const riskRank = { low:1, moderate:2, high:3, very_high:4 };
+    const ranked = scOutbreaks.filter(o=>o.risk_level).map(o=>riskRank[o.risk_level]);
+    const avgRisk = ranked.length ? (ranked.reduce((a,b)=>a+b,0)/ranked.length) : null;
+    const avgRiskLabel = avgRisk==null ? '—' : avgRisk>=3.5?'Very high':avgRisk>=2.5?'High':avgRisk>=1.5?'Moderate':'Low';
+    const notifyTimes = scOutbreaks.filter(o=>o.county_notified_at && o.created_at).map(o=>
+      (new Date(o.county_notified_at)-new Date(o.created_at))/3600000);
+    const medNotify = notifyTimes.length ? Math.round(median(notifyTimes)) + 'h' : '—';
+    return { name: sc.name, total: scOutbreaks.length, active, avgRiskLabel, medNotify };
+  }));
+  subCountyRows.sort((a,b) => b.active - a.active);
+
+  // ── County-wide CFR across all confirmed/closed outbreaks ──────────────
+  const allCases  = llAll.filter(c => obAll.find(o => o.id === c.outbreak_id));
+  const allDeaths = allCases.filter(c => c.outcome === 'died').length;
+  const countyCfr = allCases.length ? Math.round(allDeaths/allCases.length*1000)/10 : null;
+
+  el.innerHTML = `
+    <div class="period-row">
+      <button class="period-btn ${cfpAnalyticsPeriod===30?'on':''}" onclick="setCfpPeriod(30,this)">30 days</button>
+      <button class="period-btn ${cfpAnalyticsPeriod===90?'on':''}" onclick="setCfpPeriod(90,this)">90 days</button>
+      <button class="period-btn ${cfpAnalyticsPeriod===365?'on':''}" onclick="setCfpPeriod(365,this)">12 months</button>
+    </div>
+
+    <div class="chart-row">
+      <div class="chart-card">
+        <div class="chart-label">County case fatality rate</div>
+        <div style="text-align:center;padding:8px 0">
+          <div style="font-size:32px;font-weight:800;color:${countyCfr==null?'var(--text-2)':countyCfr>=10?'var(--red)':'var(--green)'}">
+            ${countyCfr==null?'—':countyCfr+'%'}</div>
+          <div style="font-size:11px;color:var(--text-2)">across ${allCases.length} line-listed case(s)</div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-label">Confirmation rate</div>
+        <div style="text-align:center;padding:8px 0">
+          <div style="font-size:32px;font-weight:800;color:var(--green)">${confirmRatio==null?'—':confirmRatio+'%'}</div>
+          <div style="font-size:11px;color:var(--text-2)">of opened investigations confirmed</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="chart-card-full">
+      <div class="chart-label">County-wide outbreak funnel</div>
+      ${funnelHtml}
+    </div>
+
+    <div class="chart-card-full">
+      <div class="chart-label">Sub-county comparison</div>
+      ${subCountyRows.length ? subCountyRows.map(r => { const slug = riskLabelToSlug(r.avgRiskLabel); return `
+        <div class="subcounty-row">
+          <div class="subcounty-top">
+            <div class="subcounty-name">${esc(r.name)}</div>
+            <span class="risk-badge ${slug?'risk-'+slug:''}"
+              style="${slug?'':'background:#F1F5F9;color:#64748B'}">${r.avgRiskLabel} avg risk</span>
+          </div>
+          <div class="subcounty-stats">
+            <span>Active: <span class="subcounty-stat-num">${r.active}</span></span>
+            <span>Total: <span class="subcounty-stat-num">${r.total}</span></span>
+            <span>Median time to notify county: <span class="subcounty-stat-num">${r.medNotify}</span></span>
+          </div>
+        </div>`; }).join('') : '<div style="font-size:12px;color:var(--text-2)">No sub-county data yet</div>'}
+      <div style="font-size:10.5px;color:#94A3B8;margin-top:6px;font-style:italic">
+        Sorted by active outbreak count — the sub-county most likely to need support sits at the top.</div>
+    </div>`;
 };
 
 // ── EXPRESSION EVALUATOR ──────────────────────────────────────────────────
