@@ -3411,6 +3411,7 @@ async function renderOutbreakDetail(outbreakId) {
 
   const { data: o } = await sb.from('outbreaks').select('*,chp_areas(name)').eq('id', outbreakId).maybeSingle();
   const { data: lineList } = await sb.from('outbreak_line_list').select('*').eq('outbreak_id', outbreakId).order('created_at');
+  const { data: sitreps } = await sb.from('outbreak_sitreps').select('*').eq('outbreak_id', outbreakId).order('filed_at',{ascending:false});
 
   if (!o) { el.innerHTML = '<div style="padding:16px">Outbreak record not found.</div>'; return; }
 
@@ -3481,6 +3482,23 @@ async function renderOutbreakDetail(outbreakId) {
         </div>`).join('') : '<div style="font-size:12px;color:var(--text-2)">No cases logged yet</div>'}
     </div>
 
+    <div class="card" style="margin-bottom:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <div class="card-title" style="margin-bottom:0">Situation reports (${(sitreps||[]).length})</div>
+        ${canDeclare && o.status!=='closed' ? `<button class="btn-sm btn-sm-p" style="width:auto;padding:6px 11px;font-size:11.5px"
+          onclick="openFileSitrep('${outbreakId}')">+ File SITREP</button>` : ''}
+      </div>
+      ${(sitreps||[]).length ? sitreps.map(s => `
+        <div style="padding:10px 0;border-bottom:1px solid #F1F5F9">
+          <div style="font-size:11px;color:var(--text-2);margin-bottom:3px">
+            ${(s.filed_at||'').slice(0,10)} · ${s.cases_total??'—'} cases · ${s.deaths_total??'—'} deaths
+          </div>
+          <div style="font-size:12.5px;line-height:1.5">${esc(s.summary)}</div>
+          ${s.actions_taken ? `<div style="font-size:11.5px;color:var(--text-2);margin-top:5px"><strong>Actions:</strong> ${esc(s.actions_taken)}</div>` : ''}
+          ${s.next_steps ? `<div style="font-size:11.5px;color:var(--text-2);margin-top:3px"><strong>Next steps:</strong> ${esc(s.next_steps)}</div>` : ''}
+        </div>`).join('') : '<div style="font-size:12px;color:var(--text-2)">No situation reports filed yet</div>'}
+    </div>
+
     ${canDeclare && o.status==='under_investigation' ? `
       <button class="btn btn-p" onclick="declareOutbreak('${o.id}')" style="margin-bottom:8px">
         Confirm & declare outbreak
@@ -3491,6 +3509,37 @@ async function renderOutbreakDetail(outbreakId) {
     ${canDeclare && o.status==='confirmed' ? `
       <button class="btn btn-o" onclick="closeOutbreak('${o.id}')">Close investigation</button>` : ''}`;
 }
+
+window.openFileSitrep = (outbreakId) => {
+  showGenericModal('File situation report', `
+    <div class="dialog-field"><label>Total cases (line-listed so far)</label>
+      <input type="number" id="sr-cases" min="0"/></div>
+    <div class="dialog-field"><label>Total deaths</label>
+      <input type="number" id="sr-deaths" min="0"/></div>
+    <div class="dialog-field"><label>Summary *</label>
+      <textarea id="sr-summary" placeholder="Current situation in brief"></textarea></div>
+    <div class="dialog-field"><label>Actions taken</label>
+      <textarea id="sr-actions" placeholder="Response activities since last report"></textarea></div>
+    <div class="dialog-field"><label>Next steps</label>
+      <textarea id="sr-next" placeholder="Planned next steps"></textarea></div>
+  `, async () => {
+    const summary = id('sr-summary').value.trim();
+    if (!summary) { alert('Summary is required'); return false; }
+    const { error } = await sb.from('outbreak_sitreps').insert({
+      outbreak_id: outbreakId,
+      filed_by: session.user.id,
+      cases_total: id('sr-cases').value || null,
+      deaths_total: id('sr-deaths').value || null,
+      summary,
+      actions_taken: id('sr-actions').value.trim() || null,
+      next_steps: id('sr-next').value.trim() || null,
+    });
+    if (error) { alert('Could not file SITREP: '+error.message); return false; }
+    showToast('✓ Situation report filed');
+    renderOutbreakDetail(outbreakId);
+    return true;
+  });
+};
 
 window.openAddLineListCase = (outbreakId) => {
   showGenericModal('Add case to line list', `
