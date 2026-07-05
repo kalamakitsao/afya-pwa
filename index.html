@@ -258,6 +258,130 @@ textarea{min-height:80px;resize:vertical}
 .gauge-num{font-size:24px;font-weight:800;line-height:1}
 .gauge-lbl{font-size:10.5px;color:var(--text-2);margin-top:2px}
 
+/* ════ INTELLIGENCE DASHBOARD COMPONENTS ════════════════════════════════ */
+
+/* Situation Panel — persistent alert strip at top of every home */
+.sit-panel{border-radius:var(--r);padding:14px 16px;margin-bottom:12px;
+  border:1px solid transparent}
+.sit-panel.sit-clear{background:#F0FDF4;border-color:#BBF7D0}
+.sit-panel.sit-warn{background:#FFFBEB;border-color:#FDE68A}
+.sit-panel.sit-alert{background:var(--red-light);border-color:#FCA5A5}
+.sit-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.sit-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.sit-title.sit-clear{color:#15803D}.sit-title.sit-warn{color:#92400E}.sit-title.sit-alert{color:var(--red)}
+.sit-ts{font-size:10px;color:var(--text-2)}
+.sit-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.sit-stat{text-align:center;background:rgba(255,255,255,.7);border-radius:8px;padding:8px 4px}
+.sit-num{font-size:18px;font-weight:800;line-height:1}
+.sit-lbl{font-size:9.5px;font-weight:500;margin-top:2px;line-height:1.3;color:var(--text-2)}
+.sit-num.crit{color:var(--red)}
+.sit-num.warn{color:var(--amber)}
+.sit-num.safe{color:var(--green)}
+.sit-num.info{color:#1E40AF}
+@keyframes sitpulse{0%,100%{opacity:1}50%{opacity:.5}}
+.sit-num.pulse{animation:sitpulse 1.4s ease infinite}
+
+/* Interactive Funnel */
+.funnel-wrap{padding:4px 0}
+.funnel-stage{margin-bottom:6px;cursor:default}
+.funnel-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:2px}
+.funnel-label{font-size:10.5px;color:var(--text-2);width:110px;flex-shrink:0;text-align:right}
+.funnel-track{flex:1;background:#F1F5F9;border-radius:4px;height:20px;overflow:hidden;position:relative}
+.funnel-fill{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;
+  padding-right:6px;transition:width .5s ease}
+.funnel-n{font-size:11px;font-weight:700;color:#fff;line-height:1}
+.funnel-conv{font-size:9.5px;color:var(--text-2);text-align:right;width:110px;flex-shrink:0}
+.funnel-conv.good{color:var(--green)}.funnel-conv.warn{color:var(--amber)}.funnel-conv.bad{color:var(--red)}
+.funnel-arrow{text-align:center;font-size:10px;color:#CBD5E1;margin:1px 0;padding-left:118px}
+
+/* Timeliness SLA scorecards */
+.tl-card{display:flex;align-items:center;gap:10px;padding:10px 12px;
+  border-radius:10px;border:1px solid transparent;margin-bottom:8px}
+.tl-card.tl-green{background:#F0FDF4;border-color:#BBF7D0}
+.tl-card.tl-amber{background:#FFFBEB;border-color:#FDE68A}
+.tl-card.tl-red{background:var(--red-light);border-color:#FCA5A5}
+.tl-card-icon{font-size:18px;flex-shrink:0}
+.tl-card-body{flex:1;min-width:0}
+.tl-card-step{font-size:11px;font-weight:600;color:var(--text)}
+.tl-card-sub{font-size:10px;color:var(--text-2);margin-top:1px}
+.tl-card-metric{text-align:right;flex-shrink:0}
+.tl-card-val{font-size:15px;font-weight:800}
+.tl-card-target{font-size:10px;color:var(--text-2)}
+
+/* Epidemic Curve */
+.epi-curve-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.epi-curve-svg{display:block;min-width:280px}
+
+/* Hotspot ranked list */
+.hotspot-row{display:flex;align-items:center;gap:8px;padding:8px 0;
+  border-bottom:1px solid #F1F5F9}
+.hotspot-row:last-child{border-bottom:none}
+.hotspot-rank{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.hotspot-rank.r1{background:var(--red);color:#fff}
+.hotspot-rank.r2{background:#C2410C;color:#fff}
+.hotspot-rank.r3{background:var(--amber);color:#fff}
+.hotspot-rank.r-n{background:#F1F5F9;color:var(--text-2)}
+.hotspot-place{flex:1;font-size:12.5px;font-weight:500}
+.hotspot-bar-wrap{width:80px;flex-shrink:0}
+.hotspot-n{font-size:12px;font-weight:700;color:var(--text);min-width:24px;text-align:right}
+.hotspot-badge{font-size:9.5px;font-weight:700;padding:2px 6px;border-radius:8px;
+  margin-left:4px;white-space:nowrap}
+.hotspot-badge.hot{background:var(--red-light);color:var(--red)}
+.hotspot-badge.warm{background:var(--amber-light);color:var(--amber)}
+
+/* Donut chart (SVG-based, pure CSS) */
+.donut-wrap{display:flex;align-items:center;gap:14px}
+.donut-legend{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+.donut-leg-row{display:flex;align-items:center;gap:6px;font-size:10.5px}
+.donut-leg-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+.donut-leg-lbl{color:var(--text-2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.donut-leg-n{font-weight:700;color:var(--text)}
+
+/* Investigation command KPI row */
+.inv-kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.inv-kpi{border-radius:10px;padding:12px 10px;text-align:center;border:1px solid transparent}
+.inv-kpi-num{font-size:22px;font-weight:800;line-height:1}
+.inv-kpi-lbl{font-size:10px;font-weight:500;margin-top:3px;line-height:1.3}
+.inv-kpi.red{background:var(--red-light);border-color:#FCA5A5}
+.inv-kpi.red .inv-kpi-num{color:var(--red)}.inv-kpi.red .inv-kpi-lbl{color:var(--red)}
+.inv-kpi.amber{background:var(--amber-light);border-color:#FDE68A}
+.inv-kpi.amber .inv-kpi-num{color:var(--amber)}.inv-kpi.amber .inv-kpi-lbl{color:var(--amber)}
+.inv-kpi.green{background:#F0FDF4;border-color:#BBF7D0}
+.inv-kpi.green .inv-kpi-num{color:#15803D}.inv-kpi.green .inv-kpi-lbl{color:#15803D}
+.inv-kpi.blue{background:#EFF6FF;border-color:#BFDBFE}
+.inv-kpi.blue .inv-kpi-num{color:#1E40AF}.inv-kpi.blue .inv-kpi-lbl{color:#1E40AF}
+.inv-kpi.gray{background:#F8FAFC;border-color:var(--border)}
+.inv-kpi.gray .inv-kpi-num{color:var(--text)}.inv-kpi.gray .inv-kpi-lbl{color:var(--text-2)}
+
+/* Risk distribution mini-bars */
+.risk-dist-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.risk-dist-lbl{font-size:11px;width:70px;flex-shrink:0;font-weight:500}
+.risk-dist-bar{flex:1;background:#F1F5F9;border-radius:3px;height:14px;overflow:hidden;position:relative}
+.risk-dist-fill{height:100%;border-radius:3px;display:flex;align-items:center;padding:0 6px}
+.risk-dist-n{font-size:10px;font-weight:700;color:#fff}
+.risk-dist-pct{font-size:10px;font-weight:600;color:var(--text-2);min-width:28px;text-align:right}
+
+/* Verification performance gauge for CHA */
+.verif-gauge{display:flex;flex-direction:column;align-items:center;padding:8px 0}
+.verif-gauge-arc{position:relative;width:120px;height:64px;overflow:hidden;margin-bottom:8px}
+.verif-gauge-arc svg{position:absolute;top:0;left:0}
+.verif-gauge-num{position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  font-size:22px;font-weight:800;line-height:1}
+.verif-gauge-lbl{font-size:10px;color:var(--text-2);text-align:center}
+
+/* Filter pill row (time/geography filters) */
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.filter-pill{padding:4px 10px;border-radius:16px;border:1px solid var(--border);
+  background:none;font-size:11px;font-weight:500;color:var(--text-2);cursor:pointer}
+.filter-pill.on{background:var(--green);color:#E1F5EE;border-color:var(--green)}
+
+/* Last updated stamp */
+.last-updated{font-size:10px;color:var(--text-2);text-align:right;margin-top:6px;
+  display:flex;align-items:center;gap:4px;justify-content:flex-end}
+.last-updated::before{content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--green);display:inline-block;flex-shrink:0}
+
 
 /* ════════════════════════════════════════════════════════════════════
    DESKTOP / WIDE VIEWPORT LAYOUT
@@ -1557,7 +1681,9 @@ async function renderChpHome() {
     ? allRecent.map(e => sigCard(e)).join('')
     : empty('📡','No signals yet','Tap Report below to submit your first signal');
 
+  const sitPanel = await buildSituationPanel();
   el.innerHTML = `
+    ${sitPanel}
     ${areaHtml}
     ${remindersHtml}
     <div class="card">
@@ -1585,48 +1711,54 @@ async function renderChaHome() {
   let statsHtml = '';
   let areas = [];
   if (isOnline()) {
-    const [areaRes, taskRes] = await Promise.all([
+    const [areaRes, taskRes, evtRes, verifRes] = await Promise.all([
       sb.from('chp_areas').select('*').order('name'),
       sb.from('tasks').select('*,events(answers,created_at)')
         .eq('status','pending').order('created_at', {ascending:false}).limit(20),
+      sb.from('events').select('id').eq('form_id','cebs_signal'),
+      sb.from('verifications').select('event_id,credible'),
     ]);
     areas = areaRes.data || [];
-    const tasks = taskRes.data || [];
+    const tasks   = taskRes.data || [];
+    const evtAll  = evtRes.data || [];
+    const verifAll = verifRes.data || [];
 
     const urgentCount = tasks.filter(t => t.title?.startsWith('URGENT')).length;
     const locLine = areas[0]
       ? `${esc(areas[0].sub_county||'')} Sub-county · ${esc(areas[0].county||'')} County`
       : '';
+    const totalReported = evtAll.length;
+    const totalVerified = verifAll.filter(v=>v.credible).length;
+
+    const sitPanel = await buildSituationPanel();
 
     statsHtml = `
+      ${sitPanel}
       <div class="card" style="margin-bottom:12px">
         <div style="font-size:16px;font-weight:700;margin-bottom:2px">${esc(areas[0]?.chu_name||'My CHU')}</div>
         <div style="font-size:12px;color:var(--text-2);margin-bottom:10px">${locLine}</div>
-        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:10px">
           ${areaStatTile('🗺', 'CHP Areas', areas.length)}
-          ${areaStatTile('📋', 'Pending tasks', tasks.length)}
-          ${urgentCount ? areaStatTile('⚠', 'Urgent', urgentCount) : areaStatTile('✅','All verified','0 urgent')}
+          ${urgentCount ? areaStatTile('⚠', 'Urgent tasks', urgentCount) : areaStatTile('✅','No urgent tasks','')}
         </div>
-        <div style="font-size:12px;font-weight:600;color:var(--text-2);
-          text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">CHP Areas</div>
-        ${areas.map(a => `
-          <div style="display:flex;align-items:center;justify-content:space-between;
-            padding:8px 0;border-bottom:1px solid #F1F5F9">
-            <div>
-              <div style="font-size:13px;font-weight:500">${esc(a.name)}</div>
-              <div style="font-size:11px;color:var(--text-2)">${a.household_count||0} households · ${a.population_count||0} people</div>
-            </div>
-          </div>`).join('')}
+      </div>
+      <div class="chart-card-full" style="margin-bottom:12px">
+        <div class="chart-label">Verification performance</div>
+        ${buildVerifPerformance(tasks.length, totalVerified, totalReported)}
       </div>`;
 
-    // Tasks list with verification action
+    // Tasks list with verification action — urgent first with red background
+    const urgent = tasks.filter(t => t.title?.startsWith('URGENT'));
+    const normal = tasks.filter(t => !t.title?.startsWith('URGENT'));
     const tasksHtml = tasks.length
-      ? tasks.map(t => renderTaskCard(t)).join('')
+      ? [...urgent, ...normal].map(t => renderTaskCard(t)).join('')
       : empty('✅','No pending tasks','All signals have been verified');
 
     el.innerHTML = statsHtml + `
       <div class="card">
-        <div class="card-title">Pending verifications (${tasks.length})</div>
+        <div class="card-title">Pending verifications (${tasks.length})
+          ${urgentCount ? `<span style="color:var(--red);font-size:11px;font-weight:600;margin-left:8px">⚠ ${urgentCount} urgent</span>` : ''}
+        </div>
         ${tasksHtml}
       </div>`;
   } else {
@@ -1648,33 +1780,56 @@ async function renderScfpHome() {
   }
 
   const subCountyId = userProfile?.sub_county_id;
-  const [{ data: subCounty }, { data: areas }, { data: riskTasks }, { data: outbreaks }] = await Promise.all([
+  const [{ data: subCounty }, { data: areas }, { data: riskTasks }, { data: outbreaks },
+         { data: allOutbreaks }, sitPanel] = await Promise.all([
     subCountyId ? sb.from('sub_counties').select('*,counties(name)').eq('id', subCountyId).maybeSingle() : Promise.resolve({data:null}),
     subCountyId ? sb.from('chp_areas').select('id').eq('sub_county_id', subCountyId) : sb.from('chp_areas').select('id'),
     sb.from('tasks').select('*,events(answers,created_at)').eq('status','pending').eq('form_type','risk_assessment').order('created_at',{ascending:false}),
-    subCountyId ? sb.from('outbreaks').select('*').eq('sub_county_id', subCountyId).neq('status','closed') : sb.from('outbreaks').select('*').neq('status','closed'),
+    subCountyId ? sb.from('outbreaks').select('*,chp_areas(county)').eq('sub_county_id', subCountyId).neq('status','closed') : sb.from('outbreaks').select('*,chp_areas(county)').neq('status','closed'),
+    sb.from('outbreaks').select('risk_level,status').neq('status','closed'),
+    buildSituationPanel(),
   ]);
 
   const activeOutbreaks = outbreaks || [];
+  const highRiskCount  = activeOutbreaks.filter(o => ['high','very_high'].includes(o.risk_level)).length;
+  const urgentTasks    = (riskTasks||[]).filter(t => t.title?.startsWith('URGENT'));
+  const normalTasks    = (riskTasks||[]).filter(t => !t.title?.startsWith('URGENT'));
 
   el.innerHTML = `
+    ${sitPanel}
     <div class="card" style="margin-bottom:12px">
       <div style="font-size:16px;font-weight:700;margin-bottom:2px">${esc(subCounty?.name||'Sub-county')} Sub-county</div>
       <div style="font-size:12px;color:var(--text-2);margin-bottom:10px">${esc(subCounty?.counties?.name||'')} County</div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
-        ${areaStatTile('🗺', 'CHP areas', (areas||[]).length)}
-        ${areaStatTile('🔍', 'Risk assessments', (riskTasks||[]).length)}
-        ${areaStatTile(activeOutbreaks.length?'⚠':'✅', 'Active outbreaks', activeOutbreaks.length)}
+        <div class="inv-kpi ${(riskTasks||[]).length?'amber':'green'}">
+          <div class="inv-kpi-num">${(riskTasks||[]).length}</div>
+          <div class="inv-kpi-lbl">Awaiting Assessment</div>
+        </div>
+        <div class="inv-kpi ${highRiskCount?'red':'green'}">
+          <div class="inv-kpi-num">${highRiskCount}</div>
+          <div class="inv-kpi-lbl">High Risk Events</div>
+        </div>
+        <div class="inv-kpi ${activeOutbreaks.length?'amber':'green'}">
+          <div class="inv-kpi-num">${activeOutbreaks.length}</div>
+          <div class="inv-kpi-lbl">Active Alerts</div>
+        </div>
       </div>
     </div>
+    <div class="chart-card-full" style="margin-bottom:12px">
+      <div class="chart-label">Risk distribution — active events</div>
+      ${buildRiskDistribution(allOutbreaks||[])}
+    </div>
     <div class="card" style="margin-bottom:12px">
-      <div class="card-title">Pending risk assessments (${(riskTasks||[]).length})</div>
+      <div class="card-title">
+        Pending risk assessments (${(riskTasks||[]).length})
+        ${urgentTasks.length ? `<span style="color:var(--red);font-size:11px;font-weight:600;margin-left:8px">⚠ ${urgentTasks.length} urgent</span>` : ''}
+      </div>
       ${(riskTasks||[]).length
-        ? riskTasks.map(t => renderRiskTaskCard(t)).join('')
+        ? [...urgentTasks,...normalTasks].map(t => renderRiskTaskCard(t)).join('')
         : empty('✅','No pending risk assessments','Escalated signals from CHAs will appear here')}
     </div>
     <div class="card">
-      <div class="card-title">Active outbreak investigations</div>
+      <div class="card-title">Active alert events</div>
       ${activeOutbreaks.length
         ? activeOutbreaks.map(o => outbreakCard(o)).join('')
         : '<div style="font-size:12px;color:var(--text-2)">None currently under investigation</div>'}
@@ -1705,27 +1860,41 @@ async function renderCfpHome() {
   }
 
   const countyId = userProfile?.county_id;
-  const [{ data: county }, { data: subCounties }, { data: outbreaks }] = await Promise.all([
+  const [{ data: county }, { data: subCounties }, { data: outbreaks },
+         { data: investigations }, { data: allTasks }, sitPanel] = await Promise.all([
     countyId ? sb.from('counties').select('*').eq('id', countyId).maybeSingle() : Promise.resolve({data:null}),
     countyId ? sb.from('sub_counties').select('id,name').eq('county_id', countyId) : sb.from('sub_counties').select('id,name'),
-    countyId ? sb.from('outbreaks').select('*').eq('county_id', countyId).neq('status','closed') : sb.from('outbreaks').select('*').neq('status','closed'),
+    countyId ? sb.from('outbreaks').select('*,chp_areas(county)').eq('county_id', countyId).neq('status','closed') : sb.from('outbreaks').select('*,chp_areas(county)').neq('status','closed'),
+    sb.from('investigations').select('case_classification,status,date_symptoms_started'),
+    sb.from('tasks').select('status,form_type,due_date'),
+    buildSituationPanel(),
   ]);
 
   const activeOutbreaks = outbreaks || [];
   const needsDeclaration = activeOutbreaks.filter(o => o.status === 'under_investigation' && !o.declared_at);
+  const invData = investigations || [];
 
   el.innerHTML = `
+    ${sitPanel}
     <div class="card" style="margin-bottom:12px">
       <div style="font-size:16px;font-weight:700;margin-bottom:2px">${esc(county?.name||'County')} County</div>
       <div style="font-size:12px;color:var(--text-2);margin-bottom:10px">County Health Management Team</div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
         ${areaStatTile('🏛', 'Sub-counties', (subCounties||[]).length)}
-        ${areaStatTile(activeOutbreaks.length?'⚠':'✅', 'Active outbreaks', activeOutbreaks.length)}
-        ${areaStatTile(needsDeclaration.length?'📋':'✅', 'Awaiting declaration', needsDeclaration.length)}
+        ${areaStatTile(activeOutbreaks.length?'⚠':'✅', 'Active alerts', activeOutbreaks.length)}
+        ${areaStatTile(needsDeclaration.length?'📋':'✅', 'Needs declaration', needsDeclaration.length)}
       </div>
     </div>
+    <div class="chart-card-full" style="margin-bottom:12px">
+      <div class="chart-label">Investigation command</div>
+      ${buildInvestigationCommandKPIs(invData, allTasks||[])}
+    </div>
+    <div class="chart-card-full" style="margin-bottom:12px">
+      <div class="chart-label">Epidemic curve — symptom onset</div>
+      ${buildEpiCurve(invData)}
+    </div>
     <div class="card">
-      <div class="card-title">Outbreaks requiring county oversight</div>
+      <div class="card-title">Active alert events</div>
       ${activeOutbreaks.length
         ? activeOutbreaks.map(o => outbreakCard(o)).join('')
         : '<div style="font-size:12px;color:var(--text-2)">No active outbreaks across this county</div>'}
@@ -4120,24 +4289,34 @@ window.renderInvestigationsScreen = async () => {
     return;
   }
 
-  // Tasks: pending investigation assignments (from SCFP risk-assessment escalation)
-  const { data: tasks } = await sb.from('tasks')
-    .select('*,events(answers,created_at)')
-    .eq('status','pending').eq('form_type','investigation')
-    .order('created_at',{ascending:false});
+  const [{ data: tasks }, { data: investigations }, { data: allTasks }] = await Promise.all([
+    sb.from('tasks').select('*,events(answers,created_at)').eq('status','pending').eq('form_type','investigation').order('created_at',{ascending:false}),
+    sb.from('investigations').select('*,outbreaks(suspected_disease,chp_areas(name))').order('created_at',{ascending:false}),
+    sb.from('tasks').select('status,form_type,due_date'),
+  ]);
 
-  const { data: investigations } = await sb.from('investigations')
-    .select('*,outbreaks(suspected_disease,chp_areas(name))')
-    .order('created_at',{ascending:false});
-
-  const open = (investigations||[]).filter(i => i.status === 'open');
-  const closed = (investigations||[]).filter(i => i.status !== 'open');
+  const inv  = investigations || [];
+  const open = inv.filter(i => i.status === 'open');
+  const closed = inv.filter(i => i.status !== 'open');
+  const urgentTasks = (tasks||[]).filter(t => t.title?.startsWith('URGENT'));
+  const normalTasks = (tasks||[]).filter(t => !t.title?.startsWith('URGENT'));
 
   el.innerHTML = `
+    <div class="chart-card-full" style="margin-bottom:12px">
+      <div class="chart-label">Investigation command</div>
+      ${buildInvestigationCommandKPIs(inv, allTasks||[])}
+    </div>
+    <div class="chart-card-full" style="margin-bottom:12px">
+      <div class="chart-label">Epidemic curve — symptom onset</div>
+      ${buildEpiCurve(inv)}
+    </div>
     <div class="card" style="margin-bottom:12px">
-      <div class="card-title">Pending investigation assignments (${(tasks||[]).length})</div>
-      ${(tasks||[]).length ? tasks.map(t => `
-        <div class="task" style="cursor:pointer;margin-bottom:8px" onclick="openNewInvestigationFromTask('${t.id}','${t.event_id}')">
+      <div class="card-title">
+        Pending assignments (${(tasks||[]).length})
+        ${urgentTasks.length ? `<span style="color:var(--red);font-size:11px;font-weight:600;margin-left:8px">⚠ ${urgentTasks.length} urgent</span>` : ''}
+      </div>
+      ${(tasks||[]).length ? [...urgentTasks,...normalTasks].map(t => `
+        <div class="task" style="cursor:pointer;margin-bottom:8px;${t.title?.startsWith('URGENT')?'border-color:var(--red);':''}" onclick="openNewInvestigationFromTask('${t.id}','${t.event_id}')">
           ${t.title?.startsWith('URGENT') ? '<div class="task-urg">⚠ Urgent — investigate immediately</div>'
             : '<div style="font-size:10px;color:var(--green);font-weight:600;margin-bottom:3px">Tap to open investigation →</div>'}
           <div class="task-title">${esc(t.title)}</div>
@@ -4421,35 +4600,35 @@ window.renderContactsScreen = async (filterOutbreakId) => {
   const secondaryAttackRate = totalContacts ? Math.round(becameCase.length / totalContacts * 1000) / 10 : 0;
 
   el.innerHTML = `
-    <div class="kpi-row" style="grid-template-columns:repeat(3,1fr)">
-      <div class="kpi" style="background:#EFF6FF;border-color:#1E40AF33">
-        <div class="kpi-num" style="color:#1E40AF">${totalContacts}</div>
-        <div class="kpi-lbl" style="color:#1E40AF">Contacts listed</div>
-      </div>
-      <div class="kpi" style="background:var(--amber-light);border-color:#854F0B33">
-        <div class="kpi-num" style="color:var(--amber)">${underFollowup}</div>
-        <div class="kpi-lbl" style="color:var(--amber)">Under follow-up</div>
-      </div>
-      <div class="kpi" style="background:var(--red-light);border-color:#A32D2D33">
-        <div class="kpi-num" style="color:var(--red)">${secondaryAttackRate}%</div>
-        <div class="kpi-lbl" style="color:var(--red)">Secondary attack rate</div>
+    <div class="chart-card-full" style="margin-bottom:12px">
+      <div class="chart-label">Contact tracing intelligence</div>
+      ${buildContactIntelligenceKPIs(all, fu)}
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px">
+        <div class="inv-kpi blue"><div class="inv-kpi-num">${totalContacts}</div><div class="inv-kpi-lbl">Total Listed</div></div>
+        <div class="inv-kpi ${underFollowup?'amber':'green'}"><div class="inv-kpi-num">${underFollowup}</div><div class="inv-kpi-lbl">Under Follow-Up</div></div>
+        <div class="inv-kpi ${secondaryAttackRate>0?'red':'green'}"><div class="inv-kpi-num">${secondaryAttackRate}%</div><div class="inv-kpi-lbl">Secondary Attack Rate</div></div>
       </div>
     </div>
     <div class="chart-row" style="margin-bottom:12px">
       <div class="chart-card">
         <div class="chart-label">Follow-up completion</div>
-        <div style="text-align:center;padding:8px 0">
-          <div style="font-size:26px;font-weight:800;color:${completionRate>=80?'var(--green)':completionRate>=50?'var(--amber)':'var(--red)'}">${completionRate}%</div>
-          <div style="font-size:10px;color:var(--text-2)">completed ÷ expected follow-ups</div>
+        <div class="gauge-wrap">
+          <div class="gauge-num" style="color:${completionRate>=80?'var(--green)':completionRate>=50?'var(--amber)':'var(--red)'}">${completionRate}%</div>
+          <div class="gauge-track"><div class="gauge-fill" style="width:${completionRate}%;background:${completionRate>=80?'var(--green)':completionRate>=50?'var(--amber)':'var(--red)'}"></div></div>
+          <div class="gauge-lbl">of expected follow-ups recorded</div>
         </div>
       </div>
       <div class="chart-card">
         <div class="chart-label">Symptomatic contacts</div>
-        <div style="text-align:center;padding:8px 0">
-          <div style="font-size:26px;font-weight:800;color:${symptomaticContacts?'var(--red)':'var(--green)'}">${symptomaticContacts}</div>
-          <div style="font-size:10px;color:var(--text-2)">developed symptoms during follow-up</div>
+        <div class="gauge-wrap">
+          <div class="gauge-num" style="color:${symptomaticContacts?'var(--red)':'var(--green)'}">${symptomaticContacts}</div>
+          <div class="gauge-lbl">developed symptoms during follow-up</div>
         </div>
       </div>
+    </div>
+    <div class="chart-card-full" style="margin-bottom:12px">
+      <div class="chart-label">Exposure distribution</div>
+      ${buildExposureDonut(all)}
     </div>
 
     <div class="card" style="margin-bottom:12px">
@@ -4663,149 +4842,584 @@ window.renderNationalDashboard = async () => {
   }
 
   const since30 = new Date(Date.now() - 30*86400000).toISOString();
-  const [evtRes, verRes, outbreakRes, invRes, contactRes, taskRes, areaRes, countyRes] = await Promise.all([
+  const [evtRes, verRes, outbreakRes, invRes, contactRes, taskRes, areaRes, fuRes] = await Promise.all([
     sb.from('events').select('id,answers,created_at,chp_area_id').eq('form_id','cebs_signal').order('created_at',{ascending:false}).limit(500),
     sb.from('verifications').select('event_id,credible,escalate,verified_at,outcome'),
     sb.from('outbreaks').select('*,chp_areas(name,county,sub_county)'),
-    sb.from('investigations').select('case_classification,status,created_at'),
-    sb.from('contacts').select('status,date_of_last_exposure'),
+    sb.from('investigations').select('*'),
+    sb.from('contacts').select('*'),
     sb.from('tasks').select('status,form_type,due_date,created_at'),
     sb.from('chp_areas').select('id,name,county,sub_county'),
-    sb.from('counties').select('id,name'),
+    sb.from('contact_followups').select('contact_id,day_number,has_fever,has_vomiting,has_diarrhoea,has_bleeding'),
   ]);
 
-  const events = evtRes.data || [];
-  const verifs = verRes.data || [];
-  const outbreaks = outbreakRes.data || [];
+  const events        = evtRes.data || [];
+  const verifs        = verRes.data || [];
+  const outbreaks     = outbreakRes.data || [];
   const investigations = invRes.data || [];
-  const contacts = contactRes.data || [];
-  const tasks = taskRes.data || [];
-  const areas = areaRes.data || [];
+  const contacts      = contactRes.data || [];
+  const tasks         = taskRes.data || [];
+  const areas         = areaRes.data || [];
+  const followups     = fuRes.data || [];
 
-  // ── Signal cascade funnel ────────────────────────────────────────────
-  const reported = events.length;
-  const verified = verifs.filter(v => v.credible).length;
-  const alertEvents = verifs.filter(v => v.escalate).length;
+  const now      = Date.now();
+  const today    = new Date().toISOString().slice(0,10);
+
+  // Signal cascade funnel
+  const reported          = events.length;
+  const verified          = verifs.filter(v => v.credible).length;
+  const alertEvents       = verifs.filter(v => v.escalate).length;
   const investigationsCount = investigations.length;
-  const suspected = investigations.filter(i => i.case_classification === 'suspected_case').length;
-  const probable = investigations.filter(i => i.case_classification === 'probable_case').length;
-  const confirmed = investigations.filter(i => i.case_classification === 'confirmed_case').length;
+  const suspected         = investigations.filter(i => i.case_classification === 'suspected_case').length;
+  const probable          = investigations.filter(i => i.case_classification === 'probable_case').length;
+  const confirmed         = investigations.filter(i => i.case_classification === 'confirmed_case').length;
 
-  const funnel = [
-    { lbl:'Reported signals', n:reported },
-    { lbl:'Verified signals', n:verified },
-    { lbl:'Alert events', n:alertEvents },
-    { lbl:'Investigations', n:investigationsCount },
-    { lbl:'Suspected cases', n:suspected },
-    { lbl:'Probable cases', n:probable },
-    { lbl:'Confirmed cases', n:confirmed },
-  ];
-  const maxFunnel = Math.max(1, ...funnel.map(f=>f.n));
+  // System health
+  const activeCHPs     = new Set(events.filter(e => new Date(e.created_at) > new Date(since30)).map(e=>e.chp_area_id)).size;
+  const silentCHPs     = areas.length - activeCHPs;
+  const signalsToday   = events.filter(e => (e.created_at||'').slice(0,10) === today).length;
 
-  // ── Timeliness SLA scorecards ────────────────────────────────────────
-  const verTimes = verifs.map(v => {
-    const ev = events.find(e => e.id === v.event_id);
-    if (!ev) return null;
-    return (new Date(v.verified_at) - new Date(ev.created_at)) / 3600000;
-  }).filter(x => x != null);
-  const medReportVerify = verTimes.length ? median(verTimes) : null;
-
-  // ── Geographic breakdown ─────────────────────────────────────────────
-  const byCounty = {};
-  events.forEach(e => {
-    const area = areas.find(a => a.id === e.chp_area_id);
-    const county = area?.county || 'Unknown';
-    byCounty[county] = (byCounty[county]||0) + 1;
-  });
-  const countySorted = Object.entries(byCounty).sort((a,b)=>b[1]-a[1]);
-  const maxCounty = countySorted[0]?.[1] || 1;
-
-  // ── Outbreak intelligence ────────────────────────────────────────────
-  const deaths = investigations.filter(i => i.is_dead).length;
-  const cfr = investigationsCount ? Math.round(deaths/investigationsCount*1000)/10 : 0;
-  const hcwCases = investigations.filter(i => i.e_visited_evd_facility).length;
-  const funeralCases = investigations.filter(i => i.e_attended_funeral).length;
-  const activeContacts = contacts.filter(c => c.status === 'active').length;
-  const activeInvestigations = investigations.filter(i => i.status === 'open').length;
-
-  // ── System health / operations ───────────────────────────────────────
-  const activeCHPs = new Set(events.filter(e => new Date(e.created_at) > new Date(since30)).map(e=>e.chp_area_id)).size;
-  const allAreaIds = new Set(areas.map(a=>a.id));
-  const silentCHPs = allAreaIds.size - activeCHPs;
-  const signalsToday = events.filter(e => (e.created_at||'').slice(0,10) === new Date().toISOString().slice(0,10)).length;
-  const awaitingVerification = tasks.filter(t => t.status==='pending' && (!t.form_type || t.form_type==='signal_verification')).length;
-  const awaitingAssessment = tasks.filter(t => t.status==='pending' && t.form_type==='risk_assessment').length;
-  const now = Date.now();
-  const investigationsOverdue = tasks.filter(t => t.status==='pending' && t.form_type==='investigation' && t.due_date && new Date(t.due_date).getTime() < now).length;
-  const contactsOverdue = contacts.filter(c => c.status==='active' && contactWindowDay(c) >= 21).length;
+  // Contact intelligence
+  const activeContacts = contacts.filter(c => c.status==='active' && contactWindowDay(c)<21).length;
+  const funeralCases   = investigations.filter(i => i.e_attended_funeral).length;
+  const hcwCases       = investigations.filter(i => i.e_visited_evd_facility).length;
+  const deaths         = investigations.filter(i => i.is_dead).length;
+  const cfr            = investigationsCount ? Math.round(deaths/investigationsCount*1000)/10 : 0;
 
   el.innerHTML = `
-    <div class="card" style="margin-bottom:12px">
-      <div style="font-size:16px;font-weight:700;margin-bottom:2px">National Outbreak Intelligence</div>
-      <div style="font-size:12px;color:var(--text-2)">Ebola Virus Disease · Situational awareness across all counties</div>
-    </div>
-
-    <div class="chart-card-full" style="margin-bottom:12px">
-      <div class="chart-label">Signal cascade funnel</div>
-      ${funnel.map(f => `
-        <div class="bar-row" style="margin-bottom:7px">
-          <div class="bar-lbl" style="width:120px">${f.lbl}</div>
-          <div class="bar-track" style="height:14px"><div class="bar-fill" style="width:${Math.round(f.n/maxFunnel*100)}%;background:#085041;height:100%"></div></div>
-          <div class="bar-val" style="min-width:28px">${f.n}</div>
-        </div>`).join('')}
-    </div>
-
-    <div class="chart-card-full" style="margin-bottom:12px">
-      <div class="chart-label">Timeliness SLA scorecard</div>
-      <div class="tl-row"><span>Report → verify (median)</span>
-        <span class="tl-val" style="color:${medReportVerify==null?'#64748B':medReportVerify<=48?'var(--green)':'var(--red)'}">
-          ${medReportVerify==null?'N/A':medReportVerify.toFixed(0)+' h'}</span></div>
-      <div class="tl-row"><span>Verify → risk assessment</span>
-        <span class="tl-val" style="color:${awaitingAssessment===0?'var(--green)':'var(--amber)'}">${awaitingAssessment} pending</span></div>
-      <div class="tl-row"><span>Assessment → investigation</span>
-        <span class="tl-val" style="color:${investigationsOverdue===0?'var(--green)':'var(--red)'}">${investigationsOverdue} overdue</span></div>
-      <div class="tl-row"><span>Investigation → classification</span>
-        <span class="tl-val">${investigationsCount ? Math.round((investigations.filter(i=>i.case_classification!=='pending_classification').length/investigationsCount)*100)+'%' : 'N/A'} classified</span></div>
-    </div>
-
-    <div class="chart-card-full" style="margin-bottom:12px">
-      <div class="chart-label">Geographic dashboard — signals by county (30d)</div>
-      ${countySorted.length ? countySorted.slice(0,8).map(([county,n]) => `
-        <div class="bar-row">
-          <div class="bar-lbl">${esc(county).slice(0,14)}</div>
-          <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/maxCounty*100)}%;background:#A32D2D"></div></div>
-          <div class="bar-val">${n}</div>
-        </div>`).join('') : '<div style="font-size:12px;color:var(--text-2)">No signals recorded yet</div>'}
-    </div>
-
-    <div class="chart-card-full" style="margin-bottom:12px">
-      <div class="chart-label">Outbreak intelligence — executive summary</div>
-      <div class="kpi-row" style="grid-template-columns:repeat(4,1fr)">
-        <div class="kpi" style="background:var(--amber-light)"><div class="kpi-num" style="color:var(--amber)">${suspected}</div><div class="kpi-lbl" style="color:var(--amber)">Suspected</div></div>
-        <div class="kpi" style="background:#FFEDD5"><div class="kpi-num" style="color:#C2410C">${probable}</div><div class="kpi-lbl" style="color:#C2410C">Probable</div></div>
-        <div class="kpi" style="background:var(--red-light)"><div class="kpi-num" style="color:var(--red)">${confirmed}</div><div class="kpi-lbl" style="color:var(--red)">Confirmed</div></div>
-        <div class="kpi" style="background:#F1F5F9"><div class="kpi-num" style="color:#1E293B">${deaths}</div><div class="kpi-lbl" style="color:#1E293B">Deaths</div></div>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px">
+      <div>
+        <div style="font-size:17px;font-weight:700">National Outbreak Intelligence</div>
+        <div style="font-size:12px;color:var(--text-2)">EVD Surveillance · All counties</div>
       </div>
-      <div class="tl-row" style="margin-top:6px"><span>Case fatality ratio</span><span class="tl-val">${cfr}%</span></div>
-      <div class="tl-row"><span>Healthcare-worker-exposed cases</span><span class="tl-val">${hcwCases}</span></div>
-      <div class="tl-row"><span>Funeral-associated cases</span><span class="tl-val">${funeralCases}</span></div>
-      <div class="tl-row"><span>Active contacts under tracing</span><span class="tl-val">${activeContacts}</span></div>
-      <div class="tl-row"><span>Active investigations</span><span class="tl-val">${activeInvestigations}</span></div>
+      <div class="last-updated">${new Date().toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'})}</div>
+    </div>
+
+    ${await buildSituationPanel()}
+
+    <div class="chart-card-full" style="margin-bottom:12px">
+      <div class="chart-label">Surveillance funnel — signal to case</div>
+      <div class="funnel-wrap">
+        ${buildFunnel([
+          {lbl:'Reported signals', n:reported,       color:'#085041'},
+          {lbl:'Verified',        n:verified,        color:'#0F6E56'},
+          {lbl:'Alert events',    n:alertEvents,     color:'#854F0B'},
+          {lbl:'Investigations',  n:investigationsCount, color:'#C2410C'},
+          {lbl:'Suspected',       n:suspected,       color:'#A32D2D'},
+          {lbl:'Probable',        n:probable,        color:'#7C2020'},
+          {lbl:'Confirmed',       n:confirmed,       color:'#4C1515'},
+        ])}
+      </div>
+    </div>
+
+    <div class="chart-card-full" style="margin-bottom:12px">
+      <div class="chart-label">Surveillance timeliness — SLA scorecards</div>
+      ${computeTimelinessSLAs(events, verifs, tasks, investigations)}
+    </div>
+
+    <div class="chart-card-full" style="margin-bottom:12px">
+      <div class="chart-label">Geographic hotspot — signals by county</div>
+      ${buildHotspotList(events, areas, outbreaks)}
+    </div>
+
+    <div class="chart-card-full" style="margin-bottom:12px">
+      <div class="chart-label">Epidemic curve — symptom onset by case classification</div>
+      ${buildEpiCurve(investigations)}
+    </div>
+
+    <div class="chart-card-full" style="margin-bottom:12px">
+      <div class="chart-label">Investigation command</div>
+      ${buildInvestigationCommandKPIs(investigations, tasks)}
+      <div style="margin-top:10px">
+        <div class="chart-label" style="margin-bottom:6px">Risk distribution</div>
+        ${buildRiskDistribution(outbreaks)}
+      </div>
+    </div>
+
+    <div class="chart-card-full" style="margin-bottom:12px">
+      <div class="chart-label">Contact tracing intelligence</div>
+      ${buildContactIntelligenceKPIs(contacts, followups)}
+      <div style="margin-top:10px">
+        <div class="chart-label" style="margin-bottom:6px">Exposure distribution</div>
+        ${buildExposureDonut(contacts)}
+      </div>
     </div>
 
     <div class="chart-card-full">
-      <div class="chart-label">System health — operations dashboard</div>
-      <div class="kpi-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:8px">
-        <div class="kpi" style="background:var(--green-light)"><div class="kpi-num" style="color:var(--green)">${activeCHPs}</div><div class="kpi-lbl" style="color:var(--green)">Active CHPs</div></div>
-        <div class="kpi" style="background:#F1F5F9"><div class="kpi-num" style="color:#64748B">${silentCHPs}</div><div class="kpi-lbl" style="color:#64748B">Silent CHPs</div></div>
-        <div class="kpi" style="background:#EFF6FF"><div class="kpi-num" style="color:#1E40AF">${signalsToday}</div><div class="kpi-lbl" style="color:#1E40AF">Signals today</div></div>
+      <div class="chart-label">System health — operations</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">
+        <div class="inv-kpi green"><div class="inv-kpi-num">${activeCHPs}</div><div class="inv-kpi-lbl">Active CHPs</div></div>
+        <div class="inv-kpi ${silentCHPs?'amber':'green'}"><div class="inv-kpi-num">${silentCHPs}</div><div class="inv-kpi-lbl">Silent CHPs</div></div>
+        <div class="inv-kpi blue"><div class="inv-kpi-num">${signalsToday}</div><div class="inv-kpi-lbl">Signals Today</div></div>
       </div>
-      <div class="tl-row"><span>Signals awaiting verification</span><span class="tl-val" style="color:${awaitingVerification?'var(--amber)':'var(--green)'}">${awaitingVerification}</span></div>
-      <div class="tl-row"><span>Events awaiting risk assessment</span><span class="tl-val" style="color:${awaitingAssessment?'var(--amber)':'var(--green)'}">${awaitingAssessment}</span></div>
-      <div class="tl-row"><span>Investigations overdue</span><span class="tl-val" style="color:${investigationsOverdue?'var(--red)':'var(--green)'}">${investigationsOverdue}</span></div>
-      <div class="tl-row"><span>Contacts overdue follow-up</span><span class="tl-val" style="color:${contactsOverdue?'var(--red)':'var(--green)'}">${contactsOverdue}</span></div>
+      <div class="tl-row"><span>CFR (confirmed/total inv.)</span><span class="tl-val" style="color:${cfr>10?'var(--red)':cfr>5?'var(--amber)':'var(--green)'}">${cfr}%</span></div>
+      <div class="tl-row"><span>HCW-exposed cases</span><span class="tl-val" style="color:${hcwCases?'var(--red)':'var(--green)'}">${hcwCases}</span></div>
+      <div class="tl-row"><span>Funeral-associated cases</span><span class="tl-val" style="color:${funeralCases?'var(--amber)':'var(--green)'}">${funeralCases}</span></div>
+      <div class="tl-row"><span>Active contacts under tracing</span><span class="tl-val">${activeContacts}</span></div>
     </div>`;
 };
+
+// ════════════════════════════════════════════════════════════════════════
+// INTELLIGENCE DASHBOARD ENGINE
+// Shared helpers used by all role home screens and analytics screens.
+// ════════════════════════════════════════════════════════════════════════
+
+// ── 1. SITUATION PANEL ────────────────────────────────────────────────
+// Compact always-visible situation card injected at top of every home.
+// Single Supabase fetch fan-out; results cached for 60s to avoid
+// hammering the DB on tab switches.
+let _sitCache = null;
+let _sitCacheTs = 0;
+async function fetchSitData(forceRefresh) {
+  const now = Date.now();
+  if (!forceRefresh && _sitCache && (now - _sitCacheTs < 60000)) return _sitCache;
+  if (!isOnline()) return null;
+  const [evtR, invR, ctR, taskR, outR] = await Promise.all([
+    sb.from('events').select('id,created_at').eq('form_id','cebs_signal').order('created_at',{ascending:false}).limit(500),
+    sb.from('investigations').select('case_classification,status,e_attended_funeral,e_visited_evd_facility,c_bleeding,is_dead'),
+    sb.from('contacts').select('status,date_of_last_exposure'),
+    sb.from('tasks').select('status,form_type,due_date'),
+    sb.from('outbreaks').select('id,risk_level,status,chp_areas(county)').neq('status','closed'),
+  ]);
+  _sitCache = {
+    events: evtR.data || [], investigations: invR.data || [],
+    contacts: ctR.data || [], tasks: taskR.data || [], outbreaks: outR.data || [],
+    ts: new Date().toLocaleTimeString('en-KE',{hour:'2-digit',minute:'2-digit'}),
+  };
+  _sitCacheTs = now;
+  return _sitCache;
+}
+
+async function buildSituationPanel() {
+  const d = await fetchSitData(false);
+  if (!d) return '';
+  const { investigations: inv, contacts: ct, tasks, outbreaks, ts } = d;
+  const activeAlerts   = outbreaks.filter(o => o.status !== 'closed').length;
+  const highRisk       = outbreaks.filter(o => ['high','very_high'].includes(o.risk_level)).length;
+  const inProgress     = inv.filter(i => i.status === 'open').length;
+  const suspected      = inv.filter(i => i.case_classification === 'suspected_case').length;
+  const probable       = inv.filter(i => i.case_classification === 'probable_case').length;
+  const confirmed      = inv.filter(i => i.case_classification === 'confirmed_case').length;
+  const underFollowup  = ct.filter(c => c.status === 'active' && contactWindowDay(c) < 21).length;
+  const sympt          = ct.filter(c => c.status === 'became_case').length;
+  const counties       = new Set(outbreaks.map(o => o.chp_areas?.county).filter(Boolean)).size;
+  const now = Date.now();
+  const overdue        = tasks.filter(t => t.status==='pending' && t.due_date && new Date(t.due_date).getTime() < now).length;
+  // Threat level
+  const level = confirmed > 0 ? 'sit-alert' : highRisk > 0 || suspected > 0 ? 'sit-warn' : 'sit-clear';
+  const levelIcon = confirmed > 0 ? '🔴 ACTIVE OUTBREAK' : highRisk > 0 ? '⚠ ELEVATED RISK' : '🟢 UNDER SURVEILLANCE';
+
+  const pulse = confirmed > 0 || highRisk > 0 ? ' pulse' : '';
+  return `
+    <div class="sit-panel ${level}">
+      <div class="sit-header">
+        <span class="sit-title ${level}">${levelIcon}</span>
+        <span class="sit-ts">Updated ${ts}</span>
+      </div>
+      <div class="sit-grid">
+        <div class="sit-stat">
+          <div class="sit-num ${activeAlerts?'warn'+pulse:'safe'}">${activeAlerts}</div>
+          <div class="sit-lbl">Active Alerts</div>
+        </div>
+        <div class="sit-stat">
+          <div class="sit-num ${highRisk?'crit'+pulse:'safe'}">${highRisk}</div>
+          <div class="sit-lbl">High Risk</div>
+        </div>
+        <div class="sit-stat">
+          <div class="sit-num ${suspected||probable?'warn':'safe'}">${suspected + probable}</div>
+          <div class="sit-lbl">Susp/Prob Cases</div>
+        </div>
+        <div class="sit-stat">
+          <div class="sit-num ${confirmed?'crit'+pulse:'safe'}">${confirmed}</div>
+          <div class="sit-lbl">Confirmed</div>
+        </div>
+        <div class="sit-stat">
+          <div class="sit-num ${underFollowup?'warn':'safe'}">${underFollowup}</div>
+          <div class="sit-lbl">Contacts Active</div>
+        </div>
+        <div class="sit-stat">
+          <div class="sit-num ${sympt?'crit':''}">${sympt}</div>
+          <div class="sit-lbl">Became Case</div>
+        </div>
+        <div class="sit-stat">
+          <div class="sit-num ${inProgress?'info':''}">${inProgress}</div>
+          <div class="sit-lbl">Investigations</div>
+        </div>
+        <div class="sit-stat">
+          <div class="sit-num ${overdue?'crit'+pulse:'safe'}">${overdue}</div>
+          <div class="sit-lbl">Tasks Overdue</div>
+        </div>
+      </div>
+      ${counties ? `<div style="font-size:10px;color:var(--text-2);margin-top:8px;text-align:center">${counties} count${counties>1?'ies':'y'} affected</div>` : ''}
+    </div>`;
+}
+
+// ── 2. INTERACTIVE FUNNEL ─────────────────────────────────────────────
+// Colour-coded funnel with conversion percentages.
+// Shared by national dashboard and CFP home.
+function buildFunnel(stages) {
+  // stages = [{lbl, n, color}]
+  const max = Math.max(1, ...stages.map(s=>s.n));
+  const defaultColors = ['#085041','#0F6E56','#1D9E75','#854F0B','#C2410C','#A32D2D','#7C3AED'];
+  return stages.map((s, i) => {
+    const pct   = Math.round(s.n / max * 100);
+    const prev  = i > 0 ? stages[i-1].n : s.n;
+    const conv  = prev > 0 ? Math.round(s.n / prev * 100) : 100;
+    const convClass = conv >= 75 ? 'good' : conv >= 40 ? 'warn' : 'bad';
+    const color = s.color || defaultColors[i % defaultColors.length];
+    return `
+      ${i > 0 ? `<div class="funnel-arrow">↓ ${conv}% conversion</div>` : ''}
+      <div class="funnel-stage">
+        <div class="funnel-bar-row">
+          <div class="funnel-label">${s.lbl}</div>
+          <div class="funnel-track">
+            <div class="funnel-fill" style="width:${pct}%;background:${color}">
+              ${s.n > 0 ? `<span class="funnel-n">${s.n}</span>` : ''}
+            </div>
+            ${s.n === 0 ? '<span style="font-size:11px;color:var(--text-2);padding-left:8px">0</span>' : ''}
+          </div>
+          <div class="funnel-conv ${i===0?'':''+convClass}">${i===0 ? '100%' : conv+'%'}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── 3. TIMELINESS SLA SCORECARDS ──────────────────────────────────────
+// Each step: label, value (hours or %), target (hours), status (auto)
+function buildTimelinessSLA(steps) {
+  return steps.map(s => {
+    const cls  = s.status === 'green' ? 'tl-green' : s.status === 'amber' ? 'tl-amber' : 'tl-red';
+    const icon = s.status === 'green' ? '✅' : s.status === 'amber' ? '⚠️' : '🔴';
+    return `<div class="tl-card ${cls}">
+      <div class="tl-card-icon">${icon}</div>
+      <div class="tl-card-body">
+        <div class="tl-card-step">${s.step}</div>
+        <div class="tl-card-sub">Target: ${s.target}</div>
+      </div>
+      <div class="tl-card-metric">
+        <div class="tl-card-val" style="color:${s.status==='green'?'#15803D':s.status==='amber'?'var(--amber)':'var(--red)'}">${s.val}</div>
+        <div class="tl-card-target">${s.status==='green'?'On target':s.status==='amber'?'Near target':'Off target'}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function computeTimelinessSLAs(events, verifs, tasks, investigations) {
+  const now = Date.now();
+  // 1. Report → Verify (target 48h)
+  const verTimes = verifs.map(v => {
+    const ev = events.find(e => e.id === v.event_id);
+    if (!ev || !v.verified_at) return null;
+    return (new Date(v.verified_at) - new Date(ev.created_at)) / 3600000;
+  }).filter(x => x != null);
+  const medRV = verTimes.length ? median(verTimes) : null;
+
+  // 2. Verify → Assessment (target 24h — count pending risk assessment tasks vs created)
+  const pendingAssess = tasks.filter(t => t.status==='pending' && t.form_type==='risk_assessment').length;
+
+  // 3. Assessment → Investigation start (target 24h — overdue = past due_date)
+  const overdueInv = tasks.filter(t => t.status==='pending' && t.form_type==='investigation' && t.due_date && new Date(t.due_date).getTime() < now).length;
+
+  // 4. Investigation → Classification (target: all classified)
+  const total = investigations.length;
+  const classified = investigations.filter(i => i.case_classification !== 'pending_classification').length;
+  const classPct = total ? Math.round(classified/total*100) : 100;
+
+  return buildTimelinessSLA([
+    {
+      step: 'Signal Reported → Verified',
+      target: '≤ 48 hours', val: medRV == null ? 'N/A' : medRV.toFixed(0)+'h',
+      status: medRV == null ? 'amber' : medRV <= 48 ? 'green' : medRV <= 72 ? 'amber' : 'red',
+    },
+    {
+      step: 'Verified → Risk Assessed',
+      target: '≤ 24 hours', val: pendingAssess === 0 ? 'Current' : pendingAssess+' pending',
+      status: pendingAssess === 0 ? 'green' : pendingAssess <= 2 ? 'amber' : 'red',
+    },
+    {
+      step: 'Assessed → Investigation',
+      target: '≤ 24 hours', val: overdueInv === 0 ? 'On track' : overdueInv+' overdue',
+      status: overdueInv === 0 ? 'green' : overdueInv <= 1 ? 'amber' : 'red',
+    },
+    {
+      step: 'Investigation → Classification',
+      target: '100% classified', val: classPct+'%',
+      status: classPct === 100 ? 'green' : classPct >= 70 ? 'amber' : 'red',
+    },
+  ]);
+}
+
+// ── 4. EPIDEMIC CURVE ─────────────────────────────────────────────────
+// SVG bar chart of cases by date of symptom onset.
+function buildEpiCurve(investigations, filterCounty) {
+  // Build date bucket from date_symptoms_started
+  const dated = investigations.filter(i => i.date_symptoms_started);
+  if (!dated.length) return '<div style="font-size:12px;color:var(--text-2);padding:12px 0">No symptom onset dates recorded yet. Enter them in investigations.</div>';
+
+  // Bucket by week for compactness, or day if ≤ 14 data points
+  const byDate = {};
+  dated.forEach(i => {
+    const d = i.date_symptoms_started.slice(0,10);
+    byDate[d] = (byDate[d]||{total:0,suspected:0,probable:0,confirmed:0});
+    byDate[d].total++;
+    if (i.case_classification === 'suspected_case') byDate[d].suspected++;
+    else if (i.case_classification === 'probable_case') byDate[d].probable++;
+    else if (i.case_classification === 'confirmed_case') byDate[d].confirmed++;
+  });
+  const dates = Object.keys(byDate).sort();
+  if (!dates.length) return '';
+  const maxN = Math.max(1, ...dates.map(d => byDate[d].total));
+  const barW = Math.max(14, Math.min(28, Math.floor(260/dates.length)));
+  const h = 80;
+  const barGap = 3;
+  const totalW = dates.length * (barW + barGap);
+  let bars = '';
+  dates.forEach((d, i) => {
+    const b = byDate[d];
+    const barH = Math.round((b.total / maxN) * h);
+    const x = i * (barW + barGap);
+    const suspH  = Math.round((b.suspected / b.total) * barH);
+    const probH  = Math.round((b.probable  / b.total) * barH);
+    const confH  = barH - suspH - probH;
+    let yOff = h - barH;
+    bars += `<g>`;
+    if (suspH > 0) { bars += `<rect x="${x}" y="${yOff}" width="${barW}" height="${suspH}" fill="#854F0B" rx="2"/>`; yOff += suspH; }
+    if (probH > 0) { bars += `<rect x="${x}" y="${yOff}" width="${barW}" height="${probH}" fill="#C2410C" rx="2"/>`; yOff += probH; }
+    if (confH > 0) { bars += `<rect x="${x}" y="${yOff}" width="${barW}" height="${confH}" fill="#A32D2D" rx="2"/>`; }
+    if (i % Math.max(1, Math.floor(dates.length/4)) === 0) {
+      bars += `<text x="${x + barW/2}" y="${h+13}" text-anchor="middle" font-size="9" fill="#64748B">${d.slice(5)}</text>`;
+    }
+    bars += `</g>`;
+  });
+  return `
+    <div style="display:flex;gap:10px;margin-bottom:6px;align-items:center">
+      <span class="donut-leg-dot" style="background:#854F0B;border-radius:2px"></span><span style="font-size:10px;color:var(--text-2)">Suspected</span>
+      <span class="donut-leg-dot" style="background:#C2410C;border-radius:2px"></span><span style="font-size:10px;color:var(--text-2)">Probable</span>
+      <span class="donut-leg-dot" style="background:#A32D2D;border-radius:2px"></span><span style="font-size:10px;color:var(--text-2)">Confirmed</span>
+    </div>
+    <div class="epi-curve-wrap">
+      <svg class="epi-curve-svg" viewBox="0 0 ${Math.max(280, totalW + 20)} ${h+20}"
+        style="height:${h+24}px;width:100%">
+        ${bars}
+      </svg>
+    </div>`;
+}
+
+// ── 5. GEOGRAPHIC HOTSPOT ─────────────────────────────────────────────
+function buildHotspotList(events, areas, outbreaks) {
+  // Count signals + alert events per county/subcounty
+  const byCounty = {};
+  events.forEach(e => {
+    const area = areas.find(a => a.id === e.chp_area_id);
+    const county = area?.county || e.answers?.village || 'Unknown';
+    byCounty[county] = byCounty[county] || {signals:0, alerts:0};
+    byCounty[county].signals++;
+  });
+  outbreaks.forEach(o => {
+    const county = o.chp_areas?.county || 'Unknown';
+    byCounty[county] = byCounty[county] || {signals:0, alerts:0};
+    byCounty[county].alerts++;
+  });
+  const sorted = Object.entries(byCounty).sort((a,b) => (b[1].signals + b[1].alerts*3) - (a[1].signals + a[1].alerts*3));
+  if (!sorted.length) return '<div style="font-size:12px;color:var(--text-2)">No geographic data yet</div>';
+  const max = sorted[0][1].signals;
+  return sorted.slice(0,8).map(([county, d], i) => {
+    const rankCls = i===0?'r1':i===1?'r2':i===2?'r3':'r-n';
+    const isHot   = d.alerts > 0;
+    const isWarm  = d.signals >= 3;
+    const pct     = Math.round(d.signals/Math.max(1,max)*100);
+    return `<div class="hotspot-row">
+      <div class="hotspot-rank ${rankCls}">${i+1}</div>
+      <div class="hotspot-place">${esc(county)}
+        ${isHot ? '<span class="hotspot-badge hot">Alert</span>' : isWarm ? '<span class="hotspot-badge warm">Active</span>' : ''}
+      </div>
+      <div class="hotspot-bar-wrap">
+        <div class="bar-track" style="height:8px"><div class="bar-fill" style="width:${pct}%;background:${isHot?'var(--red)':'var(--green)'}"></div></div>
+      </div>
+      <div class="hotspot-n">${d.signals}</div>
+    </div>`;
+  }).join('');
+}
+
+// ── 6. DONUT CHART ────────────────────────────────────────────────────
+// Pure SVG donut, no external deps
+function buildDonut(slices, cx, cy, r, stroke) {
+  // slices = [{label, n, color}]
+  const total = slices.reduce((s,x)=>s+x.n, 0);
+  if (!total) return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#F1F5F9" stroke-width="${stroke}"/>`;
+  let angle = -90;
+  return slices.map(s => {
+    if (!s.n) return '';
+    const sweep = (s.n / total) * 360;
+    const start = angle;
+    const end   = angle + sweep;
+    angle       = end;
+    const r1    = toRad(start), r2 = toRad(end);
+    const x1    = cx + r*Math.cos(r1), y1 = cy + r*Math.sin(r1);
+    const x2    = cx + r*Math.cos(r2), y2 = cy + r*Math.sin(r2);
+    const lg    = sweep > 180 ? 1 : 0;
+    return `<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${lg},1 ${x2},${y2} Z" fill="${s.color}" opacity=".9"/>`;
+  }).join('');
+}
+function toRad(d) { return d * Math.PI / 180; }
+
+function buildExposureDonut(contacts) {
+  const counts = {};
+  contacts.forEach(c => { counts[c.exposure_type] = (counts[c.exposure_type]||0)+1; });
+  const colors = {
+    household_contact:'#085041', physical_contact:'#1D9E75',
+    funeral_contact:'#A32D2D',   healthcare_exposure:'#854F0B',
+    laboratory_exposure:'#7C3AED', other:'#64748B',
+  };
+  const slices = Object.entries(EXPOSURE_TYPE_LABELS)
+    .map(([k,l]) => ({ label:l, n:counts[k]||0, color:colors[k]||'#94A3B8' }))
+    .filter(s=>s.n>0);
+  const total = slices.reduce((s,x)=>s+x.n,0);
+  if (!total) return '<div style="font-size:12px;color:var(--text-2)">No contacts registered yet</div>';
+  const sz = 90;
+  const svg = `<svg viewBox="0 0 ${sz} ${sz}" width="${sz}" height="${sz}" style="flex-shrink:0">
+    ${buildDonut(slices, sz/2, sz/2, sz/2-6, sz/5)}
+    <circle cx="${sz/2}" cy="${sz/2}" r="${sz/3}" fill="white"/>
+    <text x="${sz/2}" y="${sz/2-4}" text-anchor="middle" font-size="14" font-weight="800" fill="${'#1E293B'}">${total}</text>
+    <text x="${sz/2}" y="${sz/2+9}" text-anchor="middle" font-size="8" fill="#64748B">contacts</text>
+  </svg>`;
+  const legend = slices.map(s =>
+    `<div class="donut-leg-row"><div class="donut-leg-dot" style="background:${s.color}"></div>
+    <span class="donut-leg-lbl">${s.label}</span><span class="donut-leg-n">${s.n}</span></div>`
+  ).join('');
+  return `<div class="donut-wrap">${svg}<div class="donut-legend">${legend}</div></div>`;
+}
+
+// ── 7. RISK DISTRIBUTION BARS ─────────────────────────────────────────
+function buildRiskDistribution(outbreaks) {
+  const dist = { low:0, moderate:0, high:0, very_high:0 };
+  outbreaks.forEach(o => { if (dist[o.risk_level] !== undefined) dist[o.risk_level]++; });
+  const total = Object.values(dist).reduce((a,b)=>a+b, 0);
+  if (!total) return '<div style="font-size:12px;color:var(--text-2)">No risk-assessed events yet</div>';
+  const cfg = [
+    {k:'very_high', lbl:'Very High', color:'#A32D2D'},
+    {k:'high',      lbl:'High',      color:'#C2410C'},
+    {k:'moderate',  lbl:'Moderate',  color:'#854F0B'},
+    {k:'low',       lbl:'Low',       color:'#085041'},
+  ];
+  return cfg.map(c => {
+    const n = dist[c.k] || 0;
+    const pct = Math.round(n/total*100);
+    return `<div class="risk-dist-row">
+      <div class="risk-dist-lbl">${c.lbl}</div>
+      <div class="risk-dist-bar">
+        <div class="risk-dist-fill" style="width:${pct}%;background:${c.color}">
+          ${n > 0 ? `<span class="risk-dist-n">${n}</span>` : ''}
+        </div>
+      </div>
+      <div class="risk-dist-pct">${pct}%</div>
+    </div>`;
+  }).join('');
+}
+
+// ── 8. INVESTIGATION COMMAND KPIs ────────────────────────────────────
+function buildInvestigationCommandKPIs(investigations, tasks) {
+  const now = Date.now();
+  const open = investigations.filter(i => i.status === 'open').length;
+  const overdue = tasks.filter(t => t.status==='pending' && t.form_type==='investigation' && t.due_date && new Date(t.due_date).getTime() < now).length;
+  const classified = investigations.filter(i => i.case_classification !== 'pending_classification').length;
+  const total = investigations.length;
+  const completionRate = total ? Math.round(classified/total*100) : 0;
+  const suspected  = investigations.filter(i => i.case_classification === 'suspected_case').length;
+  const probable   = investigations.filter(i => i.case_classification === 'probable_case').length;
+  const confirmed  = investigations.filter(i => i.case_classification === 'confirmed_case').length;
+  return `
+    <div class="inv-kpi-row">
+      <div class="inv-kpi ${open?'amber':'green'}">
+        <div class="inv-kpi-num">${open}</div>
+        <div class="inv-kpi-lbl">Open</div>
+      </div>
+      <div class="inv-kpi ${overdue?'red':'green'}">
+        <div class="inv-kpi-num">${overdue}</div>
+        <div class="inv-kpi-lbl">Overdue</div>
+      </div>
+      <div class="inv-kpi ${completionRate<50?'amber':'green'}">
+        <div class="inv-kpi-num">${completionRate}%</div>
+        <div class="inv-kpi-lbl">Classified</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+      <div class="inv-kpi amber"><div class="inv-kpi-num">${suspected}</div><div class="inv-kpi-lbl">Suspected</div></div>
+      <div class="inv-kpi" style="background:#FFEDD5;border-color:#FDBA74"><div class="inv-kpi-num" style="color:#C2410C">${probable}</div><div class="inv-kpi-lbl" style="color:#C2410C">Probable</div></div>
+      <div class="inv-kpi red"><div class="inv-kpi-num">${confirmed}</div><div class="inv-kpi-lbl">Confirmed</div></div>
+    </div>`;
+}
+
+// ── 9. VERIFICATION PERFORMANCE (CHA) ────────────────────────────────
+function buildVerifPerformance(tasks_pending, verified, reported) {
+  const verifRate = reported ? Math.round(verified/reported*100) : 0;
+  const pendingNow = tasks_pending;
+  const color = verifRate >= 80 ? '#15803D' : verifRate >= 50 ? 'var(--amber)' : 'var(--red)';
+  // Semi-circle gauge using SVG
+  const angle  = (verifRate / 100) * 180;
+  const rad    = toRad(angle - 180);
+  const cx=60, cy=60, r=46;
+  const x = cx + r * Math.cos(rad), y = cy + r * Math.sin(rad);
+  const lg = angle > 180 ? 1 : 0;
+  return `
+    <div style="display:flex;gap:14px;align-items:flex-start">
+      <div style="flex-shrink:0">
+        <svg viewBox="0 0 120 70" width="120" height="70">
+          <path d="M14,60 A46,46 0 0,1 106,60" fill="none" stroke="#F1F5F9" stroke-width="10" stroke-linecap="round"/>
+          <path d="M14,60 A46,46 0 ${lg},1 ${x.toFixed(1)},${y.toFixed(1)}" fill="none" stroke="${color}" stroke-width="10" stroke-linecap="round"/>
+          <text x="60" y="55" text-anchor="middle" font-size="18" font-weight="800" fill="${color}">${verifRate}%</text>
+          <text x="60" y="66" text-anchor="middle" font-size="8" fill="#94A3B8">verified</text>
+        </svg>
+      </div>
+      <div style="flex:1;padding-top:8px">
+        <div class="tl-row"><span style="font-size:12px">Awaiting verification</span>
+          <span class="tl-val" style="color:${pendingNow?'var(--amber)':'var(--green)'}">${pendingNow}</span></div>
+        <div class="tl-row"><span style="font-size:12px">Total reported</span>
+          <span class="tl-val">${reported}</span></div>
+        <div class="tl-row"><span style="font-size:12px">Verified</span>
+          <span class="tl-val" style="color:var(--green)">${verified}</span></div>
+      </div>
+    </div>`;
+}
+
+// ── 10. CONTACT INTELLIGENCE (ENHANCED) ──────────────────────────────
+function buildContactIntelligenceKPIs(contacts, followups) {
+  const now = Date.now();
+  const today = new Date().toISOString().slice(0,10);
+  const active = contacts.filter(c => c.status==='active' && contactWindowDay(c)<21);
+  const totalContacts = contacts.length;
+
+  // Risk stratification (based on exposure type — proxy for risk level)
+  const high   = contacts.filter(c => ['funeral_contact','healthcare_exposure','laboratory_exposure'].includes(c.exposure_type) && c.status==='active').length;
+  const medium = contacts.filter(c => ['physical_contact'].includes(c.exposure_type) && c.status==='active').length;
+  const low    = contacts.filter(c => ['household_contact','other'].includes(c.exposure_type) && c.status==='active').length;
+
+  // Due today: contacts whose window day equals today (active, within window)
+  const dueToday = active.filter(c => {
+    const d = daysSince(c.date_of_last_exposure) + 1;
+    return d >= 1 && d <= 21;
+  }).length;
+
+  // Missed: active contacts past their window day without a follow-up logged
+  const recordedIds = new Set(followups.map(f => f.contact_id));
+  const missed = active.filter(c => !recordedIds.has(c.id) && contactWindowDay(c) > 0).length;
+
+  const symptomatic = contacts.filter(c => c.status==='became_case').length;
+
+  return `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px">
+      <div class="inv-kpi red"><div class="inv-kpi-num">${high}</div><div class="inv-kpi-lbl">High Risk</div></div>
+      <div class="inv-kpi amber"><div class="inv-kpi-num">${medium}</div><div class="inv-kpi-lbl">Medium Risk</div></div>
+      <div class="inv-kpi blue"><div class="inv-kpi-num">${low}</div><div class="inv-kpi-lbl">Low Risk</div></div>
+      <div class="inv-kpi ${dueToday?'amber':'green'}"><div class="inv-kpi-num">${dueToday}</div><div class="inv-kpi-lbl">Due Today</div></div>
+      <div class="inv-kpi ${missed?'red':'green'}"><div class="inv-kpi-num">${missed}</div><div class="inv-kpi-lbl">Missed</div></div>
+      <div class="inv-kpi ${symptomatic?'red':'gray'}"><div class="inv-kpi-num">${symptomatic}</div><div class="inv-kpi-lbl">Became Case</div></div>
+    </div>`;
+}
+
+// ════════════════════════════════════════════════════════════════════════
+// END INTELLIGENCE ENGINE — below are call-site modifications
+// ════════════════════════════════════════════════════════════════════════
 
 function expr(node, ans) {
   if (!node) return true;
