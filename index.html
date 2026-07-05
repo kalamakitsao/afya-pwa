@@ -725,7 +725,113 @@ textarea{min-height:80px;resize:vertical}
 .escalate-county-banner{background:#EDE9FE;border:1px solid #DDD6FE;border-radius:10px;
   padding:11px 13px;font-size:12px;color:#4C1D95;margin-bottom:12px;line-height:1.5}
 
-/* ── DEMO ENHANCEMENTS ──────────────────────────────────────────────────── */
+/* ── AFYABI / SSO INTEGRATION COMPONENTS ────────────────────────────────── */
+
+/* SSO transition animations */
+@keyframes ssoSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+@keyframes ssoFadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.sso-step{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:12px;
+  color:rgba(255,255,255,.9);animation:ssoFadeIn .3s ease both}
+.sso-step-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.sso-step.done .sso-step-dot{background:#4ADE80}
+.sso-step.active .sso-step-dot{background:#60A5FA;animation:pulse 1s ease infinite}
+.sso-step.pending .sso-step-dot{background:rgba(255,255,255,.3)}
+
+/* AfyaBI nav tabs (blue theme) */
+.afyabi-tab{padding:10px 14px;font-size:12px;font-weight:500;color:rgba(255,255,255,.6);
+  cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;
+  transition:all .15s;border:none;background:none}
+.afyabi-tab.on{color:#fff;border-bottom-color:#60A5FA}
+.afyabi-tab:hover:not(.on){color:rgba(255,255,255,.85)}
+
+/* AfyaBI cards (distinct from Afya Nyumbani cards) */
+.bi-card{background:#fff;border:1px solid #E0E7FF;border-radius:12px;padding:16px;margin-bottom:12px}
+.bi-card-title{font-size:13px;font-weight:700;color:#1E3A8A;margin-bottom:10px}
+.bi-kpi{background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:12px 10px;
+  text-align:center}
+.bi-kpi-num{font-size:22px;font-weight:800;color:#1E40AF;line-height:1.1}
+.bi-kpi-lbl{font-size:10px;color:#3B82F6;font-weight:500;margin-top:3px;line-height:1.3}
+.bi-kpi.danger{background:#FFF1F2;border-color:#FECDD3}
+.bi-kpi.danger .bi-kpi-num{color:#BE123C}
+.bi-kpi.danger .bi-kpi-lbl{color:#E11D48}
+.bi-kpi.warn{background:#FFFBEB;border-color:#FDE68A}
+.bi-kpi.warn .bi-kpi-num{color:#92400E}
+.bi-kpi.warn .bi-kpi-lbl{color:#B45309}
+.bi-kpi.good{background:#F0FDF4;border-color:#BBF7D0}
+.bi-kpi.good .bi-kpi-num{color:#15803D}
+.bi-kpi.good .bi-kpi-lbl{color:#16A34A}
+
+/* Shared identity card (shows in both platforms) */
+.shared-identity-card{background:linear-gradient(135deg,#F0F4FF,#EEF2FF);
+  border:1px solid #C7D2FE;border-radius:12px;padding:14px;margin-bottom:12px}
+.identity-header{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.identity-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;
+  justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+.identity-name{font-size:15px;font-weight:700;color:#1E293B;line-height:1.2}
+.identity-role{font-size:11px;color:#4338CA;font-weight:600;margin-top:2px}
+.identity-scope{font-size:10.5px;color:#64748B;margin-top:1px}
+.identity-fields{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.identity-field{background:#fff;border-radius:8px;padding:8px 10px}
+.identity-field-lbl{font-size:9.5px;color:#64748B;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.identity-field-val{font-size:12px;font-weight:600;color:#1E293B;margin-top:2px}
+
+/* JWT inspector */
+.jwt-panel{background:#0F172A;border-radius:10px;padding:14px;font-family:monospace}
+.jwt-header{font-size:10px;color:#60A5FA;margin-bottom:8px;font-weight:600;letter-spacing:.04em}
+.jwt-claim{display:flex;justify-content:space-between;align-items:center;
+  padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:11px}
+.jwt-claim:last-child{border-bottom:none}
+.jwt-claim-key{color:#94A3B8}
+.jwt-claim-val{color:#E2E8F0;font-weight:500;text-align:right;max-width:60%}
+.jwt-claim-val.green{color:#4ADE80}
+.jwt-claim-val.amber{color:#FBBF24}
+.jwt-claim-val.red{color:#F87171}
+.jwt-expiry-bar{margin-top:10px;background:rgba(255,255,255,.1);border-radius:4px;height:4px}
+.jwt-expiry-fill{height:100%;border-radius:4px;background:#4ADE80;transition:width .5s}
+
+/* Integration status page */
+.int-status-row{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 0;border-bottom:1px solid #F1F5F9}
+.int-status-row:last-child{border-bottom:none}
+.int-status-lbl{font-size:12.5px;font-weight:500;color:var(--text)}
+.int-status-val{font-size:12px;font-weight:600;color:var(--text-2)}
+.int-status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.int-status-dot.green{background:#22C55E}
+.int-status-dot.amber{background:#F59E0B}
+.int-status-dot.gray{background:#CBD5E1}
+.int-sys-card{display:flex;align-items:center;gap:12px;padding:12px 14px;
+  border-radius:10px;border:1.5px solid transparent;margin-bottom:8px;cursor:default}
+.int-sys-card.connected{background:#F0FDF4;border-color:#BBF7D0}
+.int-sys-card.standby{background:#F8FAFC;border-color:var(--border)}
+.int-sys-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-size:18px;flex-shrink:0}
+
+/* User directory in AfyaBI login sim */
+.afyabi-user-row{display:flex;align-items:center;gap:10px;padding:10px 12px;
+  border-radius:10px;border:1.5px solid #E0E7FF;cursor:pointer;margin-bottom:6px;
+  transition:all .12s;background:#fff}
+.afyabi-user-row:hover{border-color:#6366F1;background:#EFF6FF}
+.afyabi-user-row:active{transform:scale(.98)}
+.afyabi-user-geo{font-size:10px;color:#64748B;margin-top:2px}
+
+/* Scope badge */
+.scope-badge{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:10px;
+  text-transform:uppercase;letter-spacing:.04em}
+.scope-national{background:#EDE9FE;color:#6D28D9}
+.scope-county{background:#EFF6FF;color:#1D4ED8}
+.scope-subcounty{background:#F0FDF4;color:#15803D}
+.scope-community{background:#FEF3C7;color:#92400E}
+
+/* AfyaBI user login selector in AfyaBI login sim */
+.afyabi-login-user{display:flex;align-items:center;gap:12px;padding:12px;
+  border-radius:10px;border:1.5px solid #E0E7FF;cursor:pointer;
+  transition:all .12s;margin-bottom:6px}
+.afyabi-login-user:hover{border-color:#3B82F6;background:#EFF6FF;transform:translateY(-1px)}
+.afyabi-login-user:active{transform:scale(.98)}
+
+/* Shared platform footer (shown in both AfyaBI and Afya Nyumbani) */
+.platform-footer{display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:8px 16px;font-size:9.5px;color:rgba(255,255,255,.5);border-top:1px solid rgba(255,255,255,.08)}
 /* Role switcher rows */
 .rs-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;
   cursor:pointer;transition:background .1s;margin-bottom:4px}
@@ -951,6 +1057,25 @@ textarea{min-height:80px;resize:vertical}
         </svg>
         Sign out
       </button>
+      <!-- AfyaBI launcher in sidebar -->
+      <div class="sb-divider" style="margin:8px 6px"></div>
+      <button onclick="openAfyaBI()" style="display:flex;align-items:center;gap:9px;padding:9px 12px;
+        border-radius:9px;color:#93C5FD;font-size:12px;font-weight:500;cursor:pointer;
+        border:none;background:rgba(30,58,138,.4);width:100%;text-align:left;
+        border:1px solid rgba(147,197,253,.2);margin-bottom:4px">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+        Open AfyaBI
+      </button>
+      <button onclick="goTab('integration');renderIntegrationStatus()" style="display:flex;align-items:center;
+        gap:9px;padding:9px 12px;border-radius:9px;color:#9FE1CB;font-size:12px;font-weight:500;
+        cursor:pointer;border:none;background:none;width:100%;text-align:left">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/>
+        </svg>
+        Integration Status
+      </button>
     </div>
   </div>
 
@@ -1139,6 +1264,11 @@ textarea{min-height:80px;resize:vertical}
     <div id="risk-dash-content"></div>
   </div>
 
+  <!-- INTEGRATION STATUS — Phase 9 -->
+  <div id="screen-integration" class="screen">
+    <div id="integration-content"></div>
+  </div>
+
   <div class="tabs" id="tab-bar">
     <!-- tabs rendered by JS based on role -->
   </div>
@@ -1201,64 +1331,168 @@ textarea{min-height:80px;resize:vertical}
   </div>
 </div>
 
-<!-- ROLE SWITCHER — demo mode only, simulates different user contexts -->
+<!-- ROLE SWITCHER — demo mode only, renders dynamically from AFYABI_USERS directory -->
 <div id="role-switcher-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);
   z-index:200;align-items:center;justify-content:center;padding:20px" onclick="closeRoleSwitcher(event)">
-  <div style="background:#fff;border-radius:16px;width:100%;max-width:380px;padding:0 0 8px;overflow:hidden"
+  <div style="background:#fff;border-radius:16px;width:100%;max-width:390px;padding:0 0 8px;overflow:hidden"
     onclick="event.stopPropagation()">
-    <div style="background:var(--green);color:#E1F5EE;padding:16px 20px 14px">
-      <div style="font-size:15px;font-weight:700;margin-bottom:2px">🔄 Demo Role Switcher</div>
-      <div style="font-size:11px;color:#9FE1CB">Simulates different user contexts without re-login</div>
+    <div style="background:linear-gradient(135deg,var(--green),#0F6E56);color:#E1F5EE;padding:14px 18px 12px">
+      <div style="font-size:14px;font-weight:700;margin-bottom:1px">🔄 Switch Persona</div>
+      <div style="font-size:10.5px;color:#9FE1CB">Simulates different user contexts · Full geographic scoping applied</div>
     </div>
-    <div style="padding:12px 16px 4px">
-      <div style="font-size:11px;font-weight:600;color:var(--text-2);text-transform:uppercase;
-        letter-spacing:.05em;margin-bottom:8px">Select role to preview</div>
-      ${[
-        {role:'chp',      name:'Wanjiku Kamau',    label:'Community Health Promoter',    geo:'Kaptum, Baringo',    badge:'#085041'},
-        {role:'cha',      name:'Grace Mwangi',     label:'Community Health Assistant',   geo:'Kaptum Sub-county',  badge:'#1D9E75'},
-        {role:'scfp',     name:'James Korir',      label:'Sub-County Focal Person',      geo:'Westlands, Nairobi', badge:'#C2410C'},
-        {role:'cfp',      name:'Dr. Faith Cherono',label:'County Focal Person',          geo:'Baringo County',     badge:'#7C3AED'},
-        {role:'national', name:'Surveillance Team', label:'National Disease Surveillance',geo:'Nationwide',         badge:'#0E7490'},
-      ].map(u => `
-        <div class="rs-row" onclick="switchDemoRole('${u.role}','${u.name}','${u.label}','${u.geo}','${u.badge}')">
-          <div style="width:36px;height:36px;border-radius:50%;background:${u.badge};color:#fff;
-            display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0">
-            ${u.name.split(' ').map(x=>x[0]).slice(0,2).join('')}
-          </div>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:13px;font-weight:600">${u.name}</div>
-            <div style="font-size:11px;color:var(--text-2)">${u.label} · ${u.geo}</div>
-          </div>
-          <span style="background:${u.badge};color:#fff;padding:2px 7px;border-radius:10px;
-            font-size:10px;font-weight:700">${u.role.toUpperCase()}</span>
-        </div>`).join('')}
+    <div id="role-switcher-users" style="padding:10px 14px 4px;max-height:70vh;overflow-y:auto">
+      <!-- rendered by openRoleSwitcher() -->
     </div>
   </div>
 </div>
 
-<!-- AFYABI INTEGRATION OVERLAY -->
-<div id="afyabi-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);
-  z-index:200;align-items:center;justify-content:center;padding:20px" onclick="closeAfyaBI()">
-  <div style="background:#fff;border-radius:16px;width:100%;max-width:380px;overflow:hidden"
-    onclick="event.stopPropagation()">
-    <div style="background:linear-gradient(135deg,#1E40AF,#4338CA);color:#fff;padding:20px">
-      <div style="font-size:16px;font-weight:700;margin-bottom:4px">AfyaBI Analytics</div>
-      <div style="font-size:11px;color:#BFDBFE">Ministry of Health · National Health Intelligence Platform</div>
+<!-- AFYABI INTEGRATION OVERLAY — replaced by full simulation below -->
+<div id="afyabi-modal" style="display:none"></div>
+
+<!-- SSO TRANSITION SCREEN — shown while "authenticating" between platforms -->
+<div id="sso-transition" style="display:none;position:fixed;inset:0;z-index:500;
+  background:linear-gradient(135deg,#1E3A8A 0%,#1E40AF 40%,#2563EB 100%);
+  flex-direction:column;align-items:center;justify-content:center;color:#fff">
+  <div style="text-align:center;padding:32px">
+    <!-- Ministry of Health shared brand strip -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:32px;
+      opacity:.7">
+      <div style="width:28px;height:28px;background:rgba(255,255,255,.2);border-radius:6px;
+        display:flex;align-items:center;justify-content:center">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+        </svg>
+      </div>
+      <span style="font-size:12px;font-weight:600;letter-spacing:.04em">MINISTRY OF HEALTH · KENYA</span>
     </div>
-    <div style="padding:16px">
-      <div id="afyabi-launch-status" style="text-align:center;padding:16px 0">
-        <div style="font-size:32px;margin-bottom:8px">📊</div>
-        <div style="font-size:14px;font-weight:600;color:var(--text)">Opening AfyaBI…</div>
-        <div style="font-size:11px;color:var(--text-2);margin-top:4px">Authenticating with your session token</div>
-        <div style="margin-top:14px;background:#F1F5F9;border-radius:8px;padding:10px 12px;text-align:left;font-size:11px">
-          <div style="color:var(--text-2);margin-bottom:6px;font-weight:600">JWT Context (mock)</div>
-          <div id="afyabi-jwt-display" style="font-family:monospace;font-size:10px;color:#374151;
-            word-break:break-all;line-height:1.6"></div>
+    <div id="sso-icon" style="font-size:56px;margin-bottom:20px;
+      animation:ssoSpin 1.5s ease infinite">⚙️</div>
+    <div id="sso-title" style="font-size:22px;font-weight:700;margin-bottom:8px">
+      Authenticating…
+    </div>
+    <div id="sso-subtitle" style="font-size:14px;color:#BFDBFE;margin-bottom:32px;max-width:280px;line-height:1.6">
+      Validating your session token and establishing secure context
+    </div>
+    <!-- JWT progress steps -->
+    <div id="sso-steps" style="text-align:left;background:rgba(255,255,255,.1);border-radius:12px;
+      padding:14px 18px;max-width:300px;width:100%">
+    </div>
+    <div id="sso-error" style="display:none;background:rgba(220,38,38,.2);border:1px solid rgba(252,165,165,.4);
+      border-radius:10px;padding:14px 18px;max-width:300px;width:100%;margin-top:16px;text-align:center">
+      <div style="font-size:16px;font-weight:700;margin-bottom:6px">Authentication Failed</div>
+      <div id="sso-error-msg" style="font-size:13px;color:#FCA5A5;margin-bottom:14px"></div>
+      <button onclick="ssoRetry()" style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);
+        border-radius:8px;color:#fff;padding:9px 18px;font-size:13px;font-weight:600;cursor:pointer">
+        Try again
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- AFYABI SIMULATION — full-screen overlay simulating the AfyaBI platform
+     Uses a distinct blue theme to clearly show the user they're "in a different app"
+     while maintaining shared Ministry of Health branding and user identity -->
+<div id="afyabi-sim" style="display:none;position:fixed;inset:0;z-index:400;
+  flex-direction:column;background:#F0F4FF;overflow:hidden">
+
+  <!-- AfyaBI shared MoH platform header (matches Afya Nyumbani layout pattern) -->
+  <div id="afyabi-header" style="background:linear-gradient(135deg,#1E3A8A,#1E40AF);
+    color:#fff;padding:12px 16px;flex-shrink:0;display:flex;align-items:center;
+    justify-content:space-between">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:32px;height:32px;background:rgba(255,255,255,.15);border-radius:8px;
+        display:flex;align-items:center;justify-content:center">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+      </div>
+      <div>
+        <div style="font-size:16px;font-weight:700;letter-spacing:-.01em">AfyaBI</div>
+        <div style="font-size:10px;color:#93C5FD">National Health Intelligence Platform</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <!-- Shared user identity — same avatar/name as Afya Nyumbani -->
+      <div id="afyabi-user-pill" style="background:rgba(255,255,255,.12);border-radius:20px;
+        padding:4px 10px 4px 4px;display:flex;align-items:center;gap:6px">
+        <div id="afyabi-avatar" style="width:24px;height:24px;border-radius:50%;
+          background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;
+          font-size:10px;font-weight:700;color:#fff">?</div>
+        <div>
+          <div id="afyabi-user-name" style="font-size:11px;font-weight:600;line-height:1.2">Loading…</div>
+          <div id="afyabi-user-scope" style="font-size:9px;color:#93C5FD;line-height:1.2"></div>
         </div>
       </div>
-      <div style="display:flex;gap:8px;margin-top:4px">
-        <button class="btn btn-o" onclick="closeAfyaBI()">Cancel</button>
-        <button class="btn btn-p" onclick="launchAfyaBIExternal()">Open in Browser</button>
+      <button onclick="closeAfyaBISim()" style="background:rgba(255,255,255,.12);
+        border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#fff;
+        padding:5px 9px;font-size:11px;font-weight:600;cursor:pointer;
+        display:flex;align-items:center;gap:4px">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>Close
+      </button>
+    </div>
+  </div>
+
+  <!-- MoH platform unification strip -->
+  <div style="background:#1E3A8A;border-bottom:1px solid rgba(255,255,255,.1);
+    padding:5px 16px;display:flex;align-items:center;gap:8px;flex-shrink:0">
+    <span style="font-size:9.5px;color:#93C5FD;font-weight:600;letter-spacing:.05em;
+      text-transform:uppercase">INTEGRATED HEALTH INFORMATION SYSTEM</span>
+    <div style="flex:1;height:1px;background:rgba(255,255,255,.1)"></div>
+    <!-- Platform switcher pills -->
+    <div style="display:flex;gap:4px">
+      <div style="background:rgba(255,255,255,.18);border-radius:12px;padding:3px 9px;
+        font-size:10px;font-weight:600;color:#fff;cursor:default">AfyaBI</div>
+      <div onclick="switchToAfyaNyumbani()" style="background:rgba(8,80,65,.4);border-radius:12px;
+        padding:3px 9px;font-size:10px;font-weight:600;color:#9FE1CB;cursor:pointer;
+        border:1px solid rgba(159,225,203,.3)" title="Switch to Afya Nyumbani">Afya Nyumbani ↗</div>
+    </div>
+  </div>
+
+  <!-- AfyaBI navigation tabs -->
+  <div id="afyabi-nav" style="background:#1E3A8A;padding:0 16px;display:flex;
+    gap:0;border-bottom:2px solid rgba(255,255,255,.08);flex-shrink:0;overflow-x:auto">
+  </div>
+
+  <!-- AfyaBI main content area -->
+  <div id="afyabi-content" style="flex:1;overflow-y:auto;padding:16px">
+    <div id="afyabi-page" style="max-width:900px;margin:0 auto"></div>
+  </div>
+</div>
+
+<!-- MOCK AFYABI LOGIN — simulates the AfyaBI login portal -->
+<div id="afyabi-login-sim" style="display:none;position:fixed;inset:0;z-index:450;
+  background:linear-gradient(160deg,#EFF6FF 0%,#DBEAFE 50%,#EDE9FE 100%);
+  flex-direction:column;align-items:center;justify-content:center;padding:24px">
+  <div style="background:#fff;border-radius:20px;width:100%;max-width:360px;
+    padding:0;overflow:hidden;box-shadow:0 20px 60px rgba(30,58,138,.2)">
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#1E3A8A,#4338CA);padding:28px 24px;text-align:center">
+      <div style="width:56px;height:56px;background:rgba(255,255,255,.15);border-radius:16px;
+        display:flex;align-items:center;justify-content:center;margin:0 auto 14px">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="2">
+          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+        </svg>
+      </div>
+      <div style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-.01em">AfyaBI</div>
+      <div style="font-size:12px;color:#93C5FD;margin-top:3px">National Health Intelligence Platform</div>
+      <div style="font-size:10px;color:#BFDBFE;margin-top:6px;opacity:.8">
+        Ministry of Health · State Department for Public Health
+      </div>
+    </div>
+    <!-- Login body -->
+    <div style="padding:20px 24px 24px">
+      <div style="font-size:13px;font-weight:600;color:#1E293B;margin-bottom:12px">
+        Select your profile to continue
+      </div>
+      <div id="afyabi-user-selector" style="display:flex;flex-direction:column;gap:6px">
+        <!-- rendered by buildAfyaBIUserSelector() -->
+      </div>
+      <div style="border-top:1px solid #E2E8F0;margin-top:16px;padding-top:12px;
+        font-size:10px;color:#94A3B8;text-align:center;line-height:1.6">
+        🔒 Secure JWT-based SSO · Session valid 60 minutes<br>
+        No password required in this preview demonstration
       </div>
     </div>
   </div>
@@ -1539,6 +1773,26 @@ window.addEventListener('DOMContentLoaded', async () => {
   await openIDB();
   await updateQueueBadge();
 
+  // Check for AfyaBI SSO token in URL hash (#sso?token=...)
+  // This handles the case where AfyaBI deep-links into Afya Nyumbani
+  if (window.location.hash.startsWith('#sso')) {
+    const handled = await processSSORoute();
+    if (handled) {
+      // If SSO succeeded and we already have a Supabase session, enter app
+      // Otherwise fall through to normal login
+      if (!isConfigured) {
+        // In demo mode with SSO, show app directly with SSO context
+        show('s-app', 'flex');
+        hide('s-loading'); hide('s-login');
+        updateOfflineBanner();
+        activateDemoFab();
+        renderTabs(currentUserCtx?.role || 'scfp');
+        await renderHome();
+        return;
+      }
+    }
+  }
+
   if (!isConfigured) {
     show('s-login', 'flex'); hide('s-loading');
     setErr('login-err', 'config.js not configured — set your Supabase URL and anon key.');
@@ -1647,6 +1901,21 @@ async function enterApp() {
   // Render role-specific tabs (mobile bottom bar + desktop sidebar)
   renderTabs(role);
   activateDemoFab();  // Always show demo role-switcher FAB in this build
+
+  // Set shared user context (Phase 5) — enables geographic scoping
+  // across both platforms using the same identity object
+  setUserContext({
+    userId: uid,
+    name,
+    role,
+    countyId: profile?.county_id || null,
+    countyName: profile?._demo_county || null,
+    subcountyId: profile?.sub_county_id || null,
+    subcountyName: profile?._demo_geo || null,
+    scope: role === 'national' ? 'national' : role === 'cfp' ? 'county' :
+           role === 'scfp' ? 'subcounty' : 'community',
+    issuer: JWT_ISSUER_NYUMBANI,
+  });
 
   await loadSchema();
   await renderHome();
@@ -3041,7 +3310,7 @@ window.goTab = (tab) => {
 
   for (const t of ['home','households','household-detail','member-detail','report','tasks','signals','impact',
                     'outbreaks','outbreak-detail','invest','invest-detail','contacts','contact-detail',
-                    'hotspots','performance','risk-dash',
+                    'hotspots','performance','risk-dash','integration',
                     'success','verify-done']) {
     const s  = id(`screen-${t}`);
     const b  = id(`tab-${t}`);
@@ -3059,6 +3328,7 @@ window.goTab = (tab) => {
   if (tab === 'hotspots')    renderHotspotsScreen();
   if (tab === 'performance') renderPerformanceScreen();
   if (tab === 'risk-dash')   renderRiskDashboard();
+  if (tab === 'integration') renderIntegrationStatus();
 };
 
 async function renderTasksScreen() {
@@ -5883,86 +6153,1104 @@ function getDemoDataset() {
 function demoSituation() { return getDemoDataset().situation; }
 
 // ════════════════════════════════════════════════════════════════════════
-// PHASE 1 — AFYABI INTEGRATION PREVIEW
+// AFYABI ↔ AFYA NYUMBANI INTEGRATION PREVIEW
+// Phases 1-12 of the integration specification
+//
+// Architecture:
+//   - Pure client-side JWT generation (mock secret, demo only)
+//   - Hash-based SSO routing: #sso?token=... triggers auto-login
+//   - Mock AfyaBI portal rendered as full-screen overlay
+//   - Shared user context drives geographic data scoping
+//   - All transitions include realistic SSO loading animation
 // ════════════════════════════════════════════════════════════════════════
-window.openAfyaBI = () => {
-  const profile = userProfile || {};
-  const role = profile.role || 'chp';
-  const name = profile.display_name || session?.user?.email || 'Demo User';
-  const payload = {
-    iss: 'afya-nyumbani-pwa',
-    sub: session?.user?.id || 'demo-user',
-    name,
-    role: role.toUpperCase(),
-    county: profile.county_id ? 'assigned' : 'all',
-    scope: role === 'national' ? 'national' : role === 'cfp' ? 'county' : 'subcounty',
-    iat: Math.floor(Date.now()/1000),
-    exp: Math.floor(Date.now()/1000) + 3600,
-    platform: 'afya-nyumbani',
-    version: '2.0.0',
+
+// ── PHASE 1: SHARED AUTH MODULE ──────────────────────────────────────────
+// Mock JWT utilities — no Keycloak, OAuth2, or OIDC.
+// Uses a simple base64url + deterministic HMAC simulation for the demo.
+
+const MOCK_JWT_SECRET = 'afyabi-nyumbani-demo-secret-2024';
+const JWT_ISSUER_AFYABI    = 'afyabi-platform';
+const JWT_ISSUER_NYUMBANI  = 'afya-nyumbani-pwa';
+const JWT_EXPIRY_SECONDS   = 3600; // 1 hour
+
+function b64url(str) {
+  return btoa(str).replace(/\+/g,'-').replace(/\//g,'_').replace(/=/g,'');
+}
+function b64urlDecode(str) {
+  return atob(str.replace(/-/g,'+').replace(/_/g,'/'));
+}
+
+// Mock HMAC-SHA256: for the demo we use a deterministic hash of the payload
+// combined with the secret. NOT cryptographically secure — demo only.
+function mockSign(payload) {
+  let hash = 0;
+  const str = payload + MOCK_JWT_SECRET;
+  for (let i = 0; i < str.length; i++) {
+    hash = ((hash << 5) - hash) + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return b64url(Math.abs(hash).toString(16).padStart(8,'0') + str.length.toString(16));
+}
+
+// Generate a mock JWT token
+function generateMockJWT(claims) {
+  const header  = b64url(JSON.stringify({ alg:'HS256', typ:'JWT' }));
+  const payload = b64url(JSON.stringify({
+    ...claims,
+    iat: Math.floor(Date.now() / 1000),
+    exp: Math.floor(Date.now() / 1000) + JWT_EXPIRY_SECONDS,
+    jti: Math.random().toString(36).slice(2),
+  }));
+  const sig = mockSign(header + '.' + payload);
+  return `${header}.${payload}.${sig}`;
+}
+
+// Decode a mock JWT (no signature verification in demo mode)
+function decodeMockJWT(token) {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    return JSON.parse(b64urlDecode(parts[1]));
+  } catch (e) { return null; }
+}
+
+// Validate a mock JWT: checks structure and expiry
+function validateMockJWT(token) {
+  const claims = decodeMockJWT(token);
+  if (!claims) return { valid: false, error: 'Invalid token structure' };
+  if (claims.exp && claims.exp < Math.floor(Date.now()/1000))
+    return { valid: false, error: 'Token has expired', claims };
+  if (!claims.sub) return { valid: false, error: 'Missing subject claim' };
+  return { valid: true, claims };
+}
+
+// Build user context from JWT claims
+function getUserContextFromJWT(claims) {
+  return {
+    userId:         claims.sub,
+    name:           claims.name || 'Unknown User',
+    role:           (claims.role || 'CHP').toLowerCase(),
+    countyId:       claims.county_id   || null,
+    countyName:     claims.county_name || null,
+    subcountyId:    claims.subcounty_id   || null,
+    subcountyName:  claims.subcounty_name || null,
+    wardId:         claims.ward_id   || null,
+    wardName:       claims.ward_name || null,
+    scope:          claims.scope || 'community',
+    issuer:         claims.iss || JWT_ISSUER_AFYABI,
+    issuedAt:       claims.iat,
+    expiresAt:      claims.exp,
   };
-  const jwtDisplay = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
-.${btoa(JSON.stringify(payload)).replace(/=/g,'')}
-.<signature>`;
-  id('afyabi-jwt-display').textContent = JSON.stringify(payload, null, 2);
-  id('afyabi-modal').style.display = 'flex';
+}
+
+// ── PHASE 2: MOCK AFYABI USER DIRECTORY ───────────────────────────────────
+const AFYABI_USERS = [
+  {
+    id: 'afyabi-001',
+    name: 'James Korir',
+    role: 'SCFP',
+    title: 'Sub-County Focal Person',
+    initials: 'JK',
+    badgeColor: '#C2410C',
+    county_id: '47', county_name: 'Nairobi',
+    subcounty_id: '4701', subcounty_name: 'Westlands',
+    ward_id: '470101', ward_name: 'Parklands/Highridge',
+    scope: 'subcounty',
+    email: 'j.korir@health.go.ke',
+    activity: 'Reviewed 3 risk assessments today',
+  },
+  {
+    id: 'afyabi-002',
+    name: 'Dr. Mary Atieno',
+    role: 'CFP',
+    title: 'County Focal Person',
+    initials: 'MA',
+    badgeColor: '#7C3AED',
+    county_id: '42', county_name: 'Kisumu',
+    subcounty_id: null, subcounty_name: null,
+    scope: 'county',
+    email: 'm.atieno@health.go.ke',
+    activity: 'Declared 1 alert event this week',
+  },
+  {
+    id: 'afyabi-003',
+    name: 'Dr. Samuel Wafula',
+    role: 'NATIONAL',
+    title: 'National Disease Surveillance Officer',
+    initials: 'SW',
+    badgeColor: '#0E7490',
+    county_id: null, county_name: null,
+    subcounty_id: null, subcounty_name: null,
+    scope: 'national',
+    email: 's.wafula@health.go.ke',
+    activity: 'Monitoring 5 active outbreak events nationwide',
+  },
+  {
+    id: 'afyabi-004',
+    name: 'Grace Mwangi',
+    role: 'CHA',
+    title: 'Community Health Assistant',
+    initials: 'GM',
+    badgeColor: '#1D9E75',
+    county_id: '30', county_name: 'Baringo',
+    subcounty_id: '3001', subcounty_name: 'Kaptum',
+    scope: 'subcounty',
+    email: 'g.mwangi@health.go.ke',
+    activity: '4 signals awaiting verification',
+  },
+  {
+    id: 'afyabi-005',
+    name: 'Dr. Faith Cherono',
+    role: 'CFP',
+    title: 'County Focal Person',
+    initials: 'FC',
+    badgeColor: '#7C3AED',
+    county_id: '30', county_name: 'Baringo',
+    subcounty_id: null, subcounty_name: null,
+    scope: 'county',
+    email: 'f.cherono@health.go.ke',
+    activity: 'Coordinating 3 investigations',
+  },
+];
+
+function getAfyaBIUser(userId) {
+  return AFYABI_USERS.find(u => u.id === userId) || AFYABI_USERS[0];
+}
+
+// Current AfyaBI session (populated on login or SSO)
+let afyabiSession = null;
+let currentUserCtx = null; // shared user context across both platforms
+
+// ── PHASE 5: USER CONTEXT PROVIDER ────────────────────────────────────────
+function setUserContext(ctx) {
+  currentUserCtx = ctx;
+  // Apply geographic scoping to demo dataset filters
+  if (ctx) {
+    applyGeographicScope(ctx);
+  }
+}
+
+function getUserContext() {
+  // Merge Afya Nyumbani's userProfile with AfyaBI session if both are present
+  if (currentUserCtx) return currentUserCtx;
+  if (userProfile) {
+    return {
+      userId: session?.user?.id || 'local-user',
+      name: userProfile.display_name || session?.user?.email || 'User',
+      role: userProfile.role || 'chp',
+      countyId: userProfile.county_id || null,
+      countyName: userProfile._demo_county || null,
+      subcountyId: userProfile.sub_county_id || null,
+      subcountyName: userProfile._demo_geo || null,
+      scope: userProfile.role === 'national' ? 'national'
+           : userProfile.role === 'cfp' ? 'county'
+           : userProfile.role === 'scfp' ? 'subcounty' : 'community',
+      issuer: JWT_ISSUER_NYUMBANI,
+    };
+  }
+  return null;
+}
+
+// ── PHASE 7: GEOGRAPHIC SCOPING ───────────────────────────────────────────
+// Apply scope-based data filtering to the demo dataset.
+// Higher scope sees more data; lower scope sees only their area.
+let _geoScope = null;
+
+function applyGeographicScope(ctx) {
+  _geoScope = ctx;
+  // Invalidate demo dataset cache so it will be re-filtered on next access
+  // We don't regenerate — instead the rendering functions check _geoScope
+}
+
+function scopedSignals(signals) {
+  if (!_geoScope) return signals;
+  if (_geoScope.scope === 'national') return signals;
+  if (_geoScope.scope === 'county' && _geoScope.countyName) {
+    return signals.filter(s => s.county === _geoScope.countyName);
+  }
+  if (_geoScope.scope === 'subcounty' && _geoScope.subcountyName) {
+    return signals.filter(s => s.subcounty === _geoScope.subcountyName);
+  }
+  // Community scope: return first 20 signals (simulates local view)
+  return signals.slice(0, 20);
+}
+
+function scopedInvestigations(investigations) {
+  if (!_geoScope) return investigations;
+  if (_geoScope.scope === 'national') return investigations;
+  if (_geoScope.scope === 'county' && _geoScope.countyName) {
+    return investigations.filter(i => i.county === _geoScope.countyName);
+  }
+  if (_geoScope.scope === 'subcounty' && _geoScope.subcountyName) {
+    return investigations.filter(i => i.subcounty === _geoScope.subcountyName);
+  }
+  return investigations.slice(0, 5);
+}
+
+function scopeLabel() {
+  if (!_geoScope) return 'All data';
+  if (_geoScope.scope === 'national') return 'Nationwide';
+  if (_geoScope.subcountyName) return `${_geoScope.subcountyName} Sub-county`;
+  if (_geoScope.countyName) return `${_geoScope.countyName} County`;
+  return 'Local area';
+}
+
+// ── PHASE 3 & 4: SSO LAUNCH + RECEIVE ────────────────────────────────────
+// Phase 3: Afya Nyumbani launches AfyaBI with a JWT
+// Phase 4: AfyaBI (simulated) receives token and auto-logs-in user
+
+window.openAfyaBI = () => {
+  // Generate JWT representing current Afya Nyumbani user
+  const ctx = getUserContext();
+  if (!ctx) { showAfyaBILoginSim(); return; }
+
+  const token = generateMockJWT({
+    iss: JWT_ISSUER_NYUMBANI,
+    sub: ctx.userId,
+    name: ctx.name,
+    role: ctx.role.toUpperCase(),
+    scope: ctx.scope,
+    county_id: ctx.countyId,
+    county_name: ctx.countyName,
+    subcounty_id: ctx.subcountyId,
+    subcounty_name: ctx.subcountyName,
+    platform: 'afya-nyumbani',
+  });
+
+  launchAfyaBIWithToken(token, ctx);
 };
 
-window.closeAfyaBI = () => { id('afyabi-modal').style.display = 'none'; };
-
-window.launchAfyaBIExternal = () => {
-  showToast('Opening AfyaBI in browser…');
-  id('afyabi-modal').style.display = 'none';
-  // In production this would pass the JWT token to the AfyaBI platform
-  // window.open('https://afyabi.health.go.ke/sso?token=...', '_blank');
+window.closeAfyaBI = () => {
+  const el = id('afyabi-modal');
+  if (el) el.style.display = 'none';
 };
 
-// ════════════════════════════════════════════════════════════════════════
-// PHASE 10 — DEMO ROLE SWITCHER
-// ════════════════════════════════════════════════════════════════════════
+// Show AfyaBI SSO transition, then load AfyaBI sim
+function launchAfyaBIWithToken(token, ctx) {
+  const transition = id('sso-transition');
+  transition.style.display = 'flex';
+
+  const steps = [
+    { text: 'Generating session token', delay: 0 },
+    { text: 'Validating JWT signature', delay: 600 },
+    { text: 'Decoding user claims', delay: 1100 },
+    { text: 'Applying geographic scope', delay: 1600 },
+    { text: 'Establishing AfyaBI context', delay: 2100 },
+  ];
+
+  id('sso-steps').innerHTML = steps.map((s,i) =>
+    `<div class="sso-step pending" id="sso-step-${i}" style="animation-delay:${s.delay}ms">
+      <div class="sso-step-dot"></div>
+      <span>${s.text}</span>
+    </div>`
+  ).join('');
+
+  id('sso-title').textContent = 'Launching AfyaBI…';
+  id('sso-subtitle').textContent = `Authenticating ${ctx.name} · ${ctx.scope} scope`;
+  id('sso-error').style.display = 'none';
+
+  // Animate steps sequentially
+  steps.forEach((s, i) => {
+    setTimeout(() => {
+      const el = id(`sso-step-${i}`);
+      if (el) el.className = 'sso-step active';
+      if (i > 0) {
+        const prev = id(`sso-step-${i-1}`);
+        if (prev) prev.className = 'sso-step done';
+      }
+    }, s.delay);
+    setTimeout(() => {
+      const el = id(`sso-step-${i}`);
+      if (el) el.className = 'sso-step done';
+    }, s.delay + 500);
+  });
+
+  // Launch AfyaBI sim after all steps complete
+  setTimeout(() => {
+    transition.style.display = 'none';
+    afyabiSession = { token, ctx, loginTime: Date.now() };
+    openAfyaBISim(ctx);
+  }, 2700);
+}
+
+// Phase 4: Receive SSO token (hash-based routing)
+// When URL is .../index.html#sso?token=..., process it on load
+async function processSSORoute() {
+  const hash = window.location.hash;
+  if (!hash.startsWith('#sso')) return false;
+  const params = new URLSearchParams(hash.slice(5)); // strip '#sso'
+  const token = params.get('token');
+  if (!token) return false;
+
+  // Show SSO transition
+  const transition = id('sso-transition');
+  if (transition) transition.style.display = 'flex';
+
+  const steps = [
+    { text: 'Receiving SSO token', delay: 0 },
+    { text: 'Validating JWT signature', delay: 500 },
+    { text: 'Checking token expiry', delay: 900 },
+    { text: 'Decoding user claims', delay: 1300 },
+    { text: 'Creating application session', delay: 1700 },
+    { text: 'Routing to dashboard', delay: 2100 },
+  ];
+
+  id('sso-steps').innerHTML = steps.map((s,i) =>
+    `<div class="sso-step pending" id="sso-step-${i}">
+      <div class="sso-step-dot"></div><span>${s.text}</span>
+    </div>`
+  ).join('');
+
+  // Validate
+  const result = validateMockJWT(token);
+  if (!result.valid) {
+    await new Promise(r => setTimeout(r, 1000));
+    id('sso-title').textContent = 'Authentication Failed';
+    id('sso-error').style.display = 'block';
+    id('sso-error-msg').textContent = result.error || 'Invalid session token';
+    return true;
+  }
+
+  // Animate steps
+  steps.forEach((s, i) => {
+    setTimeout(() => {
+      const el = id(`sso-step-${i}`);
+      if (el) el.className = 'sso-step active';
+      if (i > 0) { const p = id(`sso-step-${i-1}`); if(p) p.className='sso-step done'; }
+    }, s.delay);
+    setTimeout(() => {
+      const el = id(`sso-step-${i}`); if(el) el.className = 'sso-step done';
+    }, s.delay + 400);
+  });
+
+  const ctx = getUserContextFromJWT(result.claims);
+  setUserContext(ctx);
+
+  await new Promise(r => setTimeout(r, 2500));
+  if (transition) transition.style.display = 'none';
+
+  // Apply to Afya Nyumbani as SSO login
+  await applyAfyaBIContext(ctx);
+  // Clear hash
+  history.replaceState(null, '', window.location.pathname);
+  return true;
+}
+
+window.ssoRetry = () => {
+  const t = id('sso-transition');
+  if (t) t.style.display = 'none';
+};
+
+// Apply AfyaBI user context to Afya Nyumbani session
+async function applyAfyaBIContext(ctx) {
+  const roleBg = {
+    chp:'#085041', cha:'#1D9E75', scfp:'#C2410C',
+    cfp:'#7C3AED', national:'#0E7490'
+  }[ctx.role] || '#085041';
+
+  // Patch userProfile with AfyaBI-sourced data
+  userProfile = Object.assign(userProfile || {}, {
+    role: ctx.role,
+    display_name: ctx.name,
+    sub_county_id: ctx.subcountyId,
+    county_id: ctx.countyId,
+    _demo_geo: ctx.subcountyName || ctx.countyName || 'National',
+    _demo_county: ctx.countyName,
+    _afyabi_session: true,
+  });
+
+  // Update nav bar with SSO indicator
+  id('nav-user').innerHTML = `
+    <span>${esc(ctx.name)}</span>
+    <span style="background:${roleBg};color:#fff;padding:1px 7px;border-radius:10px;
+      font-size:10px;font-weight:600;margin-left:5px">${ctx.role.toUpperCase()}</span>
+    <span style="background:linear-gradient(90deg,#1E40AF,#4338CA);color:#fff;
+      font-size:9px;font-weight:700;padding:1px 6px;border-radius:6px;margin-left:4px;
+      letter-spacing:.03em">AfyaBI SSO</span>`;
+
+  const sbName = id('sb-user-name'); const sbRole = id('sb-user-role');
+  const sbAvatar = id('sb-avatar');
+  if (sbName) sbName.textContent = ctx.name;
+  if (sbRole) sbRole.textContent = ctx.role.toUpperCase() + ' · via AfyaBI';
+  if (sbAvatar) sbAvatar.textContent = ctx.name.split(' ').map(p=>p[0]).slice(0,2).join('');
+
+  applyGeographicScope(ctx);
+  renderTabs(ctx.role);
+  activateDemoFab();
+  await renderHome();
+  showToast(`✓ Signed in via AfyaBI SSO — ${scopeLabel()}`);
+}
+
+// ── PHASE 3: AFYABI SIMULATION ─────────────────────────────────────────────
+let afyabiCurrentTab = 'dashboard';
+
+function openAfyaBISim(ctx) {
+  const sim = id('afyabi-sim');
+  sim.style.display = 'flex';
+
+  // Update shared user identity in AfyaBI header
+  const name = ctx.name || 'User';
+  const initials = name.split(' ').map(p=>p[0]).slice(0,2).join('');
+  const roleBg = { scfp:'#C2410C', cfp:'#7C3AED', national:'#0E7490',
+    cha:'#1D9E75', chp:'#085041' }[ctx.role] || '#1E40AF';
+
+  const avatar = id('afyabi-avatar');
+  const uname = id('afyabi-user-name');
+  const uscope = id('afyabi-user-scope');
+  if (avatar) { avatar.textContent = initials; avatar.style.background = roleBg; }
+  if (uname) uname.textContent = name;
+  if (uscope) uscope.textContent = scopeLabel();
+
+  // Build AfyaBI nav tabs (role-aware)
+  const allTabs = [
+    { id:'dashboard',  label:'Dashboard' },
+    { id:'outbreaks',  label:'Outbreaks' },
+    { id:'epi-curve',  label:'Epi Curve' },
+    { id:'geo',        label:'Geographic' },
+    { id:'performance',label:'Performance' },
+    ...(ctx.scope === 'national' ? [{ id:'system', label:'System Health' }] : []),
+    { id:'nyumbani',   label:'Outbreak Intelligence ↗', special:true },
+  ];
+
+  id('afyabi-nav').innerHTML = allTabs.map(t =>
+    `<button class="afyabi-tab ${afyabiCurrentTab===t.id?'on':''} ${t.special?'special':''}"
+      onclick="switchAfyaBITab('${t.id}')"
+      style="${t.special?'color:#60A5FA;margin-left:auto':''}">${t.label}</button>`
+  ).join('');
+
+  renderAfyaBIPage(afyabiCurrentTab, ctx);
+}
+
+window.closeAfyaBISim = () => {
+  id('afyabi-sim').style.display = 'none';
+};
+
+window.switchAfyaBITab = (tab) => {
+  if (tab === 'nyumbani') {
+    // This is the "Outbreak Intelligence" link — returns to Afya Nyumbani
+    closeAfyaBISim();
+    showToast('↩ Returned to Afya Nyumbani — session preserved');
+    return;
+  }
+  afyabiCurrentTab = tab;
+  const ctx = afyabiSession?.ctx || getUserContext() || AFYABI_USERS[0];
+  // Update active tab
+  document.querySelectorAll('.afyabi-tab').forEach(b => {
+    b.classList.toggle('on', b.onclick?.toString().includes(`'${tab}'`));
+  });
+  id('afyabi-nav').querySelectorAll('.afyabi-tab').forEach(b => {
+    const t = b.getAttribute('onclick')?.match(/'([^']+)'/)?.[1];
+    if (t) b.className = `afyabi-tab ${t===tab?'on':''} ${t==='nyumbani'?'special':''}`;
+  });
+  renderAfyaBIPage(tab, ctx);
+};
+
+// Switch from AfyaBI back to Afya Nyumbani (Phase 10 reverse nav)
+window.switchToAfyaNyumbani = () => {
+  const ctx = afyabiSession?.ctx || getUserContext();
+  if (ctx) {
+    const token = generateMockJWT({
+      iss: JWT_ISSUER_AFYABI,
+      sub: ctx.userId,
+      name: ctx.name,
+      role: ctx.role.toUpperCase(),
+      scope: ctx.scope,
+      county_id: ctx.countyId,
+      county_name: ctx.countyName,
+      subcounty_id: ctx.subcountyId,
+      subcounty_name: ctx.subcountyName,
+    });
+    id('afyabi-sim').style.display = 'none';
+
+    // Show reverse SSO transition
+    const transition = id('sso-transition');
+    transition.style.display = 'flex';
+    id('sso-title').textContent = 'Opening Afya Nyumbani…';
+    id('sso-subtitle').textContent = 'Passing your session context securely';
+    id('sso-steps').innerHTML = `
+      <div class="sso-step done"><div class="sso-step-dot"></div><span>Session token validated</span></div>
+      <div class="sso-step done"><div class="sso-step-dot"></div><span>User context preserved</span></div>
+      <div class="sso-step active"><div class="sso-step-dot"></div><span>Loading Afya Nyumbani dashboard…</span></div>`;
+
+    setTimeout(async () => {
+      transition.style.display = 'none';
+      await applyAfyaBIContext(ctx);
+    }, 1400);
+  } else {
+    id('afyabi-sim').style.display = 'none';
+  }
+};
+
+// Render content for each AfyaBI tab
+function renderAfyaBIPage(tab, ctx) {
+  const page = id('afyabi-page');
+  if (!page) return;
+  const d = getDemoDataset();
+  const sigs = scopedSignals(d.signals);
+  const invs = scopedInvestigations(d.investigations);
+
+  const scopeInfo = `
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;
+      background:#EFF6FF;border-radius:8px;padding:8px 12px;border:1px solid #BFDBFE">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2.5">
+        <circle cx="12" cy="10" r="3"/><path d="M12 2a8 8 0 018 8c0 5.25-8 14-8 14S4 15.25 4 10a8 8 0 018-8z"/>
+      </svg>
+      <span style="font-size:11px;font-weight:600;color:#1D4ED8">Scope: ${scopeLabel()}</span>
+      <span style="font-size:10px;color:#3B82F6;margin-left:4px">— showing ${sigs.length} signals, ${invs.length} investigations</span>
+    </div>`;
+
+  switch (tab) {
+    case 'dashboard': page.innerHTML = renderAfyaBIDashboard(ctx, sigs, invs, d, scopeInfo); break;
+    case 'outbreaks': page.innerHTML = renderAfyaBIOutbreaks(ctx, invs, d, scopeInfo); break;
+    case 'epi-curve': page.innerHTML = renderAfyaBIEpiCurve(invs, scopeInfo); break;
+    case 'geo':       page.innerHTML = renderAfyaBIGeo(sigs, d.alertEvents, scopeInfo); break;
+    case 'performance': page.innerHTML = renderAfyaBIPerformance(d, scopeInfo); break;
+    case 'system':    page.innerHTML = renderAfyaBISystem(d); break;
+    default:          page.innerHTML = `<div style="padding:40px;text-align:center;color:#64748B">Section loading…</div>`;
+  }
+}
+
+// AfyaBI Dashboard page
+function renderAfyaBIDashboard(ctx, sigs, invs, d, scopeInfo) {
+  const s = d.situation;
+  const name = ctx.name.split(' ')[0];
+  return `
+    <div style="margin-bottom:16px">
+      <div style="font-size:20px;font-weight:800;color:#1E293B">Good ${getTimeOfDay()}, ${name}</div>
+      <div style="font-size:12px;color:#64748B;margin-top:3px">${new Date().toLocaleDateString('en-KE',{weekday:'long',year:'numeric',month:'long',day:'numeric'})} · ${scopeLabel()}</div>
+    </div>
+    ${scopeInfo}
+    <!-- Shared user identity card — same identity as Afya Nyumbani -->
+    <div class="shared-identity-card" style="margin-bottom:16px">
+      <div class="identity-header">
+        <div class="identity-avatar" style="background:${{'scfp':'#C2410C','cfp':'#7C3AED','national':'#0E7490','cha':'#1D9E75'}[ctx.role]||'#085041'}">
+          ${ctx.name.split(' ').map(p=>p[0]).slice(0,2).join('')}
+        </div>
+        <div>
+          <div class="identity-name">${esc(ctx.name)}</div>
+          <div class="identity-role">${ctx.role.toUpperCase()} · ${ctx.title||'Health Officer'}</div>
+          <div class="identity-scope">📍 ${scopeLabel()}</div>
+        </div>
+        <span class="scope-badge scope-${ctx.scope}" style="margin-left:auto;align-self:flex-start">
+          ${ctx.scope}</span>
+      </div>
+      <div class="identity-fields">
+        ${ctx.countyName ? `<div class="identity-field"><div class="identity-field-lbl">County</div><div class="identity-field-val">${ctx.countyName}</div></div>` : ''}
+        ${ctx.subcountyName ? `<div class="identity-field"><div class="identity-field-lbl">Sub-county</div><div class="identity-field-val">${ctx.subcountyName}</div></div>` : ''}
+        <div class="identity-field"><div class="identity-field-lbl">Role</div><div class="identity-field-val">${ctx.role.toUpperCase()}</div></div>
+        <div class="identity-field"><div class="identity-field-lbl">Platform</div><div class="identity-field-val">AfyaBI + Afya Nyumbani</div></div>
+      </div>
+    </div>
+    <!-- KPI grid -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
+      <div class="bi-kpi ${s.confirmedCases?'danger':'good'}">
+        <div class="bi-kpi-num">${sigs.length}</div><div class="bi-kpi-lbl">Signals (${scopeLabel()})</div>
+      </div>
+      <div class="bi-kpi ${s.activeAlerts?'warn':'good'}">
+        <div class="bi-kpi-num">${s.activeAlerts}</div><div class="bi-kpi-lbl">Active Alerts</div>
+      </div>
+      <div class="bi-kpi ${invs.length?'warn':'good'}">
+        <div class="bi-kpi-num">${invs.filter(i=>i.status==='open').length}</div><div class="bi-kpi-lbl">Open Investigations</div>
+      </div>
+      <div class="bi-kpi ${s.confirmedCases?'danger':s.probableCases?'warn':'good'}">
+        <div class="bi-kpi-num">${s.confirmedCases||s.probableCases||s.suspectedCases||0}</div><div class="bi-kpi-lbl">Cases (all)</div>
+      </div>
+    </div>
+    <!-- Outbreak Intelligence deep link -->
+    <div onclick="switchAfyaBITab('nyumbani')" style="background:linear-gradient(135deg,#085041,#0F6E56);
+      border-radius:12px;padding:16px;cursor:pointer;margin-bottom:12px;
+      display:flex;align-items:center;gap:12px;transition:opacity .15s">
+      <div style="width:40px;height:40px;background:rgba(255,255,255,.15);border-radius:10px;
+        display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px">📡</div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:700;color:#E1F5EE">Outbreak Intelligence</div>
+        <div style="font-size:11px;color:#9FE1CB;margin-top:2px">
+          Open Afya Nyumbani for signal reporting, case investigations & contact tracing
+        </div>
+      </div>
+      <div style="color:#9FE1CB;font-size:18px">↗</div>
+    </div>
+    <!-- Recent activity -->
+    <div class="bi-card">
+      <div class="bi-card-title">Recent signals in scope</div>
+      ${sigs.slice(0,5).map(s => `
+        <div style="padding:8px 0;border-bottom:1px solid #EEF2FF;display:flex;align-items:center;gap:10px">
+          <div style="width:8px;height:8px;border-radius:50%;flex-shrink:0;
+            background:${evdIsUrgent(s.signal_type)?'#EF4444':'#93C5FD'}"></div>
+          <div style="flex:1">
+            <div style="font-size:12px;font-weight:500;color:#1E293B">${evdLabel(s.signal_type)}</div>
+            <div style="font-size:10.5px;color:#64748B">${esc(s.subcounty)} · ${s.created_at.slice(0,10)}</div>
+          </div>
+          <span class="scope-badge scope-${s.county===(_geoScope?.countyName||'')?'county':'subcounty'}">${s.county}</span>
+        </div>`).join('')}
+    </div>`;
+}
+
+function renderAfyaBIOutbreaks(ctx, invs, d, scopeInfo) {
+  return `
+    <div style="font-size:16px;font-weight:700;color:#1E293B;margin-bottom:8px">Outbreaks & Investigations</div>
+    ${scopeInfo}
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+      <div class="bi-kpi"><div class="bi-kpi-num">${invs.filter(i=>i.case_classification==='suspected_case').length}</div><div class="bi-kpi-lbl">Suspected</div></div>
+      <div class="bi-kpi warn"><div class="bi-kpi-num">${invs.filter(i=>i.case_classification==='probable_case').length}</div><div class="bi-kpi-lbl">Probable</div></div>
+      <div class="bi-kpi danger"><div class="bi-kpi-num">${invs.filter(i=>i.case_classification==='confirmed_case').length}</div><div class="bi-kpi-lbl">Confirmed</div></div>
+    </div>
+    <div class="bi-card">
+      <div class="bi-card-title">Investigation list</div>
+      ${invs.slice(0,8).map(i => `
+        <div style="padding:8px 0;border-bottom:1px solid #EEF2FF;display:flex;align-items:center;gap:8px">
+          <div style="flex:1">
+            <div style="font-size:12px;font-weight:600;color:#1E293B">${esc(i.county)} · ${esc(i.subcounty)}</div>
+            <div style="font-size:10.5px;color:#64748B">${i.created_at.slice(0,10)} · ${i.assigned_officer?.split(' ').slice(0,2).join(' ')||'Unassigned'}</div>
+          </div>
+          <span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;
+            background:${CASE_CLASS_COLORS[i.case_classification]||'#94A3B8'}1A;
+            color:${CASE_CLASS_COLORS[i.case_classification]||'#94A3B8'}">
+            ${CASE_CLASS_LABELS[i.case_classification]||'Pending'}</span>
+        </div>`).join('')}
+    </div>`;
+}
+
+function renderAfyaBIEpiCurve(invs, scopeInfo) {
+  return `
+    <div style="font-size:16px;font-weight:700;color:#1E293B;margin-bottom:8px">Epidemic Curve</div>
+    ${scopeInfo}
+    <div class="bi-card">
+      <div class="bi-card-title">Cases by symptom onset — ${scopeLabel()}</div>
+      ${buildEpiCurve(invs)}
+      <div style="font-size:10px;color:#64748B;margin-top:8px;text-align:center">
+        Based on ${invs.filter(i=>i.date_symptoms_started).length} investigation records with onset dates
+      </div>
+    </div>`;
+}
+
+function renderAfyaBIGeo(sigs, alerts, scopeInfo) {
+  const byCounty = {};
+  sigs.forEach(s => { byCounty[s.county] = (byCounty[s.county]||0)+1; });
+  const sorted = Object.entries(byCounty).sort((a,b)=>b[1]-a[1]);
+  return `
+    <div style="font-size:16px;font-weight:700;color:#1E293B;margin-bottom:8px">Geographic Intelligence</div>
+    ${scopeInfo}
+    <div class="bi-card">
+      <div class="bi-card-title">Signal density by county</div>
+      ${sorted.map(([county,n],i) => {
+        const pct = Math.round(n/sorted[0][1]*100);
+        return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+          <span style="width:16px;height:16px;border-radius:50%;background:${['#EF4444','#F97316','#EAB308','#22C55E'][Math.min(i,3)]};
+            display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0">${i+1}</span>
+          <span style="min-width:80px;font-size:12px;font-weight:500;color:#1E293B">${esc(county)}</span>
+          <div style="flex:1;background:#EEF2FF;border-radius:3px;height:12px;overflow:hidden">
+            <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,#3B82F6,#6366F1);border-radius:3px"></div>
+          </div>
+          <span style="font-size:12px;font-weight:700;color:#1E40AF;min-width:24px">${n}</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+function renderAfyaBIPerformance(d, scopeInfo) {
+  const tl = d.timeliness;
+  return `
+    <div style="font-size:16px;font-weight:700;color:#1E293B;margin-bottom:8px">Performance Metrics</div>
+    ${scopeInfo}
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px">
+      ${[
+        {lbl:'Report→Verify', val:tl.reportToVerify.median+'h', target:'24h', ok:tl.reportToVerify.median<24},
+        {lbl:'Verify→Assess', val:tl.verifyToAssess.median+'h', target:'24h', ok:tl.verifyToAssess.median<24},
+        {lbl:'Assess→Invest.', val:tl.assessToInvestigate.median+'h', target:'48h', ok:tl.assessToInvestigate.median<48},
+        {lbl:'Invest.→Classify', val:tl.investigateToClassify.median+'h', target:'72h', ok:tl.investigateToClassify.median<72},
+      ].map(m => `<div class="bi-kpi ${m.ok?'good':'warn'}">
+        <div class="bi-kpi-num">${m.val}</div>
+        <div class="bi-kpi-lbl">${m.lbl} · target ${m.target}</div>
+      </div>`).join('')}
+    </div>
+    <div class="bi-card">
+      <div class="bi-card-title">SLA compliance</div>
+      ${computeTimelinessSLAs([], d.verifications, [], d.investigations)}
+    </div>`;
+}
+
+function renderAfyaBISystem(d) {
+  const since30 = Date.now() - 30*86400000;
+  const activeCHPs = new Set(d.signals.filter(s=>new Date(s.created_at)>new Date(since30)).map(s=>s.county)).size;
+  return `
+    <div style="font-size:16px;font-weight:700;color:#1E293B;margin-bottom:12px">System Health</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px">
+      <div class="bi-kpi good"><div class="bi-kpi-num">${activeCHPs}</div><div class="bi-kpi-lbl">Active counties</div></div>
+      <div class="bi-kpi good"><div class="bi-kpi-num">99.8%</div><div class="bi-kpi-lbl">Uptime</div></div>
+      <div class="bi-kpi"><div class="bi-kpi-num">${d.signals.filter(s=>(s.created_at||'').slice(0,10)===new Date().toISOString().slice(0,10)).length}</div><div class="bi-kpi-lbl">Signals today</div></div>
+    </div>
+    <div class="bi-card">
+      <div class="bi-card-title">Connected systems</div>
+      <div class="int-sys-card connected">
+        <div class="int-sys-icon" style="background:#F0FDF4">📡</div>
+        <div><div style="font-weight:600;font-size:13px">Afya Nyumbani PWA</div>
+          <div style="font-size:11px;color:#64748B">EVD Outbreak Intelligence · JWT SSO active</div></div>
+        <div class="int-status-dot green" style="margin-left:auto"></div>
+      </div>
+      <div class="int-sys-card standby">
+        <div class="int-sys-icon" style="background:#F8FAFC">🏥</div>
+        <div><div style="font-weight:600;font-size:13px">KHIS 2.0</div>
+          <div style="font-size:11px;color:#64748B">Kenya Health Information System · Pending</div></div>
+        <div class="int-status-dot amber" style="margin-left:auto"></div>
+      </div>
+    </div>`;
+}
+
+function getTimeOfDay() {
+  const h = new Date().getHours();
+  return h < 12 ? 'morning' : h < 17 ? 'afternoon' : 'evening';
+}
+
+// ── AFYABI MOCK LOGIN PAGE ─────────────────────────────────────────────────
+function showAfyaBILoginSim() {
+  const el = id('afyabi-login-sim');
+  el.style.display = 'flex';
+  buildAfyaBIUserSelector();
+}
+
+function buildAfyaBIUserSelector() {
+  const el = id('afyabi-user-selector');
+  if (!el) return;
+  el.innerHTML = AFYABI_USERS.map(u => `
+    <div class="afyabi-login-user" onclick="afyaBILogin('${u.id}')">
+      <div style="width:38px;height:38px;border-radius:50%;background:${u.badgeColor};
+        color:#fff;display:flex;align-items:center;justify-content:center;
+        font-size:13px;font-weight:700;flex-shrink:0">${u.initials}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:700;color:#1E293B">${esc(u.name)}</div>
+        <div style="font-size:11px;color:#64748B">${u.title}</div>
+        <div style="font-size:10px;color:#94A3B8;margin-top:2px">
+          ${u.subcounty_name ? u.subcounty_name+' · ' : ''}${u.county_name||'Nationwide'}
+        </div>
+      </div>
+      <span class="scope-badge scope-${u.scope}">${u.scope}</span>
+    </div>`).join('');
+}
+
+window.afyaBILogin = (userId) => {
+  const u = getAfyaBIUser(userId);
+  id('afyabi-login-sim').style.display = 'none';
+
+  const ctx = {
+    userId: u.id,
+    name: u.name,
+    role: u.role.toLowerCase(),
+    title: u.title,
+    countyId: u.county_id,
+    countyName: u.county_name,
+    subcountyId: u.subcounty_id,
+    subcountyName: u.subcounty_name,
+    scope: u.scope,
+    issuer: JWT_ISSUER_AFYABI,
+  };
+
+  const token = generateMockJWT({
+    iss: JWT_ISSUER_AFYABI,
+    sub: u.id,
+    name: u.name,
+    role: u.role,
+    scope: u.scope,
+    county_id: u.county_id,
+    county_name: u.county_name,
+    subcounty_id: u.subcounty_id,
+    subcounty_name: u.subcounty_name,
+    email: u.email,
+  });
+
+  launchAfyaBIWithToken(token, ctx);
+};
+
+// ── PHASE 9: INTEGRATION STATUS PAGE ──────────────────────────────────────
+window.renderIntegrationStatus = () => {
+  const el = id('integration-content');
+  if (!el) return;
+  const ctx = getUserContext();
+  const session_jwt = afyabiSession?.token;
+  const claims = session_jwt ? decodeMockJWT(session_jwt) : null;
+  const now = Math.floor(Date.now()/1000);
+  const expiresAt = claims?.exp || now + JWT_EXPIRY_SECONDS;
+  const issuedAt = claims?.iat || now - 60;
+  const expiryPct = Math.max(0, Math.round((expiresAt - now) / JWT_EXPIRY_SECONDS * 100));
+  const expiryMin = Math.max(0, Math.round((expiresAt - now) / 60));
+
+  el.innerHTML = `
+    <div class="page-header">
+      <div><div class="page-title">Integration Status</div>
+        <div class="page-sub">AfyaBI ↔ Afya Nyumbani · JWT SSO Preview</div></div>
+      <button class="btn-sm btn-sm-p" style="width:auto;padding:6px 12px;font-size:11.5px"
+        onclick="openAfyaBI()">Open AfyaBI ↗</button>
+    </div>
+
+    <!-- Auth status -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-title">Authentication Status</div>
+      <div class="int-status-row">
+        <div style="display:flex;align-items:center;gap:6px"><div class="int-status-dot ${ctx?'green':'gray'}"></div><span class="int-status-lbl">Session active</span></div>
+        <span class="int-status-val" style="color:${ctx?'#15803D':'var(--text-2)'}">${ctx?'✓ Active':'Not authenticated'}</span>
+      </div>
+      <div class="int-status-row">
+        <span class="int-status-lbl">Identity source</span>
+        <span class="int-status-val">${afyabiSession?'AfyaBI SSO':'Afya Nyumbani local'}</span>
+      </div>
+      <div class="int-status-row">
+        <span class="int-status-lbl">JWT issuer</span>
+        <span class="int-status-val" style="font-family:monospace;font-size:11px">${claims?.iss||JWT_ISSUER_NYUMBANI}</span>
+      </div>
+      <div class="int-status-row">
+        <span class="int-status-lbl">Token expiry</span>
+        <span class="int-status-val" style="color:${expiryMin>30?'#15803D':expiryMin>10?'var(--amber)':'var(--red)'}">${expiryMin} min remaining</span>
+      </div>
+      <div style="margin-top:10px">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text-2);margin-bottom:4px">
+          <span>Token lifetime</span><span>${expiryPct}% remaining</span>
+        </div>
+        <div class="gauge-track">
+          <div class="gauge-fill" style="width:${expiryPct}%;background:${expiryPct>50?'#22C55E':expiryPct>20?'#F59E0B':'#EF4444'}"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- User context -->
+    ${ctx ? `
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-title">Current User Context</div>
+      <div class="shared-identity-card" style="margin-bottom:0">
+        <div class="identity-header">
+          <div class="identity-avatar" style="background:${{scfp:'#C2410C',cfp:'#7C3AED',national:'#0E7490',cha:'#1D9E75',chp:'#085041'}[ctx.role]||'#085041'}">
+            ${ctx.name.split(' ').map(p=>p[0]).slice(0,2).join('')}
+          </div>
+          <div>
+            <div class="identity-name">${esc(ctx.name)}</div>
+            <div class="identity-role">${ctx.role.toUpperCase()}</div>
+            <div class="identity-scope">${scopeLabel()}</div>
+          </div>
+          <span class="scope-badge scope-${ctx.scope}" style="margin-left:auto;align-self:flex-start">${ctx.scope}</span>
+        </div>
+        <div class="identity-fields">
+          ${ctx.countyName?`<div class="identity-field"><div class="identity-field-lbl">County</div><div class="identity-field-val">${ctx.countyName}</div></div>`:''}
+          ${ctx.subcountyName?`<div class="identity-field"><div class="identity-field-lbl">Sub-county</div><div class="identity-field-val">${ctx.subcountyName}</div></div>`:''}
+          <div class="identity-field"><div class="identity-field-lbl">Hierarchy source</div><div class="identity-field-val">${afyabiSession?'AfyaBI':'Local'}</div></div>
+          <div class="identity-field"><div class="identity-field-lbl">Data scope</div><div class="identity-field-val">${scopeLabel()}</div></div>
+        </div>
+      </div>
+    </div>` : ''}
+
+    <!-- JWT Inspector -->
+    ${claims ? `
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-title">JWT Claims Inspector</div>
+      <div class="jwt-panel">
+        <div class="jwt-header">HEADER · PAYLOAD · SIGNATURE</div>
+        ${Object.entries(claims).map(([k,v]) => {
+          const isTime = k==='exp'||k==='iat';
+          const val = isTime ? new Date(v*1000).toLocaleTimeString() : String(v);
+          const cls = k==='exp' ? (v>now?'green':'red') : k==='iss'?'amber':'';
+          return `<div class="jwt-claim">
+            <span class="jwt-claim-key">${k}</span>
+            <span class="jwt-claim-val ${cls}">${esc(val)}</span>
+          </div>`;
+        }).join('')}
+        <div style="margin-top:10px">
+          <div style="font-size:9px;color:#94A3B8;margin-bottom:4px">Token expiry</div>
+          <div class="jwt-expiry-bar"><div class="jwt-expiry-fill" style="width:${expiryPct}%;background:${expiryPct>50?'#4ADE80':expiryPct>20?'#FBBF24':'#F87171'}"></div></div>
+        </div>
+      </div>
+    </div>` : `
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-title">JWT Claims Inspector</div>
+      <div style="text-align:center;padding:24px;color:var(--text-2)">
+        <div style="font-size:32px;margin-bottom:8px">🔑</div>
+        <div style="font-size:13px;font-weight:600">No active SSO session</div>
+        <div style="font-size:11px;margin-top:4px">Open AfyaBI and log in to see JWT claims here</div>
+        <button class="btn btn-p" onclick="openAfyaBI()" style="margin-top:14px;padding:10px 16px">Open AfyaBI ↗</button>
+      </div>
+    </div>`}
+
+    <!-- Connected systems -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-title">Connected Systems</div>
+      <div class="int-sys-card connected">
+        <div class="int-sys-icon" style="background:#EFF6FF">📊</div>
+        <div><div style="font-weight:600;font-size:13px">AfyaBI Analytics</div>
+          <div style="font-size:11px;color:#64748B">National Health Intelligence · ${afyabiSession?'Session active':'Standby'}</div></div>
+        <div class="int-status-dot ${afyabiSession?'green':'amber'}" style="margin-left:auto"></div>
+      </div>
+      <div class="int-sys-card connected">
+        <div class="int-sys-icon" style="background:#F0FDF4">📡</div>
+        <div><div style="font-weight:600;font-size:13px">Afya Nyumbani PWA</div>
+          <div style="font-size:11px;color:#64748B">EVD Outbreak Intelligence · Active</div></div>
+        <div class="int-status-dot green" style="margin-left:auto"></div>
+      </div>
+      <div class="int-sys-card standby">
+        <div class="int-sys-icon" style="background:#F8FAFC">🏥</div>
+        <div><div style="font-weight:600;font-size:13px">KHIS 2.0</div>
+          <div style="font-size:11px;color:#64748B">Kenya Health Information System · Not connected</div></div>
+        <div class="int-status-dot gray" style="margin-left:auto"></div>
+      </div>
+    </div>
+
+    <!-- Mock API endpoints -->
+    <div class="card">
+      <div class="card-title">Mock AfyaBI API Endpoints</div>
+      ${[
+        ['GET /api/v1/me', 'Current user context', '200'],
+        ['GET /api/v1/counties', 'All Kenya counties', '200'],
+        ['GET /api/v1/subcounties?county_id=47', 'Subcounties for Nairobi', '200'],
+        ['GET /api/v1/wards?subcounty_id=4701', 'Wards for Westlands', '200'],
+        ['GET /api/v1/community-units', 'CHUs in scope', '200'],
+        ['POST /auth/sso', 'Exchange JWT for session', '200'],
+        ['GET /auth/validate', 'Validate JWT token', '200'],
+      ].map(([endpoint, desc, status]) => `
+        <div class="int-status-row" style="cursor:pointer" onclick="callMockAPI('${endpoint}')">
+          <div>
+            <div style="font-family:monospace;font-size:11px;color:#4338CA">${esc(endpoint)}</div>
+            <div style="font-size:10.5px;color:var(--text-2)">${desc}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="background:#F0FDF4;color:#15803D;font-size:10px;font-weight:700;
+              padding:2px 6px;border-radius:6px">${status}</span>
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-2)" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+          </div>
+        </div>`).join('')}
+    </div>`;
+};
+
+// Mock API call demonstration
+window.callMockAPI = (endpoint) => {
+  const ctx = getUserContext();
+  const responses = {
+    '/api/v1/me': ctx ? {
+      id: ctx.userId, name: ctx.name, role: ctx.role.toUpperCase(),
+      county_id: ctx.countyId, county_name: ctx.countyName,
+      subcounty_id: ctx.subcountyId, subcounty_name: ctx.subcountyName,
+      scope: ctx.scope,
+    } : { error: 'No session' },
+    '/api/v1/counties': [
+      {id:'47',name:'Nairobi'},{id:'42',name:'Kisumu'},{id:'30',name:'Baringo'},
+      {id:'26',name:'Busia'},{id:'44',name:'Migori'},
+    ],
+    '/api/v1/subcounties?county_id=47': [
+      {id:'4701',name:'Westlands'},{id:'4702',name:'Dagoretti North'},
+      {id:'4703',name:'Dagoretti South'},{id:'4704',name:'Langata'},
+    ],
+    '/api/v1/wards?subcounty_id=4701': [
+      {id:'470101',name:'Parklands/Highridge'},{id:'470102',name:'Karura'},
+      {id:'470103',name:'Kangemi'},{id:'470104',name:'Mountain View'},
+    ],
+    '/api/v1/community-units': [
+      {id:'cu001',name:'Kaptum Zone A',chp_count:12},{id:'cu002',name:'Kaptum Zone B',chp_count:8},
+    ],
+    '/auth/sso': { status:'success', session_id:'sess-'+Math.random().toString(36).slice(2), expires_in:3600 },
+    '/auth/validate': { valid:true, sub:ctx?.userId||'unknown', exp:Math.floor(Date.now()/1000)+3600 },
+  };
+  const key = Object.keys(responses).find(k => endpoint.includes(k.split('?')[0].split('/').pop()));
+  const data = responses[endpoint] || responses[key] || { status: 'mock response' };
+  showGenericModal(`API Response: ${endpoint.split('?')[0]}`, `
+    <div style="font-size:11px;color:var(--text-2);margin-bottom:6px">Status: 200 OK · Content-Type: application/json</div>
+    <pre style="background:#0F172A;color:#E2E8F0;padding:12px;border-radius:8px;
+      font-size:11px;overflow-x:auto;white-space:pre-wrap;line-height:1.6">
+${JSON.stringify(data, null, 2)}</pre>`, () => true);
+};
+
+// ── PHASE 10: ENHANCED ROLE SWITCHER ────────────────────────────────────────
 let demoModeActive = false;
 
-window.openRoleSwitcher = () => { id('role-switcher-modal').style.display = 'flex'; };
+window.openRoleSwitcher = () => {
+  // Render from AFYABI_USERS directory for rich geographic context
+  const el = id('role-switcher-users');
+  if (el) {
+    // Static extras (CHP, CHA not in AFYABI_USERS since they're field workers)
+    const extras = [
+      { id:'local-chp', name:'Wanjiku Kamau', role:'chp', title:'Community Health Promoter',
+        initials:'WK', badgeColor:'#085041', county_name:'Baringo', subcounty_name:'Kaptum',
+        scope:'community', activity:'12 households visited this month' },
+    ];
+    const allUsers = [...extras, ...AFYABI_USERS];
+    el.innerHTML = allUsers.map(u => `
+      <div class="rs-row" onclick="afyaBILoginAndClose('${u.id}','${u.name}','${u.role.toLowerCase()}','${u.title||''}','${u.county_name||''}','${u.subcounty_name||''}','${u.scope||'community'}','${u.badgeColor}')">
+        <div style="width:38px;height:38px;border-radius:50%;background:${u.badgeColor};color:#fff;
+          display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0">
+          ${u.initials}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600">${esc(u.name)}</div>
+          <div style="font-size:11px;color:var(--text-2)">${u.title||u.role.toUpperCase()}${u.subcounty_name?' · '+u.subcounty_name:u.county_name?' · '+u.county_name:' · Nationwide'}</div>
+          <div style="font-size:10px;color:#94A3B8;margin-top:1px">${u.activity||''}</div>
+        </div>
+        <span class="scope-badge scope-${u.scope}">${u.scope}</span>
+      </div>`).join('');
+  }
+  id('role-switcher-modal').style.display = 'flex';
+};
 window.closeRoleSwitcher = (e) => {
   if (!e || e.target === id('role-switcher-modal')) id('role-switcher-modal').style.display = 'none';
+};
+
+// Switch role from the unified user directory (used by role switcher + demo mode)
+window.afyaBILoginAndClose = async (userId, name, role, title, countyName, subcountyName, scope, badge) => {
+  id('role-switcher-modal').style.display = 'none';
+  const geo = subcountyName ? subcountyName + (countyName?', '+countyName:'') : (countyName||'Nationwide');
+  await switchDemoRole(role, name, title||role.toUpperCase(), geo, badge);
 };
 
 window.switchDemoRole = async (role, name, label, geo, badge) => {
   id('role-switcher-modal').style.display = 'none';
   demoModeActive = true;
 
-  // Patch the userProfile to reflect the selected demo role
+  // Find matching AfyaBI user for rich geographic context
+  const afyabiUser = AFYABI_USERS.find(u => u.role.toLowerCase() === role) || null;
+  const ctx = {
+    userId: afyabiUser?.id || ('demo-' + role),
+    name,
+    role,
+    title: label,
+    countyId: afyabiUser?.county_id || null,
+    countyName: afyabiUser?.county_name || (geo.includes('County') ? geo.replace(' County','') : null),
+    subcountyId: afyabiUser?.subcounty_id || null,
+    subcountyName: afyabiUser?.subcounty_name || (geo.includes(',') ? geo.split(',')[0].trim() : null),
+    scope: role === 'national' ? 'national' : role === 'cfp' ? 'county' : role === 'scfp' ? 'subcounty' : 'community',
+    issuer: 'demo-switcher',
+  };
+  setUserContext(ctx);
+
   userProfile = Object.assign(userProfile || {}, {
     role, display_name: name,
-    sub_county_id: 'sc-demo', county_id: 'c-demo',
+    sub_county_id: ctx.subcountyId || 'sc-demo',
+    county_id: ctx.countyId || 'c-demo',
     chp_area_id: 'area-demo',
     _demo_label: label, _demo_geo: geo, _demo_badge: badge,
+    _demo_county: ctx.countyName,
   });
 
-  // Update nav bar
+  const roleBg = badge;
   id('nav-user').innerHTML = `
     <span>${esc(name)}</span>
-    <span style="background:${badge};color:#fff;padding:1px 7px;border-radius:10px;
+    <span style="background:${roleBg};color:#fff;padding:1px 7px;border-radius:10px;
       font-size:10px;font-weight:600;margin-left:6px">${role.toUpperCase()}</span>
     <span class="demo-badge">DEMO</span>`;
 
-  // Update sidebar
   const sbName = id('sb-user-name'); const sbRole = id('sb-user-role');
+  const sbAvatar = id('sb-avatar');
   if (sbName) sbName.textContent = name;
-  if (sbRole) sbRole.textContent = role.toUpperCase() + ' (DEMO)';
+  if (sbRole) sbRole.textContent = role.toUpperCase() + ' · ' + (ctx.countyName || 'Demo');
+  if (sbAvatar) sbAvatar.textContent = name.split(' ').map(p=>p[0]).slice(0,2).join('');
 
-  // Re-render tabs + home
   renderTabs(role);
   await renderHome();
   goTab('home');
-  showToast(`✓ Switched to ${label} — ${geo}`);
+  showToast(`✓ Switched to ${label} — ${scopeLabel()}`);
 };
 
-// Activate demo FAB on enter app (always show in this build)
 function activateDemoFab() {
   const fab = id('demo-fab');
   if (fab) fab.style.display = 'flex';
 }
+
+// Check for SSO token in URL hash on boot
+const _origDOMContentLoaded = window.__domContentLoadedHooked;
+window.__processSSOOnBoot = true;
 
 // ════════════════════════════════════════════════════════════════════════
 // PHASE 2 — SITUATION PANEL (enhanced with demo data fallback)
